@@ -1,0 +1,76 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:mvvm="clr-namespace:Common.Mvvm;assembly=Common"
+                    xmlns:helpers="clr-namespace:Telerik.Windows.Controls.Theming.Helpers;assembly=Telerik.Windows.Controls">
+
+
+    <Style TargetType="telerik:RadButton" x:Key="AutoView_ButtonStyle">
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="Background" Value="DodgerBlue"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Height" Value="55"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+        <Setter Property="helpers:ThemeHelper.MouseOverBrush" Value="RoyalBlue"/>
+        <Setter Property="helpers:ThemeHelper.PressedBrush" Value="#353550"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="2"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <!-- ContentTemplate 정의 -->
+    <DataTemplate x:Key="ChannelTemplate">
+        <Border Background="LightGray" CornerRadius="8" Margin="3" BorderThickness="0.5" BorderBrush="Black">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.1*"/>
+                    <RowDefinition Height="0.9*"/>
+                </Grid.RowDefinitions>
+                <Grid Background="{Binding Status, Converter={StaticResource ChannelStatusColorConverter}}" telerik:CornerRadiusHelper.ClipRadius="8,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.24*"/>
+                        <ColumnDefinition Width="0.50*"/>
+                        <ColumnDefinition Width="0.24*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="{Binding Channel}" Grid.Column="0" Foreground="Black" telerik:CornerRadiusHelper.ClipRadius="8" FontSize="20" FontWeight="SemiBold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="White" Margin="15,8,25,8" Padding="0"/>
+                    <Label Content="{Binding Status}" Grid.Column="1" Foreground="White" FontSize="30" FontWeight="SemiBold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                </Grid>
+                <Image Grid.Row="1" Source="{Binding ImageSource}"/>
+                
+            </Grid>
+        </Border>
+    </DataTemplate>
+    <!--Outside Area Style-->
+    <Style TargetType="Border" x:Key="Outside_BorderStyle">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Black"/>
+    </Style>
+    <Style TargetType="Label" x:Key="Outside_LabelStyle">
+        <Setter Property="Background" Value="LightSlateGray"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="telerik:CornerRadiusHelper.ClipRadius" Value="8,0,0,8"/>
+    </Style>
+    <Style TargetType="Label" x:Key="Outside_SensorLabelStyle">
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderBrush" Value="DimGray"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+    <Style TargetType="Image" x:Key="Outside_ImageStyle">
+        <Setter Property="Source" Value="/Resources/phone.png"/>
+        <Setter Property="Stretch" Value="None"/>
+        <Setter Property="Margin" Value="0,5"/>
+    </Style>
+</ResourceDictionary>

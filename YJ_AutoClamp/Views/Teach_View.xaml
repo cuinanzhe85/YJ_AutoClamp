@@ -1,0 +1,620 @@
+﻿<mvvm:BaseUserControl x:Class="YJ_AutoClamp.Teach_View"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:YJ_AutoClamp"
+      xmlns:mvvm="clr-namespace:Common.Mvvm;assembly=Common"
+      xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+      xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:h="http://helix-toolkit.org/wpf"
+      mc:Ignorable="d">
+    <mvvm:BaseUserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/TeachView_Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <x:Array x:Key="LiftItems" Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                <sys:String>Lift 1</sys:String>
+                <sys:String>Lift 2</sys:String>
+                <sys:String>Lift 3</sys:String>
+            </x:Array>
+            <x:Array x:Key="StageItems" Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                <sys:String>1 Stage</sys:String>
+                <sys:String>2 Stage</sys:String>
+                <sys:String>3 Stage</sys:String>
+                <sys:String>4 Stage</sys:String>
+                <sys:String>5 Stage</sys:String>
+                <sys:String>6 Stage</sys:String>
+                <sys:String>7 Stage</sys:String>
+            </x:Array>
+            <x:Array x:Key="PutDownX" Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                <sys:String>Lift 1</sys:String>
+                <sys:String>Lift 2</sys:String>
+                <sys:String>Lift 3</sys:String>
+            </x:Array>
+        </ResourceDictionary>
+    </mvvm:BaseUserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.4*"/>
+            <RowDefinition Height="0.4*"/>
+            <RowDefinition Height="0.2*"/>
+        </Grid.RowDefinitions>
+        <!--Servo Move Common Area-->
+        <GroupBox Header="Servo Control" BorderThickness="2" FontWeight="SemiBold">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!--Position Data Grid-->
+                <Grid Margin="0,0,10,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.28*"/>
+                        <ColumnDefinition Width="0.24*"/>
+                        <ColumnDefinition Width="0.24*"/>
+                        <ColumnDefinition Width="0.24*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.RowSpan="4" Grid.ColumnSpan="3" CornerRadius="8" BorderThickness="1" BorderBrush="Black"/>
+                    <Border  BorderThickness="0,0,1,1" BorderBrush="Black">
+                        <telerik:RadComboBox ItemsSource="{Binding UnitList}" SelectedIndex="{Binding Selected_UnitIndex}" Focusable="False" FontSize="18" HorizontalContentAlignment="Center" telerik:StyleManager.Theme="Material"/>
+                    </Border>
+                    <!--TItle Label-->
+                    
+                    <Label Grid.Column="1" Content="Target" FontSize="20" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="DarkSeaGreen" BorderThickness="0,1,1,1" />
+                    <Label Grid.Column="2" Content="Current" FontSize="20" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="DarkSeaGreen" BorderThickness="0,0,0,1"/>
+                    <Label Grid.Row="1" Content="Servo X Position" Style="{StaticResource Position_LabelStyle}"/>
+                    <Label Grid.Row="2" Content="Servo Y Position" Style="{StaticResource Position_LabelStyle}"/>
+                    <Label Grid.Row="3" Content="Servo Z Position" Style="{StaticResource Position_LabelStyle}" BorderThickness="0,0,1,0"/>
+                    <!--XYZ Target Data-->
+                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Target_Position[0], StringFormat={}{0:F2}}" Style="{StaticResource Position_TextBoxStyle}" Background="PeachPuff"/>
+                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Target_Position[1], StringFormat={}{0:F2}}" Style="{StaticResource Position_TextBoxStyle}" Background="PeachPuff"/>
+                    <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Target_Position[2], StringFormat={}{0:F2}}" Style="{StaticResource Position_TextBoxStyle}" Background="PeachPuff"/>
+                    <!--XYZ Current Data-->
+                    <Label Grid.Column="2" Grid.Row="1" Content="{Binding Current_Position[0]}" ContentStringFormat="0.00 mm" Style="{StaticResource Position_LabelStyle}" FontSize="17" BorderThickness="0,0,0,1"/>
+                    <Label Grid.Column="2" Grid.Row="2" Content="{Binding Current_Position[1]}" ContentStringFormat="0.00 mm" Style="{StaticResource Position_LabelStyle}" FontSize="17" BorderThickness="0,0,0,1"/>
+                    <Label Grid.Column="2" Grid.Row="3" Content="{Binding Current_Position[2]}" ContentStringFormat="0.00 mm" Style="{StaticResource Position_LabelStyle}" FontSize="17" BorderThickness="0,0,0,0"/>
+                    <!--Servo Move Buttons-->
+                    <telerik:RadButton Grid.Row="0" Content="" Style="{StaticResource ServoMove_ButtonStyle}"/>
+                    <telerik:RadButton Grid.Row="1" Content="Move X" IsEnabled="{Binding Selected_UnitExist[0]}" Style="{StaticResource ServoMove_ButtonStyle}"
+                                       Command="{Binding ServoMove_Command}" CommandParameter="Move_X"/>
+                    <telerik:RadButton Grid.Row="2" Content="Move Y" IsEnabled="{Binding Selected_UnitExist[1]}" Style="{StaticResource ServoMove_ButtonStyle}"
+                                       Command="{Binding ServoMove_Command}" CommandParameter="Move_Y"/>
+                    <telerik:RadButton Grid.Row="3" Content="Move Z" IsEnabled="{Binding Selected_UnitExist[2]}" Style="{StaticResource ServoMove_ButtonStyle}"
+                                       Command="{Binding ServoMove_Command}" CommandParameter="Move_Z"/>
+                   
+                </Grid>
+               
+                <!--Servo Jog Grid-->
+                <Grid Grid.Column="1" Margin="10,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.25*"/>
+                        <ColumnDefinition Width="0.75*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <!--Move Home, Stop, Reset-->
+                        <telerik:RadButton Grid.Row="0" Content="Home " 
+                                           Style="{StaticResource Init_ButtonStyle}" Background="CornflowerBlue" Foreground="White"
+                                           Command="{Binding ServoMove_Command}" CommandParameter="Home"/>
+                        <telerik:RadButton Grid.Row="1" Content="Servo Stop" 
+                                           Style="{StaticResource Init_ButtonStyle}" Background="Firebrick" Foreground="White"
+                                           Command="{Binding ServoMove_Command}" CommandParameter="Stop"/>
+                        <telerik:RadButton Grid.Row="2" Content="Servo Reset" 
+                                           Style="{StaticResource Init_ButtonStyle}" Background="Orange" Foreground="White"
+                                           Command="{Binding ServoMove_Command}" CommandParameter="AlarmReset"/>
+                    </Grid>
+                    <!--Move Jog-->
+                    <Border Grid.Column="1" Background="White">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="1"/>
+                        </Border.Effect>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.15*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="0.3*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.5*"/>
+                                <RowDefinition Height="0.15*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="0.15*"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.ColumnSpan="5" Content="Jog Control X / Y" Style="{StaticResource Jog_LabelStyle}"/>
+                            <Label Grid.Column="5" Grid.ColumnSpan="2" Content="Jog Z" Style="{StaticResource Jog_LabelStyle}"/>
+                            <!--Z Neg Limit Seneor-->
+                            <telerik:RadButton Grid.Row="1" Grid.Column="5" Margin="5,3,5,-2" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               Background="{Binding Selected_LimitCheck[5]}"/>
+                            <!--Z Pos Limit Seneor-->
+                            <telerik:RadButton Grid.Row="5" Grid.Column="5" Margin="5,-2,5,3" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               Background="{Binding Selected_LimitCheck[4]}"/>
+                            <!--Y Neg Limit Seneor-->
+                            <telerik:RadButton Grid.Row="1" Grid.Column="2" Margin="5,3,5,-2" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               Background="{Binding Selected_LimitCheck[3]}"/>
+                            <!--Y Pos Limit Seneor-->
+                            <telerik:RadButton Grid.Row="5" Grid.Column="2" Margin="5,-2,5,3" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               Background="{Binding Selected_LimitCheck[2]}"/>
+                            <!--X Neg Limit Seneor-->
+                            <telerik:RadButton Grid.Row="3" Grid.Column="0" Margin="5,5,-2,5" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               Background="{Binding Selected_LimitCheck[1]}"/>
+                            <!--X Pos Limit Seneor-->
+                            <telerik:RadButton Grid.Row="3" Grid.Column="4" Margin="-4,5,21,5" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               Background="{Binding Selected_LimitCheck[0]}"/>
+                            <!--X Jog Buttons-->
+                            <telerik:RadButton Grid.Row="3" Grid.Column="1" Margin="5,5,2.5,5" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               IsEnabled="{Binding Selected_UnitExist[0]}">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_X_CCW"/>
+                                    </b:EventTrigger>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Stop"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                                <telerik:RadGlyph Glyph="&#xe007;" FontSize="25"/>
+                            </telerik:RadButton>
+                            <telerik:RadButton Grid.Row="3" Grid.Column="3" Margin="2.5,5,5,5" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               IsEnabled="{Binding Selected_UnitExist[0]}">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_X_CW"/>
+                                    </b:EventTrigger>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Stop"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                                <telerik:RadGlyph Glyph="&#xe005;" FontSize="25"/>
+                            </telerik:RadButton>
+                            <!--Y Jog Buttons-->
+                            <telerik:RadButton Grid.Row="2" Grid.Column="2" Margin="5,5,5,2.5" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               IsEnabled="{Binding Selected_UnitExist[1]}">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Y_CCW"/>
+                                    </b:EventTrigger>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Stop"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                                <telerik:RadGlyph Glyph="&#xe004;" FontSize="25"/>
+                            </telerik:RadButton>
+                            <telerik:RadButton Grid.Row="4" Grid.Column="2" Margin="5,2.5,5,5" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               IsEnabled="{Binding Selected_UnitExist[1]}">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Y_CW"/>
+                                    </b:EventTrigger>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Stop"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                                <telerik:RadGlyph Glyph="&#xe006;" FontSize="25"/>
+                            </telerik:RadButton>
+                            <!--XY Center Jog Buttons (Todo : Jog Speed Set)-->
+                            <telerik:RadButton Grid.Row="3" Grid.Column="2" Content="{Binding JogSpeed}"  Command="{Binding ServoMove_Command}"  CommandParameter="Jog_Speed" Margin="5" Style="{StaticResource ServoMove_ButtonStyle}"/>
+                            <!--Z Jog Buttons-->
+                            <telerik:RadButton Grid.Row="2" Grid.Column="5" Margin="5" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               IsEnabled="{Binding Selected_UnitExist[2]}">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Z_CCW"/>
+                                    </b:EventTrigger>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Stop"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                                <telerik:RadGlyph Glyph="&#xe004;" FontSize="25"/>
+                            </telerik:RadButton>
+                            <telerik:RadButton Grid.Row="4" Grid.Column="5" Margin="5" Style="{StaticResource ServoMove_ButtonStyle}"
+                                               IsEnabled="{Binding Selected_UnitExist[2]}">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Z_CW"/>
+                                    </b:EventTrigger>
+                                    <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <b:InvokeCommandAction Command="{Binding ServoMove_Command}" CommandParameter="Jog_Stop"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                                <telerik:RadGlyph Glyph="&#xe006;" FontSize="25"/>
+                            </telerik:RadButton>
+                            <telerik:RadButton Grid.Row="3" Grid.Column="5" Content="{Binding JogSpeed}" Command="{Binding ServoMove_Command}"  CommandParameter="Jog_Speed" Margin="5" Style="{StaticResource ServoMove_ButtonStyle}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+        </GroupBox>
+        <!--Teaching Contents Area-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!--Teaching In Handler [ Y Axis ]-->
+            <GroupBox Grid.Column="0" Header="Teaching Top Clamp Handler [ X Axis ]" BorderThickness="2" FontWeight="SemiBold" Foreground="OrangeRed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.4*"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Position" Style="{StaticResource TeachingHeader_LabelStyle}"/>
+                        <Label Grid.Row="1" Content="{Binding TeachPosition[0]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <telerik:RadButton Grid.Column="0" Content="Move" Style="{StaticResource Save_ButtonStyle}" 
+                                                Command="{Binding TeachingMove_Command}" CommandParameter="Top_X_Handler"/>
+                            <telerik:RadButton Grid.Column="1" Content="Save" Style="{StaticResource Save_ButtonStyle}" Background="DarkCyan"
+                                                Command="{Binding TeachingSave_Command}" CommandParameter="Top_X_Handler"/>
+                        </Grid>
+                        
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <telerik:RadRadioButton Grid.Column="0" Grid.Row="0" Content="Ready" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Top_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=0, Mode=TwoWay}"/>
+                        <telerik:RadRadioButton Grid.Column="1" Grid.Row="0" Content="Pick Up" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Top_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=1, Mode=TwoWay}"/>
+                        <telerik:RadRadioButton Grid.Column="0" Grid.Row="1" Content="Put Down" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Top_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=2, Mode=TwoWay}"/>
+                        <telerik:RadRadioButton Grid.Column="1" Grid.Row="1" Content="NG Port" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Top_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=3, Mode=TwoWay}"/>
+                        </Grid>
+                </Grid>
+            </GroupBox>
+            <!--Teaching Out Handler [ X Axis ]-->
+            <GroupBox Grid.Column="1" Header="Teaching Out Handler [ Y Axis ]"  BorderThickness="2" FontWeight="SemiBold" Foreground="OrangeRed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.35*"/>
+                            <RowDefinition Height="0.35*"/>
+                            <RowDefinition Height="0.3*"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Position" Style="{StaticResource TeachingHeader_LabelStyle}"/>
+                        <Label Grid.Row="1" Content="{Binding TeachPosition[1]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <telerik:RadButton Grid.Column="0" Content="Move" Style="{StaticResource Save_ButtonStyle}"
+                                        Command="{Binding TeachingMove_Command}" CommandParameter="Out_Y_Handler"/>
+                            <telerik:RadButton Grid.Column="1" Content="Save" Style="{StaticResource Save_ButtonStyle}" Background="DarkCyan"
+                                        Command="{Binding TeachingSave_Command}" CommandParameter="Out_Y_Handler"/>
+                        </Grid>
+                        
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <telerik:RadRadioButton Grid.Column="0" Grid.Row="0" Content="Ready" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=4, Mode=TwoWay}"/>
+                        <telerik:RadRadioButton Grid.Column="1" Grid.Row="0" Content="Pick Up" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=5, Mode=TwoWay}"/>
+                        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <telerik:RadRadioButton Grid.Column="0" Content="Lift 1" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=6, Mode=TwoWay}"/>
+                            <telerik:RadRadioButton Grid.Column="1" Content="Lift 2" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=7, Mode=TwoWay}"/>
+                            <telerik:RadRadioButton Grid.Column="2" Content="Lift 3" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=8, Mode=TwoWay}"/>
+                        </Grid>
+                        <!--<telerik:RadRadioButton Grid.Column="1" Grid.Row="1" Content="Put Down" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=6, Mode=TwoWay}"/>
+                        <Border Grid.Column="0" Grid.Row="1" Margin="5" BorderThickness="1" BorderBrush="Chocolate" CornerRadius="8">
+                            <telerik:RadComboBox ItemsSource="{StaticResource PutDownX}" SelectedIndex="{Binding Selected_PutDownLiftIndex}" Style="{StaticResource TeachJig_ComboStyle}"/>
+                        </Border>-->
+                    </Grid>
+                </Grid>
+            </GroupBox>
+            <!--Teaching Out Handler [ Z Axis ]-->
+            <GroupBox Grid.Column="1" Grid.Row="1" Header="Teaching Out Handler [ Z Axis ]"  BorderThickness="2" FontWeight="SemiBold" Foreground="OrangeRed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.4*"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Position" Style="{StaticResource TeachingHeader_LabelStyle}"/>
+                        <Label Grid.Row="1" Content="{Binding TeachPosition[2]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <telerik:RadButton Grid.Column="0" Content="Move" Style="{StaticResource Save_ButtonStyle}"
+                               Command="{Binding TeachingMove_Command}" CommandParameter="Out_Z_Handler"/>
+                            <telerik:RadButton Grid.Column="1" Content="Save" Style="{StaticResource Save_ButtonStyle}" Background="DarkCyan"
+                               Command="{Binding TeachingSave_Command}" CommandParameter="Out_Z_Handler"/>
+                        </Grid>
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <telerik:RadRadioButton Grid.Column="0" Grid.Row="0" Content="Ready" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                    IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=9, Mode=TwoWay}"/>
+                        <telerik:RadRadioButton Grid.Column="1" Grid.Row="0" Content="Pick Up" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                    IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=10, Mode=TwoWay}"/>
+                        <!--<telerik:RadRadioButton Grid.Column="1" Grid.Row="1" Content="Stage" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                    IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=11, Mode=TwoWay}"/> 
+                        <Border Grid.Column="0" Grid.Row="1" Margin="5" BorderThickness="1" BorderBrush="Chocolate" CornerRadius="8">
+                            <telerik:RadComboBox ItemsSource="{StaticResource StageItems}" SelectedIndex="{Binding Selected_OutStageIndex}" Style="{StaticResource TeachJig_ComboStyle}"/>
+                        </Border>-->
+                        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <telerik:RadRadioButton Grid.Column="0" Content="1F" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                        IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=11, Mode=TwoWay}" Margin="5,5,2,5"/>
+                            <telerik:RadRadioButton Grid.Column="1" Content="2F" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                        IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=12, Mode=TwoWay}" Margin="2,5,2,5"/>
+                            <telerik:RadRadioButton Grid.Column="2" Content="3F" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                        IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=13, Mode=TwoWay}" Margin="2,5,2,5"/>
+                            <telerik:RadRadioButton Grid.Column="3" Content="4F" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                        IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=14, Mode=TwoWay}" Margin="2,5,2,5"/>
+                            <telerik:RadRadioButton Grid.Column="4" Content="5F" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                        IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=15, Mode=TwoWay}" Margin="2,5,2,5"/>
+                            <telerik:RadRadioButton Grid.Column="5" Content="6F" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                        IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=16, Mode=TwoWay}" Margin="2,5,2,5"/>
+                            <telerik:RadRadioButton Grid.Column="6" Content="7F" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Out_Handler"
+                                        IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=17, Mode=TwoWay}" Margin="2,5,5,5"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+            <!--Teaching Lift [ Z Axis ]-->
+            <GroupBox Grid.Column="0" Grid.Row="1" Header="Teaching Lift [ Z Axis ]"  BorderThickness="2" FontWeight="SemiBold" Foreground="OrangeRed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.4*"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Position" Style="{StaticResource TeachingHeader_LabelStyle}"/>
+                        <Label Grid.Row="1" Content="{Binding TeachPosition[3]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <telerik:RadButton Grid.Column="0" Content="Move" Style="{StaticResource Save_ButtonStyle}"
+                                           Command="{Binding TeachingMove_Command}" CommandParameter="Lift"/>
+                            <telerik:RadButton Grid.Column="1" Content="Save" Style="{StaticResource Save_ButtonStyle}" Background="DarkCyan"
+                                           Command="{Binding TeachingSave_Command}" CommandParameter="Lift"/>
+                        </Grid>
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Margin="5" BorderThickness="1" BorderBrush="Chocolate" CornerRadius="8">
+                            <telerik:RadComboBox ItemsSource="{StaticResource LiftItems}" SelectedIndex="{Binding Selected_LiftIndex}" Style="{StaticResource TeachJig_ComboStyle}"/>
+                        </Border>
+                        <telerik:RadRadioButton Grid.Column="1" Grid.Row="0" Content="Ready" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Lift"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=18, Mode=TwoWay}"/>
+                        <telerik:RadRadioButton Grid.Column="0" Grid.Row="1" Content="Top" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Lift"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=19, Mode=TwoWay}"/>
+                        <telerik:RadRadioButton Grid.Column="1" Grid.Row="1" Content="Bottom" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Lift"
+                                                IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=20, Mode=TwoWay}"/>
+                        </Grid>
+                </Grid>
+            </GroupBox>
+            
+        </Grid>
+        <!--Dio Control-->
+        <Grid Grid.Row="2" Margin="0,0,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"/>
+            </Grid.ColumnDefinitions>
+            
+            <GroupBox Grid.Column="0" Header="Dio Bottom Handler" BorderThickness="2" FontWeight="SemiBold" Foreground="Teal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!--In Handler-->
+                    <telerik:RadToggleButton Content="Y LD Z Grip" CommandParameter="26" IsChecked="{Binding Dio.DO_OPER_DATA[26]}"
+                                             Grid.Column="0" Grid.Row="0"  Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="In Handler FWD" CommandParameter="29" IsChecked="{Binding Dio.DO_OPER_DATA[29]}"
+                                             Grid.Column="0" Grid.Row="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+
+                    <telerik:RadToggleButton Content="SET LZ Down" CommandParameter="28" IsChecked="{Binding Dio.DO_OPER_DATA[28]}"
+                                            Grid.Column="1" Grid.Row="0"  Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="SET LZ Vacuum" CommandParameter="33" IsChecked="{Binding Dio.DO_OPER_DATA[33]}"
+                                            Grid.Column="1" Grid.Row="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    
+                    <telerik:RadToggleButton Content="SET LZ Turn" CommandParameter="31" IsChecked="{Binding Dio.DO_OPER_DATA[31]}"
+                                             Grid.Column="2" Grid.Row="0" Style="{StaticResource DioToggle_ButtonStyle}" />
+                    <telerik:RadToggleButton Content="CV Centering" CommandParameter="34" IsChecked="{Binding Dio.DO_OPER_DATA[34]}"
+                                            Grid.Column="2" Grid.Row="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+
+
+                    <telerik:RadToggleButton Content="Bottom RZ Down" CommandParameter="30" IsChecked="{Binding Dio.DO_OPER_DATA[30]}"
+                                             Grid.Column="3" Grid.Row="0" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Bottom RZ Grip" CommandParameter="32" IsChecked="{Binding Dio.DO_OPER_DATA[32]}"
+                                            Grid.Column="3" Grid.Row="1" Style="{StaticResource DioToggle_ButtonStyle}" />
+
+                    <telerik:RadToggleButton Content="Bottom Centering" CommandParameter="35" IsChecked="{Binding Dio.DO_OPER_DATA[35]}"
+                                             Grid.Column="4" Grid.Row="0" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="CV Up Centering" CommandParameter="36" IsChecked="{Binding Dio.DO_OPER_DATA[36]}"
+                                             Grid.Column="4" Grid.Row="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+
+                    <telerik:RadToggleButton Content="Top Return C/V" CommandParameter="TopRetCV" IsChecked="{Binding TopCVRunStop}"
+                                            Grid.Column="5" Grid.Row="0" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Top Jig Up 1" CommandParameter="38" IsChecked="{Binding Dio.DO_OPER_DATA[38]}"
+                                            Grid.Column="5" Grid.Row="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    
+                    <telerik:RadToggleButton Content="Top Jig Up 2" CommandParameter="39" IsChecked="{Binding Dio.DO_OPER_DATA[39]}"
+                                            Grid.Column="6" Grid.Row="0" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Top Jig Grip" CommandParameter="40" IsChecked="{Binding Dio.DO_OPER_DATA[40]}"
+                                            Grid.Column="6" Grid.Row="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    
+                    
+                </Grid>
+            </GroupBox>
+            
+            <!--<GroupBox Grid.Column="3" Header="Dio Conveyor" BorderThickness="2" FontWeight="SemiBold" Foreground="Teal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+
+                    </Grid.RowDefinitions>
+                    <telerik:RadToggleButton Content="SET IN" CommandParameter="16" IsChecked="{Binding Dio.DO_OPER_DATA[16]}"
+                                             Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Bottom" CommandParameter="17" IsChecked="{Binding Dio.DO_OPER_DATA[17]}"
+                                             Grid.Row="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="NG BTM" CommandParameter="18" IsChecked="{Binding Dio.DO_OPER_DATA[18]}"
+                                             Grid.Row="2" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="NG Top" CommandParameter="19" IsChecked="{Binding Dio.DO_OPER_DATA[19]}"
+                                             Grid.Row="3" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Lift 1" CommandParameter="20" IsChecked="{Binding Dio.DO_OPER_DATA[20]}"
+                         Grid.Row="4" Grid.Column="0" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Lift 2" CommandParameter="21" IsChecked="{Binding Dio.DO_OPER_DATA[21]}"
+                        Grid.Row="5" Grid.Column="0" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    
+                    
+                    <telerik:RadToggleButton Content="BTM RET 1" CommandParameter="23" IsChecked="{Binding Dio.DO_OPER_DATA[23]}"
+                        Grid.Row="0" Grid.Column="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="BTM RET 2" CommandParameter="46" IsChecked="{Binding Dio.DO_OPER_DATA[46]}"
+                         Grid.Row="1" Grid.Column="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="TOP RET 1" CommandParameter="24" IsChecked="{Binding Dio.DO_OPER_DATA[24]}"
+                        Grid.Row="2" Grid.Column="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="TOP RET 2" CommandParameter="47" IsChecked="{Binding Dio.DO_OPER_DATA[47]}"
+                        Grid.Row="3" Grid.Column="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Lift 3" CommandParameter="22" IsChecked="{Binding Dio.DO_OPER_DATA[22]}"
+                        Grid.Row="4" Grid.Column="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Top Ret CV" CommandParameter="TopRetCV" IsChecked="{Binding TopCVRunStop}"
+                        Grid.Row="5" Grid.Column="1" Style="{StaticResource DioToggle_ButtonStyle}"/>
+
+                    <telerik:RadToggleButton Content="Aging 2F 1-1" CommandParameter="48" IsChecked="{Binding Dio.DO_OPER_DATA[48]}"
+                        Grid.Row="0" Grid.Column="2" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 2F 2-1" CommandParameter="49" IsChecked="{Binding Dio.DO_OPER_DATA[49]}"
+                        Grid.Row="1" Grid.Column="2" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 2F 3-1" CommandParameter="50" IsChecked="{Binding Dio.DO_OPER_DATA[50]}"
+                        Grid.Row="2" Grid.Column="2" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 1F 1-1" CommandParameter="51" IsChecked="{Binding Dio.DO_OPER_DATA[51]}"
+                        Grid.Row="3" Grid.Column="2" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 1F 2-1" CommandParameter="52" IsChecked="{Binding Dio.DO_OPER_DATA[52]}"
+                        Grid.Row="4" Grid.Column="2" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 1F 3-1" CommandParameter="53" IsChecked="{Binding Dio.DO_OPER_DATA[53]}"
+                        Grid.Row="5" Grid.Column="2" Style="{StaticResource DioToggle_ButtonStyle}"/>
+
+                    <telerik:RadToggleButton Content="Aging 2F 1-2" CommandParameter="54" IsChecked="{Binding Dio.DO_OPER_DATA[54]}"
+                        Grid.Row="0" Grid.Column="3" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 2F 2-2" CommandParameter="55" IsChecked="{Binding Dio.DO_OPER_DATA[55]}"
+                        Grid.Row="1" Grid.Column="3" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 2F 3-2" CommandParameter="56" IsChecked="{Binding Dio.DO_OPER_DATA[56]}"
+                        Grid.Row="2" Grid.Column="3" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 1F 1-2" CommandParameter="57" IsChecked="{Binding Dio.DO_OPER_DATA[57]}"
+                        Grid.Row="3" Grid.Column="3" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 1F 2-2" CommandParameter="58" IsChecked="{Binding Dio.DO_OPER_DATA[58]}"
+                        Grid.Row="4" Grid.Column="3" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                    <telerik:RadToggleButton Content="Aging 1F 3-2" CommandParameter="59" IsChecked="{Binding Dio.DO_OPER_DATA[59]}"
+                        Grid.Row="5" Grid.Column="3" Style="{StaticResource DioToggle_ButtonStyle}"/>
+                </Grid>
+            </GroupBox>-->
+            
+        </Grid>
+    </Grid>
+</mvvm:BaseUserControl>

@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:YJ_AutoClamp.Converters">
+
+    <local:RadioBoolToIntConverter x:Key="RadioBoolToIntConverter"/>
+    <local:ConnectionStringConverter x:Key="ConnectionStringConverter"/>
+    <local:OnOffStringConverter x:Key="OnOffStringConverter"/>
+    <local:IndexToCheckedConverter x:Key="IndexToCheckedConverter"/>
+    <local:BoolenVisibleConverter x:Key="BoolenVisibleConverter"/>
+    <local:BoolenVisibleReversConverter x:Key="BoolenVisibleReversConverter"/>
+
+
+    <local:ConnectionColorConverter x:Key="ConnectionColorConverter"/>
+    <local:ChannelStatusColorConverter x:Key="ChannelStatusColorConverter"/>
+    <local:LimitColorConverter x:Key="LimitColorConverter"/>
+    <local:SafetyButtonColorConverter x:Key="SafetyButtonColorConverter"/>
+    <local:AlarmForegroundColorConverter x:Key="AlarmForegroundColorConverter"/>
+    <local:AlarmBackgroundColorConverter x:Key="AlarmBackgroundColorConverter"/>
+    <local:AlarmForegroundColorReversConverter x:Key="AlarmForegroundColorReversConverter"/>
+    <local:AlarmBackgroundColorReversConverter x:Key="AlarmBackgroundColorReversConverter"/>
+
+    <local:MultiValueConverter x:Key="MultiValueConverter"/>
+</ResourceDictionary>

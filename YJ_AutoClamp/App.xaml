@@ -1,0 +1,16 @@
+﻿<Application x:Class="YJ_AutoClamp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:YJ_AutoClamp"
+             StartupUri="Views/MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Converters/Converters.xaml"/>
+                <ResourceDictionary Source="/Styles/MainWindow_Style.xaml"/>
+                <ResourceDictionary Source="/Styles/PopupView_Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        
+    </Application.Resources>
+</Application>

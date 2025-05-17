@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:helpers="clr-namespace:Telerik.Windows.Controls.Theming.Helpers;assembly=Telerik.Windows.Controls">
+
+
+    <Style TargetType="Label" x:Key="LogView_LabelStyle">
+        <Setter Property="Margin" Value="5,0,0,0"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#FF3E464C"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <Style TargetType="telerik:RadDateTimePicker" x:Key="LogView_TimePickerStyle">
+        <Setter Property="Margin" Value="0,0,5,0"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Background" Value="AliceBlue"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+    </Style>
+    <Style TargetType="Button" x:Key="LogView_ButtonStyle">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Margin" Value="2.5"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="#FF3E464C"/>
+        <Setter Property="helpers:ThemeHelper.MouseOverBrush" Value="#FF7E868C"/>
+        <Setter Property="helpers:ThemeHelper.PressedBrush" Value="#353550"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+    </Style>
+</ResourceDictionary>

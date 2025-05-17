@@ -1,0 +1,148 @@
+﻿<mvvm:BaseUserControl x:Class="YJ_AutoClamp.Auto_View"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:YJ_AutoClamp"
+      xmlns:mvvm="clr-namespace:Common.Mvvm;assembly=Common"
+      xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+      mc:Ignorable="d" >
+    <mvvm:BaseUserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/AutoVIew_Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </mvvm:BaseUserControl.Resources>
+    <Grid>
+        <Grid.Effect>
+            <DropShadowEffect ShadowDepth="2"/>
+        </Grid.Effect>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.8*"/>
+            <ColumnDefinition Width="0.2*"/>
+        </Grid.ColumnDefinitions>
+        <!--Main Content UI-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.8*"/>
+                <RowDefinition Height="0.2*"/>
+            </Grid.RowDefinitions>
+            <!--Ch 1~4 Area-->
+            <UniformGrid Rows="1">
+                <ContentControl Content="{Binding Channels[0]}" ContentTemplate="{StaticResource ChannelTemplate}"/>
+                
+            </UniformGrid>
+            <!--Outside Area-->
+            <Border Grid.Row="1" CornerRadius="8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="0.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <!--NG Shift-->
+                    <Border Margin="5" Grid.Column="0" Style="{StaticResource Outside_BorderStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <GridSplitter Grid.Column="1" BorderThickness="1" BorderBrush="Black" Height="100"/>
+                            <Label Content="NG&#x0a;Port" Style="{StaticResource Outside_LabelStyle}" Background="Orange"/>
+                            <!--NG Shift First-->
+                            <Grid Grid.Column="1" Margin="5,5,5,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="0.2*"/>
+                                    <RowDefinition Height="0.8*"/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Sensor 1" BorderThickness="2" Margin="22,10,22,-10" Style="{StaticResource Outside_SensorLabelStyle}"
+                                       Background="{Binding DisplayUI_Dio[2], Converter={StaticResource ConnectionColorConverter}}"/>
+                                <Image Grid.Row="1" Style="{StaticResource Outside_ImageStyle}" 
+                                       Visibility="{Binding DisplayUI_Dio[25], Converter={StaticResource BoolenVisibleConverter}}"/>
+                            </Grid>
+                            <!--IN C/V Second-->
+                            <Grid Grid.Column="2" Margin="5,5,5,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="0.2*"/>
+                                    <RowDefinition Height="0.8*"/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Sensor 2" BorderThickness="2" Margin="22,10,22,-10" Style="{StaticResource Outside_SensorLabelStyle}"
+                                       Background="{Binding DisplayUI_Dio[3], Converter={StaticResource ConnectionColorConverter}}"/>
+                                <Image Grid.Row="1" Style="{StaticResource Outside_ImageStyle}" 
+                                       Visibility="{Binding DisplayUI_Dio[26], Converter={StaticResource BoolenVisibleConverter}}"/>
+                            </Grid>
+                            
+                        </Grid>
+                    </Border>
+                    
+                    <!--Hand Out PP-->
+                    <Border Margin="5" Grid.Column="1" Style="{StaticResource Outside_BorderStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content=" I/F" Style="{StaticResource Outside_LabelStyle}"/>
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="0.20*"/>
+                                    <RowDefinition Height="0.60*"/>
+                                    <RowDefinition Height="0.20*"/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Column="0" Grid.Row="0" Margin="8,4,0,-4" Content="Up" BorderThickness="2,2,1,2" Style="{StaticResource Outside_SensorLabelStyle}"
+                                       Background="{Binding DisplayUI_Dio[13], Converter={StaticResource ConnectionColorConverter}}"/>
+                                <Label Grid.Column="1" Grid.Row="0" Margin="0,4,8,-4" Content="Down" BorderThickness="1,2,2,2" Style="{StaticResource Outside_SensorLabelStyle}"
+                                       Background="{Binding DisplayUI_Dio[14], Converter={StaticResource ConnectionColorConverter}}"/>
+                                <Label Grid.Column="0" Grid.Row="2" Margin="8,-2,0,2" Content="Grip" BorderThickness="2,2,1,2" Style="{StaticResource Outside_SensorLabelStyle}"
+                                       Background="{Binding DisplayUI_Dio[15], Converter={StaticResource ConnectionColorConverter}}"/>
+                                <Label Grid.Column="1" Grid.Row="2" Margin="0,-2,8,2" Content="UnGrip" BorderThickness="1,2,2,2" Style="{StaticResource Outside_SensorLabelStyle}"
+                                       Background="{Binding DisplayUI_Dio[16], Converter={StaticResource ConnectionColorConverter}}"/>
+                                <Image Grid.ColumnSpan="2" Grid.Row="1"  Margin="0,-0.5" Style="{StaticResource Outside_ImageStyle}" 
+                                       Visibility="{Binding DisplayUI_Dio[24], Converter={StaticResource BoolenVisibleConverter}}"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+        <!--Right Common Menu-->
+        <Grid Grid.Column="1" Margin="5" Background="AliceBlue">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.75*"/>
+                <RowDefinition Height="0.25*"/>
+            </Grid.RowDefinitions>
+            <!--Buttons-->
+            <StackPanel>
+                <telerik:RadButton Content="{Binding EquipmentMode}" ContentStringFormat="{}{0} RUN" Style="{StaticResource AutoView_ButtonStyle}" 
+                                   Command="{Binding RightMenu_PopupCommand}" CommandParameter="Mode"/>
+                <telerik:RadButton Content="Unit Initialize" Style="{StaticResource AutoView_ButtonStyle}"
+                                   Command="{Binding RightMenu_PopupCommand}" CommandParameter="Initialize"/>
+                <telerik:RadButton Content="Origin" Style="{StaticResource AutoView_ButtonStyle}"
+                                   Command="{Binding RightMenu_PopupCommand}" CommandParameter="Origin"/>
+                <telerik:RadButton Content="IO Monitoring" Style="{StaticResource AutoView_ButtonStyle}"
+                                   Command="{Binding RightMenu_PopupCommand}" CommandParameter="Dio"/>
+                <telerik:RadButton Content="Product Info" Background="MediumSeaGreen" Style="{StaticResource AutoView_ButtonStyle}"/>
+                <telerik:RadButton Command="{Binding RightMenu_PopupCommand}" CommandParameter="Safety"
+                                   Background="#FFDE00" Foreground="Black" Style="{StaticResource AutoView_ButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Resources/warning_black.png" Stretch="Fill" Width="24" Height="24" Margin="0,-5,8,-5"/>
+                        <Label Content="SAFETY MODE" Foreground="Black" FontWeight="Bold" Padding="0"/>
+                    </StackPanel>
+                </telerik:RadButton>
+            </StackPanel>
+            
+            <!--Products Infomations-->
+            <StackPanel Grid.Row="1">
+                <telerik:RadButton Content="Inspection Start" Style="{StaticResource AutoView_ButtonStyle}" IsEnabled="{Binding IsStartEnable}"
+                                        Command="{Binding RightMenu_PopupCommand}" CommandParameter="Start" Background="CadetBlue"/>
+                <telerik:RadButton Content="Inspection Stop" Style="{StaticResource AutoView_ButtonStyle}" IsEnabled="{Binding IsStopEnable}"
+                                        Command="{Binding RightMenu_PopupCommand}" CommandParameter="Stop" Background="PaleVioletRed"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</mvvm:BaseUserControl>

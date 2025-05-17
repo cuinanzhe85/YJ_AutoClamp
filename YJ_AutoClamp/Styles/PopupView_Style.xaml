@@ -1,0 +1,230 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:helpers="clr-namespace:Telerik.Windows.Controls.Theming.Helpers;assembly=Telerik.Windows.Controls">
+
+    <SolidColorBrush x:Key="Main_Background_Border_Color" Color="#585656"/>
+
+    <!--Dio Monitor View-->
+    <Style TargetType="Button" x:Key="Di_BottomButtonStyle">
+        <Setter Property="Background" Value="SteelBlue"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+        <Setter Property="Margin" Value="2"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Height" Value="45"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Button" x:Key="Do_BottomButtonStyle">
+        <Setter Property="Background" Value="Teal"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+        <Setter Property="Margin" Value="2"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Height" Value="45"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Label" x:Key="Di_TextStyle">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontFamily" Value="{StaticResource ContentsFont}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="Width" Value="120"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,1"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="#D4D4D4"/>
+        <Setter Property="BorderThickness" Value="1,0,0,1"/>
+        <Setter Property="Background" Value="#EFEEEF"/>
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
+    <Style TargetType="telerik:RadToggleButton" x:Key="Di_ButtonStyle">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontFamily" Value="{StaticResource ContentsFont}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="0,1"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="Width" Value="380"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="helpers:ThemeHelper.CheckedBrush" Value="#7CFC00"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <DataTemplate x:Key="Di_Template">
+        <StackPanel Margin="10,4,5,2" VerticalAlignment="Top">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.25*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                </Grid.ColumnDefinitions>
+                <!--TextBlock-->
+                <ItemsControl ItemsSource="{Binding DisplayedInputData}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Address}" Style="{StaticResource Di_TextStyle}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <!--ToggleButton-->
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding DisplayedInputData}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <telerik:RadToggleButton Content="{Binding Label}" IsChecked="{Binding Status, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Di_ButtonStyle}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="Do_Template">
+        <StackPanel Margin="5,4,8,0" VerticalAlignment="Top">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.25*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                </Grid.ColumnDefinitions>
+                <!--TextBlock-->
+                <ItemsControl ItemsSource="{Binding DisplayedOutputData}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Address}" Style="{StaticResource Di_TextStyle}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <!--ToggleButton-->
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding DisplayedOutputData}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <telerik:RadToggleButton Content="{Binding Label}" IsChecked="{Binding Status, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Di_ButtonStyle}"
+                                                     Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.OutputToggle_Command}" CommandParameter="{Binding Index}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </StackPanel>
+    </DataTemplate>
+    <!--Equipment Mode Select View-->
+    <Style TargetType="telerik:RadRadioButton" x:Key="ModeSelect_RadioStyle">
+        <Setter Property="Margin" Value="20,10,20,0"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FontSize" Value="35"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Background" Value="DarkGray"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+        <Setter Property="helpers:ThemeHelper.CheckedBrush" Value="Orange"/>
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <!--Serial Poert View-->
+    <Style TargetType="Label" x:Key="SerialPort_LabelStyle">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+    <Style TargetType="telerik:RadComboBox" x:Key="SerialPort_CboxStyle">
+        <Setter Property="Margin" Value="0,20,10,20"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+    </Style>
+    <Style TargetType="Button" x:Key="SerialPort_ButtonStyle">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Background" Value="LightGray"/>
+        <Setter Property="telerik:CornerRadiusHelper.ClipRadius" Value="8"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+    </Style>
+    <!--Motor Velocity View-->
+    <DataTemplate x:Key="MotorVelocity_Template">
+        <StackPanel Margin="4,4,2,0" VerticalAlignment="Top">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.25*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                </Grid.ColumnDefinitions>
+                <!--TextBlock-->
+                <ItemsControl ItemsSource="{Binding DisplayedInputData}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Address}" Style="{StaticResource Di_TextStyle}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <!--ToggleButton-->
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding DisplayedInputData}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <telerik:RadToggleButton Content="{Binding Label}" IsChecked="{Binding Status}" Style="{StaticResource Di_ButtonStyle}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </StackPanel>
+    </DataTemplate>
+    <!--Origin View-->
+    <Style TargetType="Button" x:Key="Origin_ButtonStyle">
+        <Setter Property="Margin" Value="5, 10"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Background" Value="LightSteelBlue"/>
+        <Setter Property="telerik:CornerRadiusHelper.ClipRadius" Value="8"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+    </Style>
+    <!--Motor / Jog View-->
+    <Style x:Key="CenteredTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="Padding" Value="10,0"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+    <!-- Model Data View Style -->
+    <Style x:Key="ModelData_ButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="LightSlateGray"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="telerik:CornerRadiusHelper.ClipRadius" Value="8"/>
+        <Setter Property="helpers:ThemeHelper.MouseOverBrush" Value="Gray"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+    </Style>
+    <Style TargetType="telerik:RadButton" x:Key="Utility_ExitButtonStyle">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="helpers:ThemeHelper.MouseOverBrush" Value="Transparent"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

@@ -1,0 +1,87 @@
+﻿<Window x:Class="YJ_AutoClamp.Initialize_View"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YJ_AutoClamp"
+        mc:Ignorable="d"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:utils="clr-namespace:YJ_AutoClamp.Utils"
+        utils:WindowBlur.IsEnabled="True"
+        ResizeMode="NoResize" WindowStyle="None"
+        Background="Transparent" AllowsTransparency="True" WindowStartupLocation="CenterScreen"
+        Name="Initialize" Width="1000" Height="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.10*"/>
+            <RowDefinition Height="0.60*"/>
+            <RowDefinition Height="0.30*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.RowSpan="3" Background="Black" Opacity="0.6"/>
+        <!--Title-->
+        <Grid >
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="MouseDown">
+                    <b:InvokeCommandAction Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=MoveCommand}" CommandParameter="Initialize"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#261b2a" Offset="0.0"/>
+                    <GradientStop Color="#292d37" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <StackPanel Orientation="Horizontal">
+                <telerik:RadGlyph Glyph="&#xe13b;" Margin="15,0" FontSize="24" Foreground="White"/>
+                <Label Content="Initialize" Foreground="White" FontSize="16" FontWeight="SemiBold" VerticalContentAlignment="Center"/>
+            </StackPanel>
+            <telerik:RadButton Style="{StaticResource Exit_ButtonStyle}"
+                               Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" CommandParameter="Initialize">
+                <telerik:RadGlyph Glyph="&#xe11b;">
+                </telerik:RadGlyph>
+            </telerik:RadButton>
+        </Grid>
+        <telerik:RadBusyIndicator Grid.Row="1" Grid.RowSpan="2" telerik:StyleManager.Theme="Expression_Dark" Foreground="White" FontSize="15"
+                   IsBusy="{Binding BusyStatus}"
+                   BusyContent="{Binding BusyContent}"/>
+        <!--ToggleButtons-->
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding ServoSlaves}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <!-- WrapPanel을 사용하여 자동 줄바꿈 -->
+                    <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <telerik:RadToggleButton Content="{Binding Name}" 
+                                         Width="235" Height="130" Margin="5" Focusable="False" 
+                                         FontSize="20" FontWeight="SemiBold"
+                                         Background="{Binding Color}"
+                                         IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                         telerik:StyleManager.Theme="Material"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <!--Setting Buttons-->
+        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="0,2,0,0" Margin="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Select All" Style="{StaticResource Origin_ButtonStyle}" 
+                    Command="{Binding Init_Command}" CommandParameter="All"/>
+                <Button Grid.Column="1" Content="Cancel All" Style="{StaticResource Origin_ButtonStyle}" 
+                    Command="{Binding Init_Command}" CommandParameter="Cancel"/>
+                <Button Grid.Column="2" Content="Initialize" Style="{StaticResource Origin_ButtonStyle}" 
+                    Command="{Binding Init_Command}" CommandParameter="Init"/>
+                <Button Grid.Column="4" Content="Exit" Style="{StaticResource Origin_ButtonStyle}"
+                    Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" CommandParameter="Initialize"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
