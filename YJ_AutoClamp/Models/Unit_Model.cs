@@ -1,14 +1,9 @@
 ﻿using Common.Managers;
-using HelixToolkit.Wpf;
-using Lmi3d.Zen;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Telerik.Windows.Data;
 using YJ_AutoClamp.ViewModels;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using static YJ_AutoClamp.Models.EziDio_Model;
 
 namespace YJ_AutoClamp.Models
@@ -80,11 +75,9 @@ namespace YJ_AutoClamp.Models
             UnitID = (int)unit;
             ServoNames = new List<ServoSlave_List>();
         }
-        private RadObservableCollection<Channel_Model> Channel_Model = SingletonManager.instance.Channel_Model;
         private Dictionary<string,double> Teaching_Data = SingletonManager.instance.Teaching_Data;
         private EziDio_Model Dio = SingletonManager.instance.Ez_Dio;
-        private EzMotion_Model_E Ez = SingletonManager.instance.Ez_Model;
-
+        private EzMotion_Model_E Ez_Model = SingletonManager.instance.Ez_Model;
         private bool _isLoopRunning = false;
         // Steps
         public enum InCvSequence
@@ -1252,11 +1245,18 @@ namespace YJ_AutoClamp.Models
                     {
                         // 적제 단수 증가
                         SingletonManager.instance.LoadFloor[SingletonManager.instance.LoadStageNo] += 1;
+                        SingletonManager.instance.Display_Lift[SingletonManager.instance.LoadStageNo].Floor[SingletonManager.instance.LoadStageNo] = true;
+
                         if (SingletonManager.instance.LoadFloor[SingletonManager.instance.LoadStageNo] >= (int)Floor_Index.Max)
                         {
                             // 7단 적제 완료 후 초기화
                             if (SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
+                            {
                                 SingletonManager.instance.LoadFloor[SingletonManager.instance.LoadStageNo] = 0;
+                                // Auto Ui 초기화
+                                for(int i = 0; i<7; i++)
+                                    SingletonManager.instance.Display_Lift[SingletonManager.instance.LoadStageNo].Floor[i] = false;
+                            }
 
                             // 적제 완료 했으면 Complete 상태 변경한다. false 원복은 Aging C/V에 배출 후 변경한다.
                             SingletonManager.instance.LoadComplete[SingletonManager.instance.LoadStageNo] = true;
@@ -1470,17 +1470,18 @@ namespace YJ_AutoClamp.Models
                 
             }
         }
+
         #region // Motion Control
         private bool MoveOutHandlerPickUpY()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up).ToString()];
             pos = Math.Round(pos, 2);
             Global.instance.Write_Sequence_Log("OUT_Y_SERVO_POS", pos.ToString());
             return SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Out_Y_Handler_Y), pos);
         }
         private bool IsOutHandlerPickupPosY()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up).ToString()];
             // 소수점아래 2자리까지비교
             pos = Math.Round(pos, 2);
             double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
@@ -1507,14 +1508,14 @@ namespace YJ_AutoClamp.Models
         }
         private bool MoveOutHandlerPickUpZ()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up).ToString()];
             pos = Math.Round(pos, 2);
             Global.instance.Write_Sequence_Log("OUT_Z_SERVO_POS", pos.ToString());
             return SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Out_Z_Handler_Z), pos);
         }
         private bool IsOutHandlerPickUpZ()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up).ToString()];
             // 소수점아래 2자리까지비교
             pos = Math.Round(pos, 2);
             double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);
@@ -1524,7 +1525,7 @@ namespace YJ_AutoClamp.Models
         }
         private bool MoveOutHandlerRadyZ()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Home).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Out_Z_Handler_Home).ToString()];
             // 소수점아래 2자리까지비교
             pos = Math.Round(pos, 2);
             Global.instance.Write_Sequence_Log("OUT_Z_SERVO_POS", pos.ToString());
@@ -1532,7 +1533,7 @@ namespace YJ_AutoClamp.Models
         }
         private bool IsOutHandlerReadyDoneZ()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Home).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Out_Z_Handler_Home).ToString()];
             // 소수점아래 2자리까지비교
             pos = Math.Round(pos, 2);
             double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);
@@ -1560,11 +1561,11 @@ namespace YJ_AutoClamp.Models
         private bool IsOutHandlerSaftyInterlockY()
         {
             double pos1, pos2, pos3;
-            pos1 = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_1).ToString()];
+            pos1 = Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_1).ToString()];
             pos1 = Math.Round(pos1, 2);
-            pos2 = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_2).ToString()];
+            pos2 = Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_2).ToString()];
             pos2 = Math.Round(pos2, 2);
-            pos3 = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_3).ToString()];
+            pos3 = Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_3).ToString()];
             pos3 = Math.Round(pos3, 2);
             double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
             
@@ -1575,19 +1576,6 @@ namespace YJ_AutoClamp.Models
         private double GetOutZ_PutDownFloorPos()
         {
             double pos = 0.0;
-            //double NowPos = SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Out_Handler_X));
-            //if (SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_X_Put_Down_1).ToString()] == NowPos)
-            //{
-            //    pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_Z_Put_Down_1 + LoadFloor[(int)Lift_Index.Lift_1]).ToString()];
-            //}
-            //else if (SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_X_Put_Down_2).ToString()] == NowPos)
-            //{
-            //    pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_Z_Put_Down_2 + LoadFloor[(int)Lift_Index.Lift_2]).ToString()];
-            //}
-            //else if (SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_X_Put_Down_3).ToString()] == NowPos)
-            //{
-            //    pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_Z_Put_Down_3 + LoadFloor[(int)Lift_Index.Lift_3]).ToString()];
-            //}
             pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Put_Down_1 + SingletonManager.instance.LoadFloor[SingletonManager.instance.LoadStageNo]).ToString()];
             pos = Math.Round(pos, 2);
             return pos;
@@ -1598,46 +1586,21 @@ namespace YJ_AutoClamp.Models
             // Lift 1,2,3 순서로 Load 한다.
             pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_1 + SingletonManager.instance.LoadStageNo).ToString()];
             pos = Math.Round(pos, 2);
-            // 1번 Lift: tray가 있으면 아직 max층이 아니면 이어서 올린다.
-            // 또는 비었있으면 1층부터 시작한다
-            //if ((Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_1_CV_DETECT_IN_SS_1] == true
-            //    && LoadFloor[(int)Lift_Index.Lift_1] > (int)Floor_Index.Max)
-            //    || Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_1_CV_DETECT_IN_SS_1] != true)
-            //{
-            //    pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_X_Put_Down_1).ToString()];
-            //}
-            //else if ((Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_2_CV_DETECT_IN_SS_1] == true
-            //    && LoadFloor[(int)Lift_Index.Lift_2] > (int)Floor_Index.Max)
-            //    || Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_2_CV_DETECT_IN_SS_1] != true)
-            //{
-            //    pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_X_Put_Down_2).ToString()];
-            //}
-            //else if ((Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_3_CV_DETECT_IN_SS_1] == true
-            //    && LoadFloor[(int)Lift_Index.Lift_3] > (int)Floor_Index.Max)
-            //    || Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_3_CV_DETECT_IN_SS_1] != true)
-            //{
-            //    pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_X_Put_Down_3).ToString()];
-            //}
-            //else
-            //{
-            //    // Lift 3곳에 Tray가 Max층까지 다 싸여 있으면 1번 List에서 기다린다.
-            //    pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Handler_X_Put_Down_1).ToString()];
-            //}
-
             return pos;
         }
         #endregion
+
         #region // Top Handler
         private bool MoveTopHandlerNGPort()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_NG_Port).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Top_X_Handler_NG_Port).ToString()];
             pos = Math.Round(pos, 2);
             Global.instance.Write_Sequence_Log("TOP_SERVO_POS", pos.ToString());
             return SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Top_X_Handler_X), pos);
         }
         private bool IsMoveTopNGPortDone()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_NG_Port).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Top_X_Handler_NG_Port).ToString()];
             // 소수점아래 2자리까지비교
             pos = Math.Round(pos, 2);
             double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Top_X_Handler_X)), 2);
@@ -1647,21 +1610,21 @@ namespace YJ_AutoClamp.Models
         }
         private bool MoveTopHandlerPutDownPos()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_Put_Down).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Top_X_Handler_Put_Down).ToString()];
             pos = Math.Round(pos, 2);
             Global.instance.Write_Sequence_Log("TOP_SERVO_POS", pos.ToString());
             return SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Top_X_Handler_X), pos);
         }
         private bool MoveTopHandlerPickUpPos()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_Pick_Up).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Top_X_Handler_Pick_Up).ToString()];
             pos = Math.Round(pos, 2);
             Global.instance.Write_Sequence_Log("TOP_SERVO_POS", pos.ToString());
             return SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Top_X_Handler_X), pos);
         }
         private bool IsTopHandlerPickUpPos()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_Pick_Up).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Top_X_Handler_Pick_Up).ToString()];
             // 소수점아래 2자리까지비교
             pos = Math.Round(pos, 2);
             double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Top_X_Handler_X)), 2);
@@ -1679,7 +1642,7 @@ namespace YJ_AutoClamp.Models
         }
         private bool IsTopHandlerPutDownPos()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_Put_Down).ToString()];
+            double pos = Teaching_Data[(Teaching_List.Top_X_Handler_Put_Down).ToString()];
             // 소수점아래 2자리까지비교
             pos = Math.Round(pos, 2);
             double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Top_X_Handler_X)), 2);
@@ -1693,19 +1656,19 @@ namespace YJ_AutoClamp.Models
             bool ret = false;
             if (Index == 3)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_1).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Low_1).ToString()];
                 pos = Math.Round(pos, 2);
                 ret = SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Lift_1_Z), pos);
             }
             if (Index == 4)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_2).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Low_2).ToString()];
                 pos = Math.Round(pos, 2);
                 ret = SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Lift_2_Z), pos);
             }
             if (Index == 5)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_3).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Low_3).ToString()];
                 pos = Math.Round(pos, 2);
                 ret = SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Lift_3_Z), pos);
             }
@@ -1719,7 +1682,7 @@ namespace YJ_AutoClamp.Models
                 return true;
             if (Index == 3)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_1).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Low_1).ToString()];
                 // 소수점아래 2자리까지비교
                 pos = Math.Round(pos, 2);
                 GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Lift_1_Z)), 2);
@@ -1728,7 +1691,7 @@ namespace YJ_AutoClamp.Models
             }
             if (Index == 4)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_2).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Low_2).ToString()];
                 // 소수점아래 2자리까지비교
                 pos = Math.Round(pos, 2);
                 GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Lift_2_Z)), 2);
@@ -1737,7 +1700,7 @@ namespace YJ_AutoClamp.Models
             }
             if (Index == 5)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_3).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Low_3).ToString()];
                 // 소수점아래 2자리까지비교
                 pos = Math.Round(pos, 2);
                 GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Lift_3_Z)), 2);
@@ -1752,21 +1715,21 @@ namespace YJ_AutoClamp.Models
             bool ret = false;
             if (Index == 3)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_1).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Upper_1).ToString()];
                 pos = Math.Round(pos, 2);
-                ret = SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Lift_1_Z), pos);
+                ret = Ez_Model.MoveABS((int)(ServoSlave_List.Lift_1_Z), pos);
             }
             if (Index == 4)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_2).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Upper_2).ToString()];
                 pos = Math.Round(pos, 2);
-                ret = SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Lift_2_Z), pos);
+                ret = Ez_Model.MoveABS((int)(ServoSlave_List.Lift_2_Z), pos);
             }
             if (Index == 5)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_3).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Upper_3).ToString()];
                 pos = Math.Round(pos, 2);
-                ret = SingletonManager.instance.Ez_Model.MoveABS((int)(ServoSlave_List.Lift_3_Z), pos);
+                ret = Ez_Model.MoveABS((int)(ServoSlave_List.Lift_3_Z), pos);
             }
             return ret;
         }
@@ -1776,34 +1739,35 @@ namespace YJ_AutoClamp.Models
             double GetPos;
             if (Index == 3)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_1).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Upper_1).ToString()];
                 // 소수점아래 2자리까지비교
                 pos = Math.Round(pos, 2);
-                GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Lift_1_Z)), 2);
+                GetPos = Math.Round(Ez_Model.GetActualPos((int)(ServoSlave_List.Lift_1_Z)), 2);
                 if (GetPos == pos)
                     return true;
             }
             if (Index == 4)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_2).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Upper_2).ToString()];
                 // 소수점아래 2자리까지비교
                 pos = Math.Round(pos, 2);
-                GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Lift_2_Z)), 2);
+                GetPos = Math.Round(Ez_Model.GetActualPos((int)(ServoSlave_List.Lift_2_Z)), 2);
                 if (GetPos == pos)
                     return true;
             }
             if (Index == 5)
             {
-                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_3).ToString()];
+                pos = Teaching_Data[(Teaching_List.Lift_Upper_3).ToString()];
                 // 소수점아래 2자리까지비교
                 pos = Math.Round(pos, 2);
-                GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Lift_3_Z)), 2);
+                GetPos = Math.Round(Ez_Model.GetActualPos((int)(ServoSlave_List.Lift_3_Z)), 2);
                 if (GetPos == pos)
                     return true;
             }
             return false;
         }
         #endregion
+
         private bool Dio_Output(DO_MAP io, bool OnOff)
         {
             bool result = false;

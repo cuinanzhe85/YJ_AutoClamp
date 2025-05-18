@@ -10,7 +10,7 @@
         utils:WindowBlur.IsEnabled="True"
         mc:Ignorable="d"
         Name="Dio" Height="750" Width="1000" ResizeMode="NoResize" WindowStyle="None"
-        Background="Transparent" AllowsTransparency="True" WindowStartupLocation="CenterScreen">
+        Background="Transparent" AllowsTransparency="True" Top="10">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.05*"/>
@@ -32,12 +32,12 @@
             </Grid.Background>
             <StackPanel Orientation="Horizontal">
                 <telerik:RadGlyph Glyph="&#xe690;" Margin="15,0" FontSize="18" Foreground="White"/>
-                <Label Content="IO Monitoring" Foreground="White" FontSize="13" FontWeight="SemiBold" Padding="0,6"/>
+                <Label Content="IO Monitoring" Foreground="White" FontSize="13" FontWeight="SemiBold" Padding="0,10"/>
             </StackPanel>
             <telerik:RadButton Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" 
                                CommandParameter="Dio" 
-                               Style="{StaticResource Exit_ButtonStyle}" Width="50">
-                <telerik:RadGlyph Glyph="&#xe11b;">
+                               Style="{StaticResource Exit_ButtonStyle}" Width="50" Height="35" Margin="0,2,8,-5">
+                <telerik:RadGlyph Glyph="&#xe11b;" FontSize="20">
                 </telerik:RadGlyph>
             </telerik:RadButton>
         </Grid>

@@ -1,8 +1,8 @@
 ﻿using Common.Commands;
+using Common.Mvvm;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Data;
@@ -17,6 +17,7 @@ namespace YJ_AutoClamp.ViewModels
         public ICommand RightMenu_PopupCommand { get; private set; }
         public ICommand PointView_PopupCommand { get; private set; }
         #endregion
+
         #region // PopupManager
         enum AutoMenu_PopupList
         {
@@ -28,6 +29,7 @@ namespace YJ_AutoClamp.ViewModels
         }
         private readonly Dictionary<AutoMenu_PopupList, Func<(Window, Child_ViewModel)>> PopupFactories;
         #endregion
+
         #region // UI Properties
         private string _EquipmentMode = SingletonManager.instance.EquipmentMode.ToString();
         public string EquipmentMode
@@ -54,6 +56,11 @@ namespace YJ_AutoClamp.ViewModels
         {
             get { return _IsStopEnable; }
             set { SetValue(ref _IsStopEnable, value); }
+        }
+        private ObservableCollection<Lift_Model> _LiftData = SingletonManager.instance.Display_Lift;
+        public ObservableCollection<Lift_Model> LiftData
+        {
+            get { return _LiftData; }
         }
         #endregion
         public Auto_ViewModel()
@@ -92,7 +99,7 @@ namespace YJ_AutoClamp.ViewModels
                 SingletonManager.instance.Ez_Model.ServoStop((int)ServoSlave_List.Out_Z_Handler_Z);
                 SingletonManager.instance.Ez_Model.ServoStop((int)ServoSlave_List.Top_X_Handler_X);
 
-                /*프로그램 종료 전 동작 유지*/
+                #region /*프로그램 종료 전 동작 유지*/
                 //// In_Handler, Out_Handler 실린더 Up
                 //SingletonManager.instance.Ez_Dio.Set_HandlerUpDown(true);
 
@@ -116,6 +123,7 @@ namespace YJ_AutoClamp.ViewModels
                 //    SingletonManager.instance.Unit_Model[i].Out_Handler_Step = Unit_Model.Out_Handler_Sequence.Idle;
                 //    SingletonManager.instance.Unit_Model[i].Jig_Step = Unit_Model.Jig_Sequence.Idle;
                 //}
+                #endregion
             }
             else
             {
@@ -177,5 +185,29 @@ namespace YJ_AutoClamp.ViewModels
             base.DisposeManaged();
         }
         #endregion
+    }
+
+    public class Lift_Model : BindableAndDisposable
+    {
+        private string _LiftName;
+        public string LiftName
+        {
+            get { return _LiftName; }
+            set { SetValue(ref _LiftName, value); }
+        }
+        private ObservableCollection<bool> _Floor;
+        public ObservableCollection<bool> Floor
+        {
+            get { return _Floor; }
+            set { SetValue(ref _Floor, value); }
+        }
+        public Lift_Model(string lift)
+        {
+            Floor = new ObservableCollection<bool>();
+            for (int i = 0; i < 7; i++)
+                Floor.Add(false);
+
+            this.LiftName = lift;
+        }
     }
 }

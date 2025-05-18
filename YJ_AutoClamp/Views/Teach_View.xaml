@@ -62,14 +62,12 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Border Grid.RowSpan="4" Grid.ColumnSpan="3" CornerRadius="8" BorderThickness="1" BorderBrush="Black"/>
                     <Border  BorderThickness="0,0,1,1" BorderBrush="Black">
                         <telerik:RadComboBox ItemsSource="{Binding UnitList}" SelectedIndex="{Binding Selected_UnitIndex}" Focusable="False" FontSize="18" HorizontalContentAlignment="Center" telerik:StyleManager.Theme="Material"/>
                     </Border>
                     <!--TItle Label-->
-                    
-                    <Label Grid.Column="1" Content="Target" FontSize="20" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="DarkSeaGreen" BorderThickness="0,1,1,1" />
-                    <Label Grid.Column="2" Content="Current" FontSize="20" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="DarkSeaGreen" BorderThickness="0,0,0,1"/>
+                    <Label Grid.Column="1" Content="Target" FontSize="20" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="DarkSeaGreen" BorderThickness="0,0,1,1" BorderBrush="Black"/>
+                    <Label Grid.Column="2" Content="Current" FontSize="20" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="DarkSeaGreen" BorderThickness="0,0,0,1" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="0,8,0,0"/>
                     <Label Grid.Row="1" Content="Servo X Position" Style="{StaticResource Position_LabelStyle}"/>
                     <Label Grid.Row="2" Content="Servo Y Position" Style="{StaticResource Position_LabelStyle}"/>
                     <Label Grid.Row="3" Content="Servo Z Position" Style="{StaticResource Position_LabelStyle}" BorderThickness="0,0,1,0"/>
@@ -82,14 +80,15 @@
                     <Label Grid.Column="2" Grid.Row="2" Content="{Binding Current_Position[1]}" ContentStringFormat="0.00 mm" Style="{StaticResource Position_LabelStyle}" FontSize="17" BorderThickness="0,0,0,1"/>
                     <Label Grid.Column="2" Grid.Row="3" Content="{Binding Current_Position[2]}" ContentStringFormat="0.00 mm" Style="{StaticResource Position_LabelStyle}" FontSize="17" BorderThickness="0,0,0,0"/>
                     <!--Servo Move Buttons-->
-                    <telerik:RadButton Grid.Row="0" Content="" Style="{StaticResource ServoMove_ButtonStyle}"/>
+                    <!--<telerik:RadButton Grid.Row="0" Content="" Style="{StaticResource ServoMove_ButtonStyle}"/>-->
                     <telerik:RadButton Grid.Row="1" Content="Move X" IsEnabled="{Binding Selected_UnitExist[0]}" Style="{StaticResource ServoMove_ButtonStyle}"
                                        Command="{Binding ServoMove_Command}" CommandParameter="Move_X"/>
                     <telerik:RadButton Grid.Row="2" Content="Move Y" IsEnabled="{Binding Selected_UnitExist[1]}" Style="{StaticResource ServoMove_ButtonStyle}"
                                        Command="{Binding ServoMove_Command}" CommandParameter="Move_Y"/>
                     <telerik:RadButton Grid.Row="3" Content="Move Z" IsEnabled="{Binding Selected_UnitExist[2]}" Style="{StaticResource ServoMove_ButtonStyle}"
                                        Command="{Binding ServoMove_Command}" CommandParameter="Move_Z"/>
-                   
+                    
+                    <Border Grid.RowSpan="4" Grid.ColumnSpan="3" CornerRadius="8" BorderThickness="1" BorderBrush="Black"/>
                 </Grid>
                
                 <!--Servo Jog Grid-->
@@ -260,13 +259,11 @@
                     </Grid.ColumnDefinitions>
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="0.3*"/>
-                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.6*"/>
                             <RowDefinition Height="0.4*"/>
                         </Grid.RowDefinitions>
-                        <Label Content="Position" Style="{StaticResource TeachingHeader_LabelStyle}"/>
-                        <Label Grid.Row="1" Content="{Binding TeachPosition[0]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
-                        <Grid Grid.Row="2">
+                        <Label Content="{Binding TeachPosition[0]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
+                        <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
@@ -307,13 +304,11 @@
                     </Grid.ColumnDefinitions>
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="0.3*"/>
-                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.6*"/>
                             <RowDefinition Height="0.4*"/>
                         </Grid.RowDefinitions>
-                        <Label Content="Position" Style="{StaticResource TeachingHeader_LabelStyle}"/>
-                        <Label Grid.Row="1" Content="{Binding TeachPosition[1]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
-                        <Grid Grid.Row="2">
+                        <Label Content="{Binding TeachPosition[1]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
+                        <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
@@ -368,13 +363,11 @@
                     </Grid.ColumnDefinitions>
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="0.3*"/>
-                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.6*"/>
                             <RowDefinition Height="0.4*"/>
                         </Grid.RowDefinitions>
-                        <Label Content="Position" Style="{StaticResource TeachingHeader_LabelStyle}"/>
-                        <Label Grid.Row="1" Content="{Binding TeachPosition[2]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
-                        <Grid Grid.Row="2">
+                        <Label Content="{Binding TeachPosition[2]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
+                        <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
@@ -440,13 +433,11 @@
                     </Grid.ColumnDefinitions>
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="0.3*"/>
-                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.6*"/>
                             <RowDefinition Height="0.4*"/>
                         </Grid.RowDefinitions>
-                        <Label Content="Position" Style="{StaticResource TeachingHeader_LabelStyle}"/>
-                        <Label Grid.Row="1" Content="{Binding TeachPosition[3]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
-                        <Grid Grid.Row="2">
+                        <Label Content="{Binding TeachPosition[3]}" ContentStringFormat="{}{0:F2}" Style="{StaticResource TeachingValue_LabelStyle}"/>
+                        <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>

@@ -227,11 +227,22 @@ namespace YJ_AutoClamp.Models
             IN_BOTTOM_EXIST,
             IN_TOP_EXIST,
             OUT_HAND_EXIST,
-            LIFT_1,
-            LIFT_2,
-            LIFT_3,
-            RET_BOTTOM,
-            RET_TOP,
+            InterFace_1,
+            InterFace_2,
+            InterFace_3,
+            InterFace_4,
+            InterFace_5,
+            InterFace_6,
+            InterFace_7,
+            InterFace_8,
+            InterFace_9,
+            InterFace_10,
+            InterFace_11,
+            InterFace_12,
+            InterFace_13,
+            InterFace_14,
+            InterFace_15,
+            InterFace_16,
             Max
         }
         public List<int> DisplayDio_List = new List<int>
@@ -329,17 +340,10 @@ namespace YJ_AutoClamp.Models
             // Auto UI Display Dio
             DisplayExistMapping = new Dictionary<DisplayExist_List, Func<bool>>
             {
-                { DisplayExist_List.IN_CV_EXIST1, () => DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_OUT_SS_2] },   //24
-                { DisplayExist_List.NG_EXIST1, () => DI_RAW_DATA[(int)DI_MAP.NG_TOP_CV_DETECT_SS_2] },      //25
-                { DisplayExist_List.NG_EXIST2, () => DI_RAW_DATA[(int)DI_MAP.NG_BOTTOM_CV_DETECT_SS_2] },   //26
-
-                {//27
-                    DisplayExist_List.IN_SET_EXIST,
-                    () =>
-                        SingletonManager.instance.EquipmentMode == EquipmentMode.Dry
-                            ? DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS]
-                            :!DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS]
-                },
+                { DisplayExist_List.IN_CV_EXIST1, () => DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_OUT_SS_2] }, // 24
+                { DisplayExist_List.NG_EXIST1, () => DI_RAW_DATA[(int)DI_MAP.NG_TOP_CV_DETECT_SS_2] },    // 25
+                { DisplayExist_List.NG_EXIST2, () => DI_RAW_DATA[(int)DI_MAP.NG_BOTTOM_CV_DETECT_SS_2] }, // 26
+                { DisplayExist_List.IN_SET_EXIST, () => DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS] }, // 27
                 {//28
                     DisplayExist_List.IN_BOTTOM_EXIST,
                     () =>
@@ -360,41 +364,6 @@ namespace YJ_AutoClamp.Models
                         SingletonManager.instance.EquipmentMode == EquipmentMode.Dry
                             ? DI_RAW_DATA[(int)DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS]
                             :!DI_RAW_DATA[(int)DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS] && !DI_RAW_DATA[(int)DI_MAP.CLAMP_LD_Z_UNGRIP_CYL_SS]
-                },
-                {//31
-                    DisplayExist_List.LIFT_1,
-                    () =>
-                        SingletonManager.instance.EquipmentMode == EquipmentMode.Dry
-                            ? DI_RAW_DATA[(int)DI_MAP.LIFT_1_CV_DETECT_IN_SS_1]
-                            :!DI_RAW_DATA[(int)DI_MAP.LIFT_1_CV_DETECT_IN_SS_1]
-                },
-                {//32
-                    DisplayExist_List.LIFT_2,
-                    () =>
-                        SingletonManager.instance.EquipmentMode == EquipmentMode.Dry
-                            ? DI_RAW_DATA[(int)DI_MAP.LIFT_2_CV_DETECT_IN_SS_1]
-                            :!DI_RAW_DATA[(int)DI_MAP.LIFT_2_CV_DETECT_IN_SS_1]
-                },
-                {//33
-                    DisplayExist_List.LIFT_3,
-                    () =>
-                        SingletonManager.instance.EquipmentMode == EquipmentMode.Dry
-                            ? DI_RAW_DATA[(int)DI_MAP.LIFT_3_CV_DETECT_IN_SS_1]
-                            :!DI_RAW_DATA[(int)DI_MAP.LIFT_3_CV_DETECT_IN_SS_1]
-                },
-                {//34
-                    DisplayExist_List.RET_BOTTOM,
-                    () =>
-                        SingletonManager.instance.EquipmentMode == EquipmentMode.Dry
-                            ? DI_RAW_DATA[(int)DI_MAP.RETURN_BOTTOM_CV_DETECT_SS_2]
-                            :!DI_RAW_DATA[(int)DI_MAP.RETURN_BOTTOM_CV_DETECT_SS_2]
-                },
-                {//35
-                    DisplayExist_List.RET_TOP,
-                    () =>
-                        SingletonManager.instance.EquipmentMode == EquipmentMode.Dry
-                            ? DI_RAW_DATA[(int)DI_MAP.RETURN_TOP_CV_DETECT_SS_2]
-                            :!DI_RAW_DATA[(int)DI_MAP.RETURN_TOP_CV_DETECT_SS_2]
                 }
             };
         }

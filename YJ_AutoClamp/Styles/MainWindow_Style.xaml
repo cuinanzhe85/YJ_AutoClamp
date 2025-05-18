@@ -41,9 +41,10 @@
         <Setter Property="Padding" Value="0"/>
         <Setter Property="CornerRadius" Value="3"/>
         <Setter Property="Width" Value="85"/>
+        <Setter Property="Height" Value="Auto"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Focusable" Value="False"/>
-        <Setter Property="Margin" Value="2.5,5"/>
+        <Setter Property="Margin" Value="0,0"/>
         <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
         <Setter Property="helpers:ThemeHelper.MouseOverBrush" Value="RoyalBlue"/>
         <Setter Property="helpers:ThemeHelper.PressedBrush" Value="#353550"/>
@@ -68,7 +69,8 @@
         <Setter Property="Stretch" Value="Fill"/>
     </Style>
     <Style TargetType="telerik:RadGlyph" x:Key="MainWindow_BottomIconStyle">
-        <Setter Property="FontSize" Value="30"/>
+        <Setter Property="FontSize" Value="26"/>
+        <Setter Property="Margin" Value="0,8,0,0"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -79,7 +81,7 @@
         </Style.Triggers>
     </Style>
     <Style TargetType="Label" x:Key="MainWindow_BottomLabelStyle">
-        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontSize" Value="17"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="Padding" Value="0,4"/>
         <Setter Property="FontWeight" Value="SemiBold"/>

@@ -53,9 +53,10 @@
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Margin" Value="0,1"/>
         <Setter Property="Padding" Value="0"/>
-        <Setter Property="Height" Value="35"/>
-        <Setter Property="Width" Value="380"/>
+        <Setter Property="Height" Value="34.6"/>
+        <Setter Property="Width" Value="358"/>
         <Setter Property="Focusable" Value="False"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
         <Setter Property="helpers:ThemeHelper.CheckedBrush" Value="#7CFC00"/>
         <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
         <Style.Triggers>
@@ -91,7 +92,7 @@
         </StackPanel>
     </DataTemplate>
     <DataTemplate x:Key="Do_Template">
-        <StackPanel Margin="5,4,8,0" VerticalAlignment="Top">
+        <StackPanel Margin="5,4,10,0" VerticalAlignment="Top">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.25*"/>

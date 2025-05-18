@@ -11,27 +11,24 @@
     <mvvm:BaseUserControl.Resources>
         <Style x:Key="Tile_Style" TargetType="telerik:Tile">
             <Setter Property="IsSelected" Value="{Binding IsTileSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-            <Setter Property="Width" Value="350"/>
-            <Setter Property="Height" Value="200"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
         <Style x:Key="TileGlyph_Style" TargetType="telerik:RadGlyph">
-            <Setter Property="Margin" Value="20"/>
+            <Setter Property="Margin" Value="40"/>
             <Setter Property="FontSize" Value="60"/>
         </Style>
         <Style x:Key="TileLabel_Style" TargetType="Label">
-            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="Margin" Value="10,-5"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="30"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
     </mvvm:BaseUserControl.Resources>
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="1024" Height="600">
+    <Grid Width="Auto" Height="Auto" >
         <Grid.Effect>
             <DropShadowEffect ShadowDepth="2"/>
         </Grid.Effect>
-        <telerik:RadTileList HorizontalTilesAlignment="Center" TilePlaceHolderSide="260">
+        <telerik:RadTileList TilePlaceHolderSide="220" Margin="70,0,0,0">
             <telerik:Tile Background="#00a100" Style="{StaticResource Tile_Style}"
                           Command="{Binding TileButton_Command}" CommandParameter="System">
                 <StackPanel VerticalAlignment="Center">
@@ -46,15 +43,8 @@
                     <Label Content="Jog Setting" Style="{StaticResource TileLabel_Style}"/>
                 </StackPanel>
             </telerik:Tile>
-            <!--<telerik:Tile Background="#006ac1" Style="{StaticResource Tile_Style}"
-                          Command="{Binding TileButton_Command}" CommandParameter="Model">
-                <StackPanel VerticalAlignment="Center">
-                    <telerik:RadGlyph Glyph="&#xe665;" Style="{StaticResource TileGlyph_Style}"/>
-                    <Label Content="Model Data" Style="{StaticResource TileLabel_Style}"/>
-                </StackPanel>
-            </telerik:Tile>-->
             <telerik:Tile Background="#21b8bc" Style="{StaticResource Tile_Style}"
-              Command="{Binding TileButton_Command}" CommandParameter="Serial">
+                          Command="{Binding TileButton_Command}" CommandParameter="Serial">
                 <StackPanel VerticalAlignment="Center">
                     <telerik:RadGlyph Glyph="&#xe10f;" Style="{StaticResource TileGlyph_Style}"/>
                     <Label Content="Serial Port Setting" Style="{StaticResource TileLabel_Style}"/>

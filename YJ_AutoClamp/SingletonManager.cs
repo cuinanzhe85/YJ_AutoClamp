@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -41,13 +40,8 @@ namespace YJ_AutoClamp
             get { return _IsY_PickupColl; }
             set { SetValue(ref _IsY_PickupColl, value); }
         }
-        //private int[] _LoadFloor = { 0, 0, 0 };
-        //public int[] LoadFloor
-        //{
-        //    get { return _LoadFloor; }
-        //    set { SetValue(ref _LoadFloor, value); }
-        //}
         public ObservableCollection<int> LoadFloor { get; set; }
+        public ObservableCollection<Lift_Model> Display_Lift { get; set; }
         public int LoadStageNo = 0;
         public bool BottomClampDone = false;
         public bool BottomClampNG = false;
@@ -95,9 +89,15 @@ namespace YJ_AutoClamp
             Current_Model = new ModelData_Model();
             Spec_Data = new ObservableCollection<SpecData_Model>();
 
+            // Lift Data
             LoadFloor = new ObservableCollection<int>();
             for (int i = 0; i < 3; i++)
                 LoadFloor.Add(0);
+            // Lift Status Display
+            Display_Lift = new ObservableCollection<Lift_Model>();
+            for (int i = 0; i < 3; i++)
+                Display_Lift.Add(new Lift_Model("LIFT " + (i + 1)));
+            
         }
         public void Run()
         {
