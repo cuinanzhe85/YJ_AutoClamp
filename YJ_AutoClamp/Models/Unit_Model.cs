@@ -95,7 +95,7 @@ namespace YJ_AutoClamp.Models
             Centering_forward_Check,
             Centering_Backward_Check
         }
-        public enum InBottomHandle
+        public enum BottomHandle
         {
             Idle,
             Out_Position_Tray_Check,
@@ -239,7 +239,7 @@ namespace YJ_AutoClamp.Models
         }
         public InCvSequence In_Cv_Step = InCvSequence.Idle;
         public OutCvSequence Out_Cv_Step = OutCvSequence.Idle;
-        public InBottomHandle In_Grip_Step = InBottomHandle.Idle;
+        public BottomHandle Bottom_Step = BottomHandle.Idle;
         public TopHandle Top_Handle_Step = TopHandle.Idle;
         public OutHandle Out_Handle_Step = OutHandle.Idle;
         public Aging_CV_Step[] AgingCVStep = { Aging_CV_Step.Idle, 
@@ -644,12 +644,12 @@ namespace YJ_AutoClamp.Models
         }
         private void Bottom_Handel_Logic()
         {
-            switch (In_Grip_Step)
+            switch (Bottom_Step)
             {
-                case InBottomHandle.Idle:
-                    In_Grip_Step = InBottomHandle.Out_Position_Tray_Check;
+                case BottomHandle.Idle:
+                    Bottom_Step = BottomHandle.Out_Position_Tray_Check;
                     break;
-                case InBottomHandle.Out_Position_Tray_Check:
+                case BottomHandle.Out_Position_Tray_Check:
                     
                     // Set Grip UP
                     if (Dio.DO_RAW_DATA[(int)DO_MAP.TRANSFER_LZ_DOWN_SOL] == true)
@@ -662,9 +662,9 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_RZ_GRIP_SOL, false);
 
                     // 트레이가 없으면
-                    In_Grip_Step = InBottomHandle.TrayInSecsorCheck;
+                    Bottom_Step = BottomHandle.TrayInSecsorCheck;
                     break;
-                case InBottomHandle.TrayInSecsorCheck:
+                case BottomHandle.TrayInSecsorCheck:
                     // Bottom Handler Up,Ungrip상태 확인
                     if ((Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_UP_CYL_SS] == true
                         && Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_UP_CYL_SS] == true
@@ -676,10 +676,10 @@ namespace YJ_AutoClamp.Models
                         // Bottom Pickup Move , false: tray pickup true: set pickup
                         Dio_Output(DO_MAP.TRANSFER_FORWARD_SOL, false);
                         
-                        In_Grip_Step = InBottomHandle.Set_Handler_Down;
+                        Bottom_Step = BottomHandle.Set_Handler_Down;
                     }
                     break;
-                case InBottomHandle.Set_Handler_Down:
+                case BottomHandle.Set_Handler_Down:
                     // Left 위치 도착 확인
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_X_FORWARD_CYL_SS] == true)
                     {
@@ -692,17 +692,17 @@ namespace YJ_AutoClamp.Models
                         {
                             // Bottom clamp가 놓여져 있으면 Put Down 동작을 한다.
                             Dio_Output(DO_MAP.TRANSFER_LZ_DOWN_SOL, true);
-                            In_Grip_Step = InBottomHandle.Set_PutDown;
+                            Bottom_Step = BottomHandle.Set_PutDown;
                         }
                         else
                         {
                             // Bottom Clamp가 없으면 Clamp Pickup 으로 이동한다.
-                            In_Grip_Step = InBottomHandle.Bottom_Clmap_Pickup;
+                            Bottom_Step = BottomHandle.Bottom_Clmap_Pickup;
                         }
                     }
                             
                     break;
-                case InBottomHandle.Set_PutDown:
+                case BottomHandle.Set_PutDown:
                     // Set Handler Down 확인
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_DOWN_CYL_SS] == true)
                     {
@@ -712,10 +712,10 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_LZ_VACUUM_SOL, false);
                         Dio_Output(DO_MAP.TRANSFER_LZ_BOLW_SOL, true);
                         Dio_Output(DO_MAP.TRANSFER_LZ_DOWN_SOL, false);
-                        In_Grip_Step = InBottomHandle.Set_Handler_Up;
+                        Bottom_Step = BottomHandle.Set_Handler_Up;
                     }
                     break;
-                case InBottomHandle.Set_Handler_Up:
+                case BottomHandle.Set_Handler_Up:
                     // Set Handler Up,Vacuum Off
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_UP_CYL_SS] == true
                     && (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS] == false
@@ -726,15 +726,15 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_LZ_BOLW_SOL, false);
                         Dio_Output(DO_MAP.CLAMPING_CV_CENTERING_SOL_2, false);
                         Dio_Output(DO_MAP.CLAMPING_CV_UP_SOL, false);
-                        In_Grip_Step = InBottomHandle.Set_PutDown_Done;
+                        Bottom_Step = BottomHandle.Set_PutDown_Done;
                     }
                     break;
-                case InBottomHandle.Set_PutDown_Done:
+                case BottomHandle.Set_PutDown_Done:
                     if ((Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_CENTERING_CYL_SS_2_BWD] == true
                        && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DOWN_CYL_SS] == true)
                        || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                     {
-                        In_Grip_Step = InBottomHandle.Bottom_Clmap_Pickup;
+                        Bottom_Step = BottomHandle.Bottom_Clmap_Pickup;
                         /****************************************************/
                         // 여기서 CV Move 한다.
                         // 스토퍼 상승
@@ -746,46 +746,46 @@ namespace YJ_AutoClamp.Models
                         SingletonManager.instance.BottomClampNG = false;
                     }
                     break;
-                case InBottomHandle.Bottom_Clmap_Pickup:
+                case BottomHandle.Bottom_Clmap_Pickup:
                     // Return CV에 bottom clamp가 있으면 
                     if ( Dio.DI_RAW_DATA[(int)DI_MAP.RETURN_BOTTOM_CV_DETECT_SS_2] == true
                         || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                     {
                         Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, true);
-                        In_Grip_Step = InBottomHandle.Bottom_Clamp_Grip;
+                        Bottom_Step = BottomHandle.Bottom_Clamp_Grip;
                     }
                     break;
-                case InBottomHandle.Bottom_Clamp_Grip:
+                case BottomHandle.Bottom_Clamp_Grip:
                     // Bottom clamp Grip
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_DOWN_CYL_SS] == true)
                     {
                         Dio_Output(DO_MAP.TRANSFER_RZ_GRIP_SOL, true);
-                        In_Grip_Step = InBottomHandle.Bottom_Handler_Up;
+                        Bottom_Step = BottomHandle.Bottom_Handler_Up;
                     }
                     break;
-                case InBottomHandle.Bottom_Handler_Up:
+                case BottomHandle.Bottom_Handler_Up:
                     // Bottom handler Up
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_GRIP_CYL_SS] == true)
                     {
                         Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, false);
-                        In_Grip_Step = InBottomHandle.Bottom_PicUp_Done;
+                        Bottom_Step = BottomHandle.Bottom_PicUp_Done;
                     }
                     break;
-                case InBottomHandle.Bottom_PicUp_Done:
+                case BottomHandle.Bottom_PicUp_Done:
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_UP_CYL_SS] == true)
                     {
-                        In_Grip_Step = InBottomHandle.Bottom_Handler_Forward;
+                        Bottom_Step = BottomHandle.Bottom_Handler_Forward;
                     }
                     break;
                 
-                case InBottomHandle.Bottom_Handler_Forward:
+                case BottomHandle.Bottom_Handler_Forward:
                     // Panel Grip Return
                     Dio_Output(DO_MAP.TRANSFER_LZ_TURN_SOL, false);
                     // Panel Pickup Move
                     Dio_Output(DO_MAP.TRANSFER_FORWARD_SOL, true);
-                    In_Grip_Step = InBottomHandle.Set_PickUp_Down;
+                    Bottom_Step = BottomHandle.Set_PickUp_Down;
                     break;
-                case InBottomHandle.Set_PickUp_Down:
+                case BottomHandle.Set_PickUp_Down:
                     // Set Pickup으로 Turn하고 전진
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_X_BACKWARD_CYL_SS] == true
                         && Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_RETURN_CYL_SS] == true)
@@ -796,7 +796,7 @@ namespace YJ_AutoClamp.Models
                         {
                             // Set Handler Down
                             Dio_Output(DO_MAP.TRANSFER_LZ_DOWN_SOL, true);
-                            In_Grip_Step = InBottomHandle.Set_Vacuum_On;
+                            Bottom_Step = BottomHandle.Set_Vacuum_On;
                         }
                         //else
                         //{
@@ -804,40 +804,40 @@ namespace YJ_AutoClamp.Models
                         //}
                     }
                     break;
-                case InBottomHandle.Set_Vacuum_On:
+                case BottomHandle.Set_Vacuum_On:
                     // Vacuum On
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_DOWN_CYL_SS] == true)
                     {
                         Dio_Output(DO_MAP.TRANSFER_LZ_VACUUM_SOL , true);
-                        In_Grip_Step = InBottomHandle.Set_Centering_Bwd;
+                        Bottom_Step = BottomHandle.Set_Centering_Bwd;
                     }
                     break;
-                case InBottomHandle.Set_Centering_Bwd:
+                case BottomHandle.Set_Centering_Bwd:
                     // Set CV Out centering Backward
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS] == true
                         || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                     {
                         Dio_Output(DO_MAP.IN_SET_CV_CENTERING, false);
-                        In_Grip_Step = InBottomHandle.Set_PickUp_Up;
+                        Bottom_Step = BottomHandle.Set_PickUp_Up;
                     }
                     break;
-                case InBottomHandle.Set_PickUp_Up:
+                case BottomHandle.Set_PickUp_Up:
                     // centerring 후진 센서가 뭔지 모르겠다.???
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_UNALIGN_CYL_SS] == false)
                     {
                         // Set Handler Up
                         Dio_Output(DO_MAP.TRANSFER_LZ_DOWN_SOL, false);
-                        In_Grip_Step = InBottomHandle.Set_PickUp_Done;
+                        Bottom_Step = BottomHandle.Set_PickUp_Done;
                     }
                     break;
-                case InBottomHandle.Set_PickUp_Done:
+                case BottomHandle.Set_PickUp_Done:
                     
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_UP_CYL_SS] == true)
                     {
-                        In_Grip_Step = InBottomHandle.Bottom_PutDown_Down;
+                        Bottom_Step = BottomHandle.Bottom_PutDown_Down;
                     }
                     break;
-                case InBottomHandle.Bottom_PutDown_Down:
+                case BottomHandle.Bottom_PutDown_Down:
                     if ((Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_4] == false
                         && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_5] == false
                         && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_6] == false
@@ -845,33 +845,33 @@ namespace YJ_AutoClamp.Models
                         || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                     {
                         Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, true);
-                        In_Grip_Step = InBottomHandle.Bottom_UnGrip;
+                        Bottom_Step = BottomHandle.Bottom_UnGrip;
                     }
                     break;
-                case InBottomHandle.Bottom_UnGrip:
+                case BottomHandle.Bottom_UnGrip:
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_DOWN_CYL_SS] == true)
                     {
                         Dio_Output(DO_MAP.TRANSFER_RZ_GRIP_SOL, false);
-                        In_Grip_Step = InBottomHandle.Bottom_PutDown_Up;
+                        Bottom_Step = BottomHandle.Bottom_PutDown_Up;
                     }
                     break;
-                case InBottomHandle.Bottom_PutDown_Up:
+                case BottomHandle.Bottom_PutDown_Up:
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_UNGRIP_CYL_SS] == true)
                     {
                         Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, false);
-                        In_Grip_Step = InBottomHandle.Bottom_Centering_Fwd;
+                        Bottom_Step = BottomHandle.Bottom_Centering_Fwd;
                     }
                     break;
-                case InBottomHandle.Bottom_Centering_Fwd:
+                case BottomHandle.Bottom_Centering_Fwd:
                     // Bottom sentering fwd
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_UP_CYL_SS] == true)
                     {
                         Dio_Output(DO_MAP.CLAMPING_CV_CENTERING_SOL_2, true);
                         Dio_Output(DO_MAP.CLAMPING_CV_UP_SOL, true);
-                        In_Grip_Step = InBottomHandle.Bottom_PutDown_Done;
+                        Bottom_Step = BottomHandle.Bottom_PutDown_Done;
                     }
                     break;
-                case InBottomHandle.Bottom_PutDown_Done:
+                case BottomHandle.Bottom_PutDown_Done:
                     // Bottom sentering fwd
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.CLMAPING_CV_UP_CYL_SS] == true
                         && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_CENTERING_CYL_SS_2_FWD] == true)
@@ -879,12 +879,12 @@ namespace YJ_AutoClamp.Models
                         // Out X Handler 동작하지 않을때를 까지 대기한다.
                         if (SingletonManager.instance.IsY_PickupColl == false
                             && IsOutHandlerSaftyInterlockY() == true)
-                            In_Grip_Step = InBottomHandle.Idle;
+                            Bottom_Step = BottomHandle.Idle;
                     }
                     break;
              
             }
-            int step = (int)In_Grip_Step;
+            int step = (int)Bottom_Step;
             Global.instance.Write_Sequence_Log("BOTTOM_STEP", step.ToString());
             if (Dio.DO_RAW_DATA[(int)DO_MAP.TRANSFER_FORWARD_SOL] == true)
                 Global.instance.Write_Sequence_Log("BOTTOM_HANDLER_POS", "LEFT");
@@ -1997,7 +1997,7 @@ namespace YJ_AutoClamp.Models
             {
                 Out_Handle_Step = OutHandle.Idle;
                 Top_Handle_Step = TopHandle.Idle;
-                In_Grip_Step = InBottomHandle.Idle;
+                Bottom_Step = BottomHandle.Idle;
                 SingletonManager.instance.LoadStageNo = 0;
                 SingletonManager.instance.IsY_PickupColl = false;
                 SingletonManager.instance.UnitLastPositionSet = false;
@@ -2006,7 +2006,7 @@ namespace YJ_AutoClamp.Models
             }
             Top_Handle_Step = (TopHandle)Convert.ToInt16(value);
             value = myIni.Read("BOTTOM_STEP", "SEQUENCE");
-            In_Grip_Step = (InBottomHandle)Convert.ToInt16(value);
+            Bottom_Step = (BottomHandle)Convert.ToInt16(value);
             value = myIni.Read("Y_PICKUP_COLL_FLAG", "SEQUENCE");
             SingletonManager.instance.IsY_PickupColl =bool.Parse(value);
             value = myIni.Read("OUT_LOAD_STAGE", "SEQUENCE");

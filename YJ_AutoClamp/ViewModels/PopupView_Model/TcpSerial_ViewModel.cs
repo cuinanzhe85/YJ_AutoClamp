@@ -1,12 +1,9 @@
 ﻿using Common.Commands;
 using Common.Managers;
-using Lmi3d.Zen.Io;
 using System;
 using System.Collections.ObjectModel;
-using System.Net;
 using System.Windows;
 using System.Windows.Input;
-using YJ_AutoClamp.Models;
 
 namespace YJ_AutoClamp.ViewModels
 {
@@ -28,17 +25,17 @@ namespace YJ_AutoClamp.ViewModels
             get { return _BarCodePort; }
             set { SetValue(ref _BarCodePort, value); }
         }
-        private string _LabelPrintPort;
-        public string LabelPrintPort
+        private string _NfcPort;
+        public string NfcPort
         {
-            get { return _LabelPrintPort; }
-            set { SetValue(ref _LabelPrintPort, value); }
+            get { return _NfcPort; }
+            set { SetValue(ref _NfcPort, value); }
         }
-        private string[] _MotionIP = new string[(int)ServoSlave_List.Max];
-        public string[] MotionIP
+        private string _Port;
+        public string Port
         {
-            get { return _MotionIP; }
-            set { SetValue(ref _MotionIP, value); }
+            get { return _Port; }
+            set { SetValue(ref _Port, value); }
         }
         public TcpSerial_ViewModel()
         {
@@ -46,36 +43,29 @@ namespace YJ_AutoClamp.ViewModels
             foreach (string port in ports)
                 PortNames.Add(port);
 
-            MotionIP = new string[(int)ServoSlave_List.Max];
+            BarCodePort = SingletonManager.instance.Barcode_Model.Port;
+            NfcPort = SingletonManager.instance.Nfc_Model.Port;
         }
         private void OnSave_Command(object obj)
         {
             try
             {
-                Global.Mlog.Info($"[USER] Tcp / SerialPort 'Save' Button Click");
+                if (MessageBox.Show("Save Success.", "Save Success", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+                Global.Mlog.Info($"[USER] SerialPort 'Save' Button Click");
                 var myIni = new IniFile(Global.instance.IniSystemPath);
                 // Gocator Front,Rear Ip Set
-                string Section = "TCP";
-                //myIni.Write("GOCATOR_FRONT_IP", Gocator_Front, Section);
-                //myIni.Write("GOCATOR_REAR_IP", Gocator_Rear, Section);
-                //Global.Mlog.Info(" Gocator Front Ip Address = " + Gocator_Front);
-                //Global.Mlog.Info(" Gocator REar Ip Address = " + Gocator_Rear);
+                string Section = "SERIAL";
                 // Serial : Bacorde, Label
-                Section = "SERIAL";
                 myIni.Write("BARCODE_PORT", BarCodePort, Section);
-                Global.Mlog.Info(" Barcode Port = " + BarCodePort);
-                myIni.Write("LABELPRINT_PORT", LabelPrintPort, Section);
-                Global.Mlog.Info(" Label Print_PORT = " + LabelPrintPort);
-                // Set Singleton Data
-                //SingletonManager.instance.Gocator_Model[0].IpAddress = KIpAddress.Parse(Gocator_Front);
-                //SingletonManager.instance.Gocator_Model[1].IpAddress = KIpAddress.Parse(Gocator_Rear);
+                Global.Mlog.Info(" BARCODE_PORT = " + BarCodePort);
+                myIni.Write("NFC_PORT", NfcPort, Section);
+                Global.Mlog.Info(" NFC_PORT = " + NfcPort);
+
                 SingletonManager.instance.Barcode_Model.Port = BarCodePort;
-                SingletonManager.instance.LabelPrint_Model.Port = LabelPrintPort;
-                //for(int i=0; i<(int)ServoSlave_List.Max; i++)
-                //{
-                //    SingletonManager.instance.Ez_Model.IpAddress[i]= IPAddress.Parse(MotionIP[i]);
-                //}
-                MessageBox.Show("Save Success.", "Save Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                SingletonManager.instance.Nfc_Model.Port = NfcPort;
             }
             catch(Exception e)
             {

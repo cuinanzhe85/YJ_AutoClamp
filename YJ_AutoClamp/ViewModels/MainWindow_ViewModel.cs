@@ -180,8 +180,7 @@ namespace YJ_AutoClamp.ViewModels
                 
                 // Bcr Close
                 SingletonManager.instance.Barcode_Model.Close();
-                // Label Print Close
-                SingletonManager.instance.LabelPrint_Model.Close();
+                SingletonManager.instance.Nfc_Model.Close();
             });
 
             // UI 스레드에서 Dispose 및 Shutdown 호출

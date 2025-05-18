@@ -63,7 +63,7 @@ namespace YJ_AutoClamp
         public EziDio_Model Ez_Dio { get; set; }
         public EzMotion_Model_E Ez_Model { get; set; }
         public Serial_Model Barcode_Model { get; set; }
-        public Serial_Model LabelPrint_Model { get; set; }
+        public Serial_Model Nfc_Model { get; set; }
         public RadObservableCollection<Unit_Model> Unit_Model { get; set; }
         public RadObservableCollection<Servo_Model> Servo_Model { get; set; }
         public RadObservableCollection<Channel_Model> Channel_Model { get; set; }
@@ -91,7 +91,7 @@ namespace YJ_AutoClamp
             Channel_Model = new RadObservableCollection<Channel_Model>();
             Teaching_Data = new Dictionary<string, double>();
             Barcode_Model = new Serial_Model();
-            LabelPrint_Model = new Serial_Model();
+            Nfc_Model = new Serial_Model();
             Current_Model = new ModelData_Model();
             Spec_Data = new ObservableCollection<SpecData_Model>();
 
@@ -268,12 +268,7 @@ namespace YJ_AutoClamp
             if(Barcode_Model.Open() == false)
                 MessageBox.Show("BCR Port open fail.", "BCR Open Fail", MessageBoxButton.OK, MessageBoxImage.Error);
 
-            // Label Print Serial Port Init
-            string labelPort = myIni.Read("LABELPRINT_PORT", section);
-            LabelPrint_Model.PortName = "Label Print";
-            LabelPrint_Model.Port = labelPort;
-            if (LabelPrint_Model.Open() == false)
-                MessageBox.Show("LabelPrint Port open fail.", "LabelPrint Open Fail", MessageBoxButton.OK, MessageBoxImage.Error);
+            
         }
         private void Gocator_Init()
         {

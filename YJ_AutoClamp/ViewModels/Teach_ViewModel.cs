@@ -432,12 +432,24 @@ namespace YJ_AutoClamp.ViewModels
                     AlarmAllReset();
                     return;
                 case "Move_X":
+                    if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
+                    {
+                        break;
+                    }
                     EzModel.MoveABS(Selected_ServoIndex[(int)ServoTarget.X], Target_Position[(int)ServoTarget.X]);
                     break;
                 case "Move_Y":
+                    if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
+                    {
+                        break;
+                    }
                     EzModel.MoveABS(Selected_ServoIndex[(int)ServoTarget.Y], Target_Position[(int)ServoTarget.Y]);
                     break;
                 case "Move_Z":
+                    if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
+                    {
+                        break;
+                    }
                     EzModel.MoveABS(Selected_ServoIndex[(int)ServoTarget.Z], Target_Position[(int)ServoTarget.Z]);
                     break;
                 case "Jog_X_CW":
@@ -547,17 +559,13 @@ namespace YJ_AutoClamp.ViewModels
                 TeachPosition[(int)TeachingSection.Out_Handler_Z] = Current_Position[(int)ServoTarget.Z];
                 SingletonManager.instance.Teaching_Data[((Teaching_List)TeachingIndex).ToString()] = Current_Position[(int)ServoTarget.Z];
             }
-            if(section == "Lift")
-                MessageBox.Show($"[ {((Teaching_List)TeachingIndex + (Selected_LiftIndex * 3)).ToString()} ] Save Complete.", "Save Successful", MessageBoxButton.OK, MessageBoxImage.Information);
-            else if(section == "OutZ_Handler")
-            {
-                MessageBox.Show($"[ {((Teaching_List)TeachingIndex ).ToString()} ] Save Complete.", "Save Successful", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-                MessageBox.Show($"[ {((Teaching_List)TeachingIndex).ToString()} ] Save Complete.", "Save Successful", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         private void OnTeachingMove_Command(object obj)
         {
+            if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
+            {
+                return;
+            }
             string cmd = obj.ToString();
             switch (cmd)
             {

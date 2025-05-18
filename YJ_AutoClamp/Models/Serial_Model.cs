@@ -14,6 +14,15 @@ namespace YJ_AutoClamp.Models
         private string STX = string.Format("{0}", Convert.ToChar(0x02));
         private string ETX = string.Format("{0}", Convert.ToChar(0x03));
         private bool _IsConnected = false;
+
+        public enum BcrIndex
+        {
+            bcr1,
+            bcr2,
+            bcr3,
+            bcr4,
+            Max
+        }
         public bool IsConnected
         {
             get { return _IsConnected; }

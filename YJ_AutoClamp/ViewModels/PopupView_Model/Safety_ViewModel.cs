@@ -37,17 +37,17 @@ namespace YJ_AutoClamp.ViewModels
             // Buzzer Y0C
             if(cmd == "Buzzer")
             {
-                if (SingletonManager.instance.Dio.DO_RAW_DATA[(int)EziDio_Model.DO_MAP.BUZZER] == false)
-                    SingletonManager.instance.Dio.Set_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
+                if (SingletonManager.instance.Ez_Dio.DO_RAW_DATA[(int)EziDio_Model.DO_MAP.BUZZER] == false)
+                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
                 else
-                    SingletonManager.instance.Dio.Set_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
+                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
             }
             // Reset Y20
             else
             {
-                SingletonManager.instance.Dio.Set_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_RESET, true);
+                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_RESET, true);
                 await Task.Delay(1000); // 비동기 대기
-                SingletonManager.instance.Dio.Set_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_RESET, false);
+                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_RESET, false);
             }
         }
         private void OnPreventClose(object obj) { }
@@ -55,7 +55,7 @@ namespace YJ_AutoClamp.ViewModels
         {
             Global.Mlog.Info("[USER] Safety 'Unlock' Button Click");
 
-            if (Dio.DI_RAW_DATA[(int)NmcDio_Model.DI_MAP.DOOR_OPEN_SAFETY_CHECK_FEEDBACK] == true)
+            if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.DOOR_FEEDBACK] == true)
             {
                 MessageBox.Show("SAFETY_PLC_POWER_OFF. Please Reset Swich Push.", "Reset Push !", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
