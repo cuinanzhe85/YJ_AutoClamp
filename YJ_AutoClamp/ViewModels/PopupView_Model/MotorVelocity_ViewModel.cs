@@ -65,7 +65,7 @@ namespace YJ_AutoClamp.ViewModels
                 iniFile.Write($"{servoName}_Barcode_Vel", originalServo.Barcode_Vel.ToString("F2"), section);
             }
 
-            MessageBox.Show("Motor velocity settings have been successfully saved.", "Save Successful", MessageBoxButton.OK, MessageBoxImage.Information);
+            Global.instance.ShowMessagebox("Motor velocity settings have been successfully saved.",false);
         }
         #region // override
         protected override void InitializeCommands()

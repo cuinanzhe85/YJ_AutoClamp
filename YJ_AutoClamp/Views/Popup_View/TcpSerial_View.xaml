@@ -10,8 +10,8 @@
         xmlns:utils="clr-namespace:YJ_AutoClamp.Utils"
         utils:WindowBlur.IsEnabled="True"
         ResizeMode="NoResize" WindowStyle="None"
-        Background="Transparent" AllowsTransparency="True" WindowStartupLocation="CenterScreen"
-        Name="SerialPort" Width="1000" Height="850">
+        Background="Transparent" AllowsTransparency="True" WindowStartupLocation="CenterScreen" Top="8" Left="12"
+        Name="SerialPort" Width="1000" Height="750">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.05*"/>
@@ -62,14 +62,27 @@
                 
                 
                 <Label Content="Barcode Port" Grid.Row="0" Grid.Column="0" Style="{StaticResource SerialPort_LabelStyle}"/>
-                <Label Content="NFC Port" Grid.Row="1" Grid.Column="0" Style="{StaticResource SerialPort_LabelStyle}"/>
 
                 <telerik:RadComboBox Grid.Column="1" Grid.Row="0" Style="{StaticResource SerialPort_CboxStyle}"
                                      ItemsSource="{Binding PortNames}" SelectedItem="{Binding BarCodePort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                
+                <Label Content="NFC Port" Grid.Row="1" Grid.Column="0" Style="{StaticResource SerialPort_LabelStyle}"/>
                 <telerik:RadComboBox Grid.Column="1" Grid.Row="1" Style="{StaticResource SerialPort_CboxStyle}"
-                                    ItemsSource="{Binding PortNames}" SelectedItem="{Binding NfcPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-               
-                </Grid>
+                      ItemsSource="{Binding PortNames}" SelectedItem="{Binding NfcPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                
+                <Button Grid.Column="2" Grid.Row="0" Margin="5" Content="Port Open" Command="{Binding Bcr_Command}" CommandParameter="BcrPortOpen" Style="{StaticResource SerialPort_ButtonStyle}"/>
+                <StackPanel Grid.Column="3" Grid.Row="0" Margin="5">
+                    <Button Content="Bar Code Test" Command="{Binding Bcr_Command}" CommandParameter="BcrTest" Style="{StaticResource SerialPort_ButtonStyle}"/>
+                    <Label  Content="{Binding bcrData[0]}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
+                </StackPanel>
+                <Button Grid.Column="2" Grid.Row="1" Margin="5" Content="Port Open" Command="{Binding Bcr_Command}" CommandParameter="NfcPortOpen" Style="{StaticResource SerialPort_ButtonStyle}"/>
+                <StackPanel Grid.Column="3" Grid.Row="1" Margin="5">
+                    <Button Content="NFC Test" Command="{Binding Bcr_Command}" CommandParameter="NfcTest" Style="{StaticResource SerialPort_ButtonStyle}"/>
+                    <Label  Content="{Binding NfcData}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
+                </StackPanel>
+
+            </Grid>
         </Border>
         <!--Save / Exit-->
         <Border Grid.Row="2" Margin="40,0,40,25">

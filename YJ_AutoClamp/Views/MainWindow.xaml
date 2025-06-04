@@ -91,9 +91,13 @@
                             </StackPanel>
                         </telerik:RadButton>
                     </Grid>
-                    <!--Fail Log-->
-                    <telerik:RadListBox Margin="5" Grid.Column="1">
-                    </telerik:RadListBox>
+                    <ListBox Margin="5" Grid.Column="1"
+                    ItemsSource="{Binding LogList.Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{Binding LogList.SelectedItem}" telerik:StyleManager.Theme="Windows8">
+                        <b:Interaction.Behaviors>
+                            <utils:ListBoxScrollIntoViewBehavior/>
+                        </b:Interaction.Behaviors>
+                    </ListBox>
                     <!--Right Buttons-->
                     <Grid Grid.Column="2">
                         <Grid.ColumnDefinitions>

@@ -3,12 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
-using Telerik.Windows.Media.Imaging.Shapes;
+using System.Threading.Tasks;
 using YJ_AutoClamp.Utils.EzMotion_E;
-using static YJ_AutoClamp.Models.EziDio_Model;
-using static YJ_AutoClamp.Models.NmcDio_Model;
 
 namespace YJ_AutoClamp.Models
 {
@@ -41,8 +38,8 @@ namespace YJ_AutoClamp.Models
             NG_TOP_CV_DETECT_SS_2,          // X016
             NG_BOTTOM_CV_DETECT_SS_1,       // X017
             NG_BOTTOM_CV_DETECT_SS_2,       // X018
-            TRANSFER_X_FORWARD_CYL_SS,      // X019
-            TRANSFER_X_BACKWARD_CYL_SS,     // X01A
+            TRANSFER_X_RIGHT_CYL_SS,      // X019
+            TRANSFER_X_LEFT_CYL_SS,     // X01A
             TRANSFER_LZ_UP_CYL_SS,          // X01B
             TRANSFER_LZ_DOWN_CYL_SS,        // X01C
             TRANSFER_LZ_TURN_CYL_SS,        // X01D 90도
@@ -106,7 +103,6 @@ namespace YJ_AutoClamp.Models
             RETURN_TOP_CV_DETECT_SS_2,      // X053
             RETURN_BOTTOM_CV_DETECT_SS_1,   // X054
             RETURN_BOTTOM_CV_DETECT_SS_2,   // X055
-           
             X056, X057,
             AGING_CV_UPPER_INTERFACE_1,     // X058
             AGING_CV_LOW_INTERFACE_1,       // X059
@@ -172,8 +168,8 @@ namespace YJ_AutoClamp.Models
             TOP_RETURN_CV_RUN,      // Y018
             Y019,
             CLAMPING_LD_Z_GRIP_SOL, // Y01A
-            IN_SET_CV_CENTERING,    // Y01B
-            TRANSFER_LZ_DOWN_SOL,   // Y01C
+            TRANSFER_LZ_DOWN_SOL,   // Y01b // 1b,1c는 배선이 꼬인건지 확인이 필요하다
+            IN_SET_CV_CENTERING,    // Y01c
             TRANSFER_FORWARD_SOL,   // Y01D
             TRANSFER_RZ_DOWN_SOL,   // Y01E
             TRANSFER_LZ_TURN_SOL,   // Y01F
@@ -235,14 +231,6 @@ namespace YJ_AutoClamp.Models
             InterFace_6,
             InterFace_7,
             InterFace_8,
-            InterFace_9,
-            InterFace_10,
-            InterFace_11,
-            InterFace_12,
-            InterFace_13,
-            InterFace_14,
-            InterFace_15,
-            InterFace_16,
             Max
         }
         public List<int> DisplayDio_List = new List<int>
@@ -267,7 +255,7 @@ namespace YJ_AutoClamp.Models
             (int)DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS,     //17
             (int)DI_MAP.CLAMP_LD_Z_UNGRIP_CYL_SS,   //18
             (int)DI_MAP.RETURN_BOTTOM_CV_DETECT_SS_2,//19
-            (int)DI_MAP.RETURN_TOP_CV_DETECT_SS_2,  //20
+            (int)DI_MAP.TOP_JIG_CV_DETECT_SS,  //20
             (int)DI_MAP.LIFT_1_CV_DETECT_IN_SS_1,   //21
             (int)DI_MAP.LIFT_2_CV_DETECT_IN_SS_1,   //22
             (int)DI_MAP.LIFT_3_CV_DETECT_IN_SS_1    //23
@@ -281,7 +269,8 @@ namespace YJ_AutoClamp.Models
         private volatile bool _shouldStop = false;
         private readonly Dictionary<DisplayExist_List, Func<bool>> DisplayExistMapping;
         public IPAddress IpAddress { get; set; }
-        public bool[] IsConnected { get; set; } = { false , false, false, false, false, false, false, false };
+        public bool[] IsConnected { get; set; } = 
+            { false ,false , false, false, false, false, false, false};
         public int DioSlave { get; set; } = 1;
         public int Dio_InputCount { get; set; } = (int)DI_MAP.DI_MAX - 1;
         public int Dio_OutputCount { get; set; } = (int)DO_MAP.DO_MAX - 1;
@@ -364,7 +353,15 @@ namespace YJ_AutoClamp.Models
                         SingletonManager.instance.EquipmentMode == EquipmentMode.Dry
                             ? DI_RAW_DATA[(int)DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS]
                             :!DI_RAW_DATA[(int)DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS] && !DI_RAW_DATA[(int)DI_MAP.CLAMP_LD_Z_UNGRIP_CYL_SS]
-                }
+                },
+                { DisplayExist_List.InterFace_1, () => DI_RAW_DATA[(int)DI_MAP.AGING_CV_UPPER_INTERFACE_1] },   // 31
+                { DisplayExist_List.InterFace_2, () => DI_RAW_DATA[(int)DI_MAP.AGING_CV_LOW_INTERFACE_1] },     // 32
+                { DisplayExist_List.InterFace_3, () => DI_RAW_DATA[(int)DI_MAP.AGING_CV_UPPER_INTERFACE_2] },   // 33
+                { DisplayExist_List.InterFace_4, () => DI_RAW_DATA[(int)DI_MAP.AGING_CV_LOW_INTERFACE_2] },     // 34
+                { DisplayExist_List.InterFace_5, () => DI_RAW_DATA[(int)DI_MAP.AGING_CV_UPPER_INTERFACE_3] },   // 35
+                { DisplayExist_List.InterFace_6, () => DI_RAW_DATA[(int)DI_MAP.AGING_CV_LOW_INTERFACE_3] },     // 36
+                { DisplayExist_List.InterFace_7, () => DI_RAW_DATA[(int)DI_MAP.BOTTOM_RETURN_CV_INTERFACE] },   // 37
+                { DisplayExist_List.InterFace_8, () => DI_RAW_DATA[(int)DI_MAP.TOP_RETURN_CV_INTERFACE] }       // 38
             };
         }
         public bool Connect(int iSlaveNo)
@@ -375,23 +372,30 @@ namespace YJ_AutoClamp.Models
                 // Already Connected
                 if (IsConnected[iSlaveNo] == true)
                 {
-                    IsConnected[iSlaveNo] = true;
                     return true;
                 }
-                if (iSlaveNo == 0) IpAddress = IPAddress.Parse("192.168.0.9");
-                if (iSlaveNo == 1) IpAddress = IPAddress.Parse("192.168.0.10");
-                if (iSlaveNo == 2) IpAddress = IPAddress.Parse("192.168.0.11");
-                if (iSlaveNo == 3) IpAddress = IPAddress.Parse("192.168.0.12");
-                if (iSlaveNo == 4) IpAddress = IPAddress.Parse("192.168.0.13");
-                if (iSlaveNo == 5) IpAddress = IPAddress.Parse("192.168.0.14");
-                if (iSlaveNo == 6) IpAddress = IPAddress.Parse("192.168.0.15");
-                if (iSlaveNo == 7) IpAddress = IPAddress.Parse("192.168.0.16");
+                if (iSlaveNo == 0) 
+                    IpAddress = IPAddress.Parse("192.168.0.9");
+                if (iSlaveNo == 1) 
+                    IpAddress = IPAddress.Parse("192.168.0.10");
+                if (iSlaveNo == 2)
+                    IpAddress = IPAddress.Parse("192.168.0.11");
+                if (iSlaveNo == 3)
+                    IpAddress = IPAddress.Parse("192.168.0.12");
+                if (iSlaveNo == 4)
+                    IpAddress = IPAddress.Parse("192.168.0.13");
+                if (iSlaveNo == 5)
+                    IpAddress = IPAddress.Parse("192.168.0.14");
+                if (iSlaveNo == 6)
+                    IpAddress = IPAddress.Parse("192.168.0.15");
+                if (iSlaveNo == 7)
+                    IpAddress = IPAddress.Parse("192.168.0.16");
 
                 // Is not 0 == Connect Success
-                else if (EziMOTIONPlusELib.FAS_ConnectTCP(IpAddress, slave) == true)
+                if (EziMOTIONPlusELib.FAS_ConnectTCP(IpAddress, slave) == true)
                 {
                     IsConnected[iSlaveNo] = true;
-                    Global.Mlog.Info($"EziMotion DIO Board Connect Success. IP Address : {IpAddress.ToString()}, Slave : {DioSlave}");
+                    Global.Mlog.Info($"EziMotion DIO Board Connect Success. IP Address : {IpAddress.ToString()}, Slave : {slave}");
 
                     // Thread Start
                     DioThread = new Thread(ThreadReceive);
@@ -403,10 +407,9 @@ namespace YJ_AutoClamp.Models
                 else
                 {
                     IsConnected[iSlaveNo] = false;
-                    Global.Mlog.Info($"EziMotion DIO Board Connect Fail. IP Address : {IpAddress.ToString()}, Slave : {DioSlave}");
+                    Global.Mlog.Info($"EziMotion DIO Board Connect Fail. IP Address : {IpAddress.ToString()}, Slave : {slave}");
                     return false;
                 }
-                return true;
             }
             catch (Exception e)
             {
@@ -423,7 +426,7 @@ namespace YJ_AutoClamp.Models
                 {
                     EziMOTIONPlusELib.FAS_Close(slave);
                     IsConnected[iSlave] = false;
-                    Global.Mlog.Info($"EziMotion DIO Board Disconnect Success. IP Address : {IpAddress}, Slave : {DioSlave}");
+                    Global.Mlog.Info($"EziMotion DIO Board Disconnect Success. IP Address : {IpAddress}, Slave : {slave}");
                 }
 
                 if (DioThread != null)
@@ -486,7 +489,7 @@ namespace YJ_AutoClamp.Models
         {
             UpdateIO_OperData();
             // IO Bit를 통해 Slave NO를 계산한다.
-            int slave = (int)Dio_Slave.DIO_1+ index / 16;
+            int slave = (int)Dio_Slave.DIO_1 + (index / 16);
             // 해당 Slave 의 제어해야할 bit No를 계산한다.
             int uOotBit = (int)index % 16;
 
@@ -537,16 +540,18 @@ namespace YJ_AutoClamp.Models
             {
                 try
                 {
-                    for (int i = 0; i < (int)DI_MAP.DI_MAX / 16; i++)
+                    for (int i = 0; i < ((int)DI_MAP.DI_MAX / 16); i++)
                     {
                         // Get Input Data
                         GetIO_InputData(i);
-                        
+                        Thread.Sleep(2);
+
                     }
                     for (int j = 0; j < (int)DO_MAP.DO_MAX / 16; j++)
                     {
                         // Get Output Data
                         GetIO_OutputData(j);
+                        Thread.Sleep(2);
                     }
                     
 
@@ -558,7 +563,7 @@ namespace YJ_AutoClamp.Models
                     Global.ExceptionLog.ErrorFormat($"{System.Reflection.MethodBase.GetCurrentMethod().Name} - {error}");
                 }
 
-                Thread.Sleep(100);
+                Thread.Sleep(5);
             }
             // 스레드 종료 후 상태 업데이트
             IsDioThreadRunning = false;

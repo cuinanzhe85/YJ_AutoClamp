@@ -5,6 +5,19 @@ using System;
 
 namespace YJ_AutoClamp.Converters
 {
+    public class ReversBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool m = (bool)value;
+            return !m;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return new NotImplementedException();
+        }
+    }
     public class RadioBoolToIntConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

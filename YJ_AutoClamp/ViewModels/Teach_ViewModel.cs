@@ -4,7 +4,9 @@ using HelixToolkit.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,13 +38,13 @@ namespace YJ_AutoClamp.ViewModels
         Out_Z_Handler_Put_Down_5,
         Out_Z_Handler_Put_Down_6,
         Out_Z_Handler_Put_Down_7,
-        Lift_Home_1,
+        Lift_Load_1,
         Lift_Upper_1,
         Lift_Low_1,
-        Lift_Home_2,
+        Lift_Load_2,
         Lift_Upper_2,
         Lift_Low_2,
-        Lift_Home_3,
+        Lift_Load_3,
         Lift_Upper_3,
         Lift_Low_3,
 
@@ -532,7 +534,7 @@ namespace YJ_AutoClamp.ViewModels
             {
                 return;
             }
-            string teachFilePath = Path.Combine(Global.instance.IniTeachPath, SingletonManager.instance.Current_Model.TeachFileName);
+            string teachFilePath = Path.Combine(Global.instance.IniTeachPath);
             var iniFile = new IniFile(teachFilePath);
             string section = obj.ToString();
             if (section == "Lift")
@@ -570,9 +572,16 @@ namespace YJ_AutoClamp.ViewModels
             switch (cmd)
             {
                 case "Top_X_Handler":
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
                     EzModel.MoveABS((int)ServoSlave_List.Top_X_Handler_X, TeachPosition[(int)TeachingSection.Top_Handler_X]);
                     break;
                 case "Out_Y_Handler":
+                    if (EzModel.IsOutHandlerReadyDoneZ() == false)
+                    {
+                        MessageBox.Show("Z is not ready position.", "Servo Move", MessageBoxButton.OK);
+                        return;
+                    }
                     EzModel.MoveABS((int)ServoSlave_List.Out_Y_Handler_Y, TeachPosition[(int)TeachingSection.Out_Handler_Y]);
                     break;
                 case "Out_Z_Handler":
@@ -585,7 +594,6 @@ namespace YJ_AutoClamp.ViewModels
             if (UpdateTimer.IsEnabled == false)
                 UpdateTimer.Start();
         }
-        
         private void OnDioControl_Command(object obj)
         {
             if (string.IsNullOrEmpty(obj.ToString()))
@@ -596,6 +604,83 @@ namespace YJ_AutoClamp.ViewModels
                     EzModel.MoveJog((int)ServoSlave_List.Top_CV_X, (int)Direction.CCW, 2);
                 else
                     EzModel.ServoStop((int)ServoSlave_List.Top_CV_X);
+            }
+            else if (obj.ToString() == "ClampL")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_LZ_UP_CYL_SS] == true)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_LZ_DOWN_SOL, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_LZ_DOWN_SOL, false);
+            }
+            else if (obj.ToString() == "ClampR")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_RZ_UP_CYL_SS] == true)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_RZ_DOWN_SOL, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_RZ_DOWN_SOL, false);
+            }
+            else if (obj.ToString() == "TopUpDown1")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_TR_Z_UP_CYL_SS_1] == true)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
+            }
+            else if (obj.ToString() == "TopUpDown2")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_TR_Z_UP_CYL_SS_2] == true)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, false);
+            }
+            else if (obj.ToString() == "BottomGrip")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_RZ_UNGRIP_CYL_SS] == true)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_RZ_GRIP_SOL, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_RZ_GRIP_SOL, false);
+            }
+            else if (obj.ToString() == "TopGrip")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_RT_Z_UNGRIP_CYL_SS] == true)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_GRIP_SOL, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_GRIP_SOL, false);
+            }
+            else if (obj.ToString() == "LoadGrip")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMP_LD_Z_UNGRIP_CYL_SS] == true)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_LD_Z_GRIP_SOL, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_LD_Z_GRIP_SOL, false);
+            }
+            else if (obj.ToString() == "BottomCenter")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMPING_CV_CENTERING_CYL_SS_2_BWD] == true)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_2, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_2, false);
+            }
+            else if (obj.ToString() == "TopCenter")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMPING_CV_CENTERING_CYL_SS_1_BWD] == true)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_1, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_1, false);
+            }
+            else if (obj.ToString() == "InputCenter")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.IN_CV_UNALIGN_CYL_SS] == false)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.IN_SET_CV_CENTERING, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.IN_SET_CV_CENTERING, false);
+            }
+            else if (obj.ToString() == "LeftRight")
+            {
+                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_X_LEFT_CYL_SS] == false)
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_FORWARD_SOL, true);
+                else
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_FORWARD_SOL, false);
             }
             else
             {

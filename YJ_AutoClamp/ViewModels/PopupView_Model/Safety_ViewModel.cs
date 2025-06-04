@@ -20,7 +20,7 @@ namespace YJ_AutoClamp.ViewModels
         {
             get { return _Dio; }
         }
-        private bool _IsTopmost = true;
+        private bool _IsTopmost = true; 
         public bool IsTopmost
         {
             get { return _IsTopmost; }
@@ -29,12 +29,13 @@ namespace YJ_AutoClamp.ViewModels
         public Safety_ViewModel()
         {
             Global.Mlog.InfoFormat($"Safety Popup Open.");
-
+            Global.instance.Set_TowerLamp(Global.TowerLampType.Error);
+            SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
         }
-        private async void OnDioSet_Command(object obj)
+        private async void OnDioSetCommand(object obj)
         {
             string cmd = obj.ToString();
-            // Buzzer Y0C
+            // Buzzer Y07
             if(cmd == "Buzzer")
             {
                 if (SingletonManager.instance.Ez_Dio.DO_RAW_DATA[(int)EziDio_Model.DO_MAP.BUZZER] == false)
@@ -42,11 +43,11 @@ namespace YJ_AutoClamp.ViewModels
                 else
                     SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
             }
-            // Reset Y20
+            // Reset Y03
             else
             {
                 SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_RESET, true);
-                await Task.Delay(1000); // 비동기 대기
+                await Task.Delay(3000); // 비동기 대기
                 SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_RESET, false);
             }
         }
@@ -55,12 +56,15 @@ namespace YJ_AutoClamp.ViewModels
         {
             Global.Mlog.Info("[USER] Safety 'Unlock' Button Click");
 
-            if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.DOOR_FEEDBACK] == true)
+            if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.DOOR_FEEDBACK] == false
+                || Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.FRONT_OP_EMERGENCY_FEEDBACK] == false
+                || Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.REAR_OP_EMERGENCY_FEEDBACK] == false)
             {
-                MessageBox.Show("SAFETY_PLC_POWER_OFF. Please Reset Swich Push.", "Reset Push !", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Global.instance.ShowMessagebox("SAFETY_PLC_POWER_OFF. Please Reset Swich Push.", false);
                 return;
             }
-
+            SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
+            Global.instance.InspectionStop();
             // Exit
             Global.instance.SafetyErrorMessage = string.Empty;
             WindowManager.Instance.CloseCommand.Execute("Safety");
@@ -75,7 +79,7 @@ namespace YJ_AutoClamp.ViewModels
 
             Exit_ButtonCommand = new RelayCommand(OnExit_Command);
             PreventCloseCommand = new RelayCommand(OnPreventClose);
-            DioSetCommand = new RelayCommand(OnDioSet_Command);
+            DioSetCommand = new RelayCommand(OnDioSetCommand);
         }
         protected override void DisposeManaged()
         {

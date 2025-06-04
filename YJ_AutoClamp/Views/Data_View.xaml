@@ -29,28 +29,28 @@
             <DropShadowEffect ShadowDepth="2"/>
         </Grid.Effect>
         <telerik:RadTileList TilePlaceHolderSide="220" Margin="70,0,0,0">
-            <telerik:Tile Background="#00a100" Style="{StaticResource Tile_Style}"
+            <telerik:Tile Background="Gray" Style="{StaticResource Tile_Style}"
                           Command="{Binding TileButton_Command}" CommandParameter="System">
                 <StackPanel VerticalAlignment="Center">
                     <telerik:RadGlyph Glyph="&#xe025;" Style="{StaticResource TileGlyph_Style}"/>
                     <Label Content="System Manager" Style="{StaticResource TileLabel_Style}"/>
                 </StackPanel>
             </telerik:Tile>
-            <telerik:Tile Background="#bc214b" Style="{StaticResource Tile_Style}"
+            <telerik:Tile Background="Gray" Style="{StaticResource Tile_Style}"
                           Command="{Binding TileButton_Command}" CommandParameter="Jog">
                 <StackPanel VerticalAlignment="Center">
                     <telerik:RadGlyph Glyph="&#xe141;" Style="{StaticResource TileGlyph_Style}"/>
                     <Label Content="Jog Setting" Style="{StaticResource TileLabel_Style}"/>
                 </StackPanel>
             </telerik:Tile>
-            <telerik:Tile Background="#21b8bc" Style="{StaticResource Tile_Style}"
+            <telerik:Tile Background="Gray" Style="{StaticResource Tile_Style}"
                           Command="{Binding TileButton_Command}" CommandParameter="Serial">
                 <StackPanel VerticalAlignment="Center">
                     <telerik:RadGlyph Glyph="&#xe10f;" Style="{StaticResource TileGlyph_Style}"/>
                     <Label Content="Serial Port Setting" Style="{StaticResource TileLabel_Style}"/>
                 </StackPanel>
             </telerik:Tile>
-            <telerik:Tile Background="#dcb016" Style="{StaticResource Tile_Style}" 
+            <telerik:Tile Background="Gray" Style="{StaticResource Tile_Style}" 
                           Command="{Binding TileButton_Command}" CommandParameter="Motor">
                 <StackPanel VerticalAlignment="Center">
                     <telerik:RadGlyph Glyph="&#xe13b;" Style="{StaticResource TileGlyph_Style}"/>

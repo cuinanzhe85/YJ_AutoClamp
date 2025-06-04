@@ -1,0 +1,129 @@
+﻿<Window x:Class="YJ_AutoClamp.SystemData_View"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YJ_AutoClamp"
+        mc:Ignorable="d"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:utils="clr-namespace:YJ_AutoClamp.Utils"
+        utils:WindowBlur.IsEnabled="True"
+        ResizeMode="NoResize" WindowStyle="None"
+        Background="Transparent" AllowsTransparency="True" WindowStartupLocation="CenterScreen" Top="8" Left="12"
+        Name="SystemData" Height="750" Width="1000">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.05*"/>
+            <RowDefinition Height="0.85*"/>
+            <RowDefinition Height="0.10*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.RowSpan="3" Background="Black" Opacity="0.6"/>
+        <!--Title-->
+        <Grid >
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="MouseDown">
+                    <b:InvokeCommandAction Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=MoveCommand}" CommandParameter="SystemData"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#261b2a" Offset="0.0"/>
+                    <GradientStop Color="#292d37" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <StackPanel Orientation="Horizontal">
+                <telerik:RadGlyph Glyph="&#xe13b;" Margin="15,0" FontSize="18" Foreground="White"/>
+                <Label Content="System Data" Foreground="White" FontSize="13" FontWeight="SemiBold" Padding="0,6" VerticalContentAlignment="Center"/>
+            </StackPanel>
+            <telerik:RadButton Style="{StaticResource Exit_ButtonStyle}"
+                           Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" CommandParameter="SystemData">
+                <telerik:RadGlyph Glyph="&#xe11b;">
+                </telerik:RadGlyph>
+            </telerik:RadButton>
+        </Grid>
+        <!--Contents-->
+        <Border Grid.Row="1" Margin="40,25" Background="WhiteSmoke" CornerRadius="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.3*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="0.3*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                </Grid.ColumnDefinitions>
+
+
+                <Label Content="Load Wait TimeOut(Sec)" Grid.Row="0" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadWatermarkTextBox Grid.Row="0" Grid.Column="1" Text="{Binding PickUpTimeOut, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
+
+                <Label Content="Load Floor Count" Grid.Row="0" Grid.Column="2" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadWatermarkTextBox Grid.Row="0" Grid.Column="3" Text="{Binding LoadFloorCount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
+                
+                <Label Content="BarCode Use" Grid.Row="1" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Option_ComboStyle}"
+                     ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding BcrUseNotuse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label Content="NFC Use" Grid.Row="2" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="2" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
+                     ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding NfcUseNotuse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <StackPanel Grid.Row="2" Grid.Column="2">
+                    <Label Content="prodcMagtNo"  Style="{StaticResource Option_LabelStyle}"/>
+                    <telerik:RadWatermarkTextBox Text="{Binding HttpSendData, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}" Margin="0,-5,0,2" FontSize="15"/>
+                </StackPanel>
+                <Button Grid.Row="2" Grid.Column="3" Content="HTTP Test" FontSize="20" FontWeight="Bold" Command="{Binding Manual_Command}" CommandParameter="HTTP_TEST" Margin="5"/>
+
+                <Label Content="Aging CV Step Time(ms)" Grid.Row="3" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadWatermarkTextBox Grid.Row="3" Grid.Column="1" Text="{Binding AgingCvStepTime, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
+                <Button Grid.Row="3" Grid.Column="2" Content="Step Run" FontSize="20" FontWeight="Bold" 
+                        Command="{Binding Manual_Command}" CommandParameter="StepRun" Margin="5"/>
+                <telerik:RadComboBox Grid.Row="3" Grid.Column="3"  Style="{StaticResource Option_ComboStyle}"
+                        ItemsSource="{Binding AgingCvList}" SelectedItem="{Binding AgingCvSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                 <!--Aging Conveyor Use NotUse-->
+                <Label Content="Aging Upper1" Grid.Row="4" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="4" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
+                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[0], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Content="Aging Upper2" Grid.Row="5" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="5" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
+                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[1], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Content="Aging Upper3" Grid.Row="6" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="6" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
+                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[2], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label Content="Aging Low1" Grid.Row="4" Grid.Column="2" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="4" Grid.Column="3"  Style="{StaticResource Option_ComboStyle}"
+                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[3], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Content="Aging Low2" Grid.Row="5" Grid.Column="2" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="5" Grid.Column="3"  Style="{StaticResource Option_ComboStyle}"
+                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[4], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Content="Aging Low3" Grid.Row="6" Grid.Column="2" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="6" Grid.Column="3"  Style="{StaticResource Option_ComboStyle}"
+                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[5], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </Border>
+        <!--Save / Exit-->
+        <Border Grid.Row="2" Margin="40,0,40,25">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Save" Margin="0,0,10,0" Style="{StaticResource SerialPort_ButtonStyle}" 
+                    Command="{Binding Save_Command}"/>
+                <Button Grid.Column="1" Content="Exit" Margin="10,0,0,0" Style="{StaticResource SerialPort_ButtonStyle}"
+                    Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" CommandParameter="SystemData"/>
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>

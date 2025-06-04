@@ -104,7 +104,27 @@ namespace YJ_AutoClamp.ViewModels
                     {
                         string failedMessage = $"Failed to turn off the following Servo: {failedSlaves}";
                         Global.Mlog.Error(failedMessage);
-                        System.Windows.MessageBox.Show(failedMessage, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                        Global.instance.ShowMessagebox(failedMessage);
+                    }
+                    break;
+                case "AlarmReset":
+                    string failedSlave = string.Empty;
+                    foreach (var slave in ServoSlaves.Where(s => s.IsChecked))
+                    {
+                        result = SingletonManager.instance.Ez_Model.ServoAlarmReset(slave.SlaveID);
+                        if (!result)
+                        {
+                            if (!string.IsNullOrEmpty(failedSlave))
+                                failedSlave += ", ";
+                            failedSlave += slave.Name;
+                        }
+                        slave.IsChecked = false;
+                    }
+                    if (!string.IsNullOrEmpty(failedSlave))
+                    {
+                        string failedMessage = $"Failed to Alam Reset the following Servo: {failedSlave}";
+                        Global.Mlog.Error(failedMessage);
+                        Global.instance.ShowMessagebox(failedMessage);
                     }
                     break;
                 case "Origin":
@@ -184,7 +204,7 @@ namespace YJ_AutoClamp.ViewModels
                     {
                         string failedMessage = $"Failed to complete origin operation for the following Servo(s): {string.Join(", ", failedSlavesList)}";
                         Global.Mlog.Error(failedMessage);
-                        MessageBox.Show(failedMessage, "Origin Fail", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Global.instance.ShowMessagebox(failedMessage);
                     }
 
                     BusyContent = string.Empty;

@@ -63,7 +63,7 @@ namespace YJ_AutoClamp.ViewModels
                 }
             }
 
-            MessageBox.Show("Jog velocity settings have been successfully saved.", "Save Successful", MessageBoxButton.OK, MessageBoxImage.Information);
+            Global.instance.ShowMessagebox("Jog velocity settings have been successfully saved.",false);
         }
         #region // override
         protected override void InitializeCommands()

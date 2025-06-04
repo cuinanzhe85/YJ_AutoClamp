@@ -1,5 +1,6 @@
 ﻿using Common.Mvvm;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
@@ -29,6 +30,7 @@ namespace YJ_AutoClamp.Models
         };
 
         public IPAddress IpAddress ;
+        //private EziDio_Model Dio = SingletonManager.instance.Ez_Dio;
         public EzMotion_Model_E() { }
         public bool Connect(int iSlaveNo)
         {
@@ -364,6 +366,7 @@ namespace YJ_AutoClamp.Models
                 EmergencyServoStop(iSlaveNo);
                 return false;
             }
+            await Task.Delay(1000);
             // Alarm Reset
             if (ServoAlarmReset(iSlaveNo) == false)
             {
@@ -393,9 +396,9 @@ namespace YJ_AutoClamp.Models
             await Task.Delay(200);
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            int waitTime = 20000;
+            int waitTime = 60000;
             if (iSlaveNo == (int)ServoSlave_List.Out_Y_Handler_Y)
-                waitTime = 50000;
+                waitTime = 90000;
             while (true)
             {
                 if (IsOriginOK(iSlaveNo) == true)
@@ -479,6 +482,407 @@ namespace YJ_AutoClamp.Models
             minusOver = flag2;  //true이면 over이다.
 
             return EziMOTIONPlusRLib.FMM_OK;
+        }
+        public bool MoveTopHandlerNGPort()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_NG_Port).ToString()];
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("TOP_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Top_X_Handler_X), pos);
+        }
+        public bool IsMoveTopNGPortDone()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_NG_Port).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Top_X_Handler_X)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveTopHandlerPutDownPos()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_Put_Down).ToString()];
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("TOP_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Top_X_Handler_X), pos);
+        }
+        public bool MoveTopHandlerPickUpPos()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_Pick_Up).ToString()];
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("TOP_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Top_X_Handler_X), pos);
+        }
+        public bool IsTopHandlerPickUpPos()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_Pick_Up).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Top_X_Handler_X)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveTopReturnCvRun()
+        {
+            return MoveJog((int)(ServoSlave_List.Top_CV_X), (int)Direction.CCW, 2);
+        }
+        public bool MoveTopReturnCvStop()
+        {
+            return ServoStop((int)(ServoSlave_List.Top_CV_X));
+        }
+        public bool IsTopHandlerPutDownPos()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Top_X_Handler_Put_Down).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Top_X_Handler_X)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveLiftDown(int Index)
+        {
+            double pos;
+            bool ret = false;
+            if (Index == 3)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_1).ToString()];
+                pos = Math.Round(pos, 2);
+                ret = MoveABS((int)(ServoSlave_List.Lift_1_Z), pos);
+            }
+            if (Index == 4)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_2).ToString()];
+                pos = Math.Round(pos, 2);
+                ret = MoveABS((int)(ServoSlave_List.Lift_2_Z), pos);
+            }
+            if (Index == 5)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_3).ToString()];
+                pos = Math.Round(pos, 2);
+                ret = MoveABS((int)(ServoSlave_List.Lift_3_Z), pos);
+            }
+            return ret;
+        }
+        public bool IsMoveLiftDownDone(int Index)
+        {
+            double pos;
+            double GetPos;
+            if (Index == 0 || Index == 1 || Index == 2)
+                return true;
+            if (Index == 3)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_1).ToString()];
+                // 소수점아래 2자리까지비교
+                pos = Math.Round(pos, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_1_Z)), 2);
+                if (GetPos == pos)
+                    return true;
+            }
+            if (Index == 4)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_2).ToString()];
+                // 소수점아래 2자리까지비교
+                pos = Math.Round(pos, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_2_Z)), 2);
+                if (GetPos == pos)
+                    return true;
+            }
+            if (Index == 5)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Low_3).ToString()];
+                // 소수점아래 2자리까지비교
+                pos = Math.Round(pos, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_3_Z)), 2);
+                if (GetPos == pos)
+                    return true;
+            }
+            return false;
+        }
+        public bool MoveLiftUp(int Index)
+        {
+            double pos;
+            bool ret = false;
+            if (Index == 0 || Index == 3)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_1).ToString()];
+                pos = Math.Round(pos, 2);
+                ret = MoveABS((int)(ServoSlave_List.Lift_1_Z), pos);
+            }
+            if (Index == 1 || Index == 4)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_2).ToString()];
+                pos = Math.Round(pos, 2);
+                ret = MoveABS((int)(ServoSlave_List.Lift_2_Z), pos);
+            }
+            if (Index == 2 || Index == 5)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_3).ToString()];
+                pos = Math.Round(pos, 2);
+                ret = MoveABS((int)(ServoSlave_List.Lift_3_Z), pos);
+            }
+            return ret;
+        }
+        public bool IsMoveLiftUpDone(int Index)
+        {
+            double pos;
+            double GetPos;
+            if (Index == 0 || Index == 3)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_1).ToString()];
+                // 소수점아래 2자리까지비교
+                pos = Math.Round(pos, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_1_Z)), 2);
+                if (GetPos == pos)
+                    return true;
+            }
+            if (Index == 1 || Index == 4)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_2).ToString()];
+                // 소수점아래 2자리까지비교
+                pos = Math.Round(pos, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_2_Z)), 2);
+                if (GetPos == pos)
+                    return true;
+            }
+            if (Index == 2 || Index == 5)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Upper_3).ToString()];
+                // 소수점아래 2자리까지비교
+                pos = Math.Round(pos, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_3_Z)), 2);
+                if (GetPos == pos)
+                    return true;
+            }
+            return false;
+        }
+        public bool MoveLiftLoding(int LiftIndex)
+        {
+            double pos;
+            bool ret = false;
+            if (LiftIndex == 0)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Load_1).ToString()];
+                pos = Math.Round(pos, 2);
+                ret = MoveABS((int)(ServoSlave_List.Lift_1_Z), pos);
+            }
+            if (LiftIndex == 1)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Load_2).ToString()];
+                pos = Math.Round(pos, 2);
+                ret = MoveABS((int)(ServoSlave_List.Lift_2_Z), pos);
+            }
+            if (LiftIndex == 2)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Load_3).ToString()];
+                pos = Math.Round(pos, 2);
+                ret = MoveABS((int)(ServoSlave_List.Lift_3_Z), pos);
+            }
+            return ret;
+        }
+        public bool IsMoveLiftLodingDone(int LiftIndex)
+        {
+            double pos;
+            double GetPos;
+            if (LiftIndex == 0)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Load_1).ToString()];
+                // 소수점아래 2자리까지비교
+                pos = Math.Round(pos, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_1_Z)), 2);
+                if (GetPos == pos)
+                    return true;
+            }
+            if (LiftIndex == 1)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Load_2).ToString()];
+                // 소수점아래 2자리까지비교
+                pos = Math.Round(pos, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_2_Z)), 2);
+                if (GetPos == pos)
+                    return true;
+            }
+            if (LiftIndex == 2)
+            {
+                pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Load_3).ToString()];
+                // 소수점아래 2자리까지비교
+                pos = Math.Round(pos, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_3_Z)), 2);
+                if (GetPos == pos)
+                    return true;
+            }
+            return false;
+        }
+       
+        public bool MoveOutHandlerPickUpY()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up).ToString()];
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("OUT_Y_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Out_Y_Handler_Y), pos);
+        }
+        public bool IsOutHandlerPickupPosY()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveOutHandlerPutDownY()
+        {
+            double pos = GetOutY_PutDownMovePosition();
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("OUT_Y_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Out_Y_Handler_Y), pos);
+        }
+        public bool IsOutHandlerYPutDownPos()
+        {
+            double pos = GetOutY_PutDownMovePosition();
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveOutHandlerReadyY()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Home).ToString()];
+            pos = Math.Round(pos, 2);
+            return MoveABS((int)(ServoSlave_List.Out_Y_Handler_Y), pos);
+        }
+        public bool IsMoveOutHandlerReadyY()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Home).ToString()];
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveOutHandlerPickUpZ()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up).ToString()];
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("OUT_Z_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Out_Z_Handler_Z), pos);
+        }
+        public bool IsOutHandlerPickUpZ()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveOutHandlerRadyZ()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Home).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("OUT_Z_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Out_Z_Handler_Z), pos);
+        }
+        public bool IsOutHandlerReadyDoneZ()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Home).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveOutHandlerPutDownZ()
+        {
+            double pos = GetOutZ_PutDownFloorPos();
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("OUT_Y_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Out_Z_Handler_Z), pos);
+        }
+        public bool IsOutHandlerPutDownDoneZ()
+        {
+            double pos = GetOutZ_PutDownFloorPos();
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool IsOutHandlerSaftyInterlockY()
+        {
+            double pos1, pos2, pos3, pos4;
+            pos1 = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_1).ToString()];
+            pos1 = Math.Round(pos1, 2);
+            pos2 = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_2).ToString()];
+            pos2 = Math.Round(pos2, 2);
+            pos3 = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_3).ToString()];
+            pos3 = Math.Round(pos3, 2);
+            pos4 = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Home).ToString()];
+            pos4 = Math.Round(pos4, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
+
+            // Y 축 Lift 1,2,3 , Ready 일때
+            if (GetPos == pos1 || GetPos == pos2 || GetPos == pos3 || GetPos == pos4 || GetPos ==0)
+                return true;
+            return false;
+        }
+        public bool IsYPickupMoveLiftSaftyPos(int Index)
+        {
+            double pos1=0;
+            double GetPos = 0;
+            if (Index == 0)
+            {
+                pos1 = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Load_1).ToString()];
+                pos1 = Math.Round(pos1, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_1_Z)), 2);
+
+                if (GetPos >= pos1)
+                    return true;
+            }
+            else if (Index == 1)
+            {
+                pos1 = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Load_2).ToString()];
+                pos1 = Math.Round(pos1, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_2_Z)), 2);
+
+                if (GetPos >= pos1)
+                    return true;
+            }
+            else if (Index == 2)
+            {
+                pos1 = SingletonManager.instance.Teaching_Data[(Teaching_List.Lift_Load_3).ToString()];
+                pos1 = Math.Round(pos1, 2);
+                GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Lift_3_Z)), 2);
+
+                if (GetPos >= pos1)
+                    return true;
+            }
+            
+            return false;
+        }
+        public double GetOutZ_PutDownFloorPos()
+        {
+            double pos = 0.0;
+            pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Put_Down_1 + SingletonManager.instance.LoadFloor[SingletonManager.instance.LoadStageNo]).ToString()];
+            pos = Math.Round(pos, 2);
+            return pos;
+        }
+        public double GetOutY_PutDownMovePosition()
+        {
+            double pos = 0.0;
+            // Lift 1,2,3 순서로 Load 한다.
+            pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_1 + SingletonManager.instance.LoadStageNo).ToString()];
+            pos = Math.Round(pos, 2);
+            return pos;
         }
         #region  //DIO Control
         public bool GetIO_InputData(int iSlaveNo, int target)

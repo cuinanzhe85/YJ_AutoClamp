@@ -460,7 +460,7 @@
                         <Border Margin="5" BorderThickness="1" BorderBrush="Chocolate" CornerRadius="8">
                             <telerik:RadComboBox ItemsSource="{StaticResource LiftItems}" SelectedIndex="{Binding Selected_LiftIndex}" Style="{StaticResource TeachJig_ComboStyle}"/>
                         </Border>
-                        <telerik:RadRadioButton Grid.Column="1" Grid.Row="0" Content="Ready" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Lift"
+                        <telerik:RadRadioButton Grid.Column="1" Grid.Row="0" Content="Loading" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Lift"
                                                 IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=18, Mode=TwoWay}"/>
                         <telerik:RadRadioButton Grid.Column="0" Grid.Row="1" Content="Top" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="Lift"
                                                 IsChecked="{Binding TeachingIndex, Converter={StaticResource IndexToCheckedConverter}, ConverterParameter=19, Mode=TwoWay}"/>
@@ -473,11 +473,14 @@
         </Grid>
         <!--Dio Control-->
         <Grid Grid.Row="2" Margin="0,0,0,5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.25*"/>
+            <!--<Grid.ColumnDefinitions>
+                <ColumnDefinition Width="249*"/>
+                <ColumnDefinition Width="130*"/>
+                <ColumnDefinition Width="379*"/>
+                <ColumnDefinition Width="134*"/>
             </Grid.ColumnDefinitions>
-            
-            <GroupBox Grid.Column="0" Header="Dio Bottom Handler" BorderThickness="2" FontWeight="SemiBold" Foreground="Teal">
+
+            <GroupBox Grid.Column="0" Header="Dio Bottom Handler" BorderThickness="2" FontWeight="SemiBold" Foreground="Teal" Grid.ColumnSpan="3">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -493,7 +496,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <!--In Handler-->
+                    --><!--In Handler--><!--
                     <telerik:RadToggleButton Content="Y LD Z Grip" CommandParameter="26" IsChecked="{Binding Dio.DO_OPER_DATA[26]}"
                                              Grid.Column="0" Grid.Row="0"  Style="{StaticResource DioToggle_ButtonStyle}"/>
                     <telerik:RadToggleButton Content="In Handler FWD" CommandParameter="29" IsChecked="{Binding Dio.DO_OPER_DATA[29]}"
@@ -532,8 +535,35 @@
                     
                     
                 </Grid>
-            </GroupBox>
-            
+            </GroupBox>-->
+            <GroupBox Grid.Column="0" Header="Dio Bottom Handler" BorderThickness="2" FontWeight="SemiBold" Foreground="Teal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <telerik:RadRadioButton Grid.Column="0" Grid.Row="0" Content="Clamp L Up/Down" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="ClampL" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="1" Grid.Row="0" Content="Clamp R Up/Down" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="ClampR" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="2" Grid.Row="0" Content="Top Up/Down 1" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="TopUpDown1" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="3" Grid.Row="0" Content="Top Up/Down 2" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="TopUpDown2" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="4" Grid.Row="0" Content="Buttom Grip" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="BottomGrip" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="0" Grid.Row="1" Content="Top Grip" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="TopGrip" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="1" Grid.Row="1" Content="Load Y Grip" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="LoadGrip" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="2" Grid.Row="1" Content="Bottom Center" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="BottomCenter" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="3" Grid.Row="1" Content="Top Center" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="TopCenter" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="4" Grid.Row="1" Content="Input Center" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="InputCenter" Command="{Binding DioControl_Command}"/>
+                    <telerik:RadRadioButton Grid.Column="5" Grid.Row="0" Content="Left / Right" Style="{StaticResource Radio_ButtonStyle}" CommandParameter="LeftRight" Command="{Binding DioControl_Command}"/>
+                </Grid>
+                
+            </GroupBox >
             <!--<GroupBox Grid.Column="3" Header="Dio Conveyor" BorderThickness="2" FontWeight="SemiBold" Foreground="Teal">
                 <Grid>
                     <Grid.ColumnDefinitions>

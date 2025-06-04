@@ -245,4 +245,30 @@ namespace YJ_AutoClamp.Converters
             throw new NotImplementedException();
         }
     }
+    public class MessageboxBackgroundConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            try
+            {
+                bool m = (bool)value;
+                if (m == true)
+                {
+                    return "OrangeRed";
+                }
+                else
+                {
+                    return "CornflowerBlue";
+                }
+            }
+            catch
+            {
+                return "OrangeRed";
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -10,7 +10,7 @@
         xmlns:utils="clr-namespace:YJ_AutoClamp.Utils"
         utils:WindowBlur.IsEnabled="True"
         ResizeMode="NoResize" WindowStyle="None"
-        Background="Transparent" AllowsTransparency="True" WindowStartupLocation="CenterScreen"
+        Background="Transparent" AllowsTransparency="True" WindowStartupLocation="CenterScreen" Top="8" Left="12"
         Name="JogVelocity" Width="1000" Height="780">
     <Grid>
         <Grid.RowDefinitions>
