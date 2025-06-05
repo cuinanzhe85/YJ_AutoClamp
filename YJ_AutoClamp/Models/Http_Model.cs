@@ -45,9 +45,9 @@ namespace YJ_AutoClamp.Models
             factoryCode = "C100E";
             plantCode = "P104";
             plantUrl = "http://168.219.108.30:81/gmes2/gmes2If.do";
-            APIName = "gumi_process_status/1/getPrevInspInfo";
-            ticket = "credential:TICKET-d419685c-ebc5-44c4-9c95-51254a872697:23ba025a-e5f7-48a8-9cca-9968765107f3:dc3ef8d0-69b5-45b4-8312-c129b3583610_6da98e02-005c-4a35-89e1-b038cc885665:-1:6nAo3jZN+JAcZWvBuAoesS/WdfxWEMTXeWQqBZuoGvYcKcSbz5WDwGdp5h0dVdpPfYFexmw5Cz9w53/v/y9pZQ==:signature=QaZOJfq1BZrw3/W7uJMXvL0il0VxvHt/1hpkHmpk41N1Pt+0gOmEC8sTIw4pfw8p73I2Mn4VWlogBZM/WJ1yAg==";
-
+            APIName = "com_samsung_gmes2_qm_json_vo_QmSubInspForJsonSVO/1/qmSubInspForJson01DVO";
+            //ticket = "credential:TICKET-d419685c-ebc5-44c4-9c95-51254a872697:23ba025a-e5f7-48a8-9cca-9968765107f3:dc3ef8d0-69b5-45b4-8312-c129b3583610_6da98e02-005c-4a35-89e1-b038cc885665:-1:6nAo3jZN+JAcZWvBuAoesS/WdfxWEMTXeWQqBZuoGvYcKcSbz5WDwGdp5h0dVdpPfYFexmw5Cz9w53/v/y9pZQ==:signature=QaZOJfq1BZrw3/W7uJMXvL0il0VxvHt/1hpkHmpk41N1Pt+0gOmEC8sTIw4pfw8p73I2Mn4VWlogBZM/WJ1yAg==";
+            ticket = "credential:TICKET-839fd18b-596e-4f08-b257-9b30dd9d2275:d76f5914-0caa-430d-837c-c9c7257e41c4:1950074a-219a-44a4-898c-47ce4d36d5ea_6da98e02-005c-4a35-89e1-b038cc885665:-1:CZXIvSBHI86/NCZAd4h9jLJ9t8TXjmtFvEahao68ImG3zSIXPn5eobN2gmEWUljlFpR|C8IJYn1v2JYWFMnxMQ==:signature=mqCuwbiVsW1NCMAkb2+Iq68DsK/SDgegRnY/aTtBwzPfkN3kRaP0qGx+GXL0YytDRHy5VRV8frT/1mPFybvhcw==";
             // inspTopCode TopCode 필스로 입력할 예정
             APIURL = plantUrl + "/" + APIName + "?fctCode=" + factoryCode + "&plantCode=" + plantCode + "&inspTopCode=TOP123" + "&prodcMagtNo=" + inputCN;
             Global.Mlog.Info($"http send : " + APIURL);

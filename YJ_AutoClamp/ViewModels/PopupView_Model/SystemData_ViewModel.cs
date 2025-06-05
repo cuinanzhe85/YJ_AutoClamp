@@ -3,6 +3,8 @@ using Common.Managers;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using YJ_AutoClamp.Models;
@@ -129,8 +131,8 @@ namespace YJ_AutoClamp.ViewModels
                 Global.Mlog.Info(" LOAD_FLOOR_COUNT = " + LoadFloorCount);
                 SingletonManager.instance.SystemModel.LoadFloorCount = Convert.ToInt32(LoadFloorCount);
 
-                myIni.Write("AGING_CV_STEP_TIME", LoadFloorCount, Section);
-                Global.Mlog.Info(" AGING_CV_STEP_TIME = " + LoadFloorCount);
+                myIni.Write("AGING_CV_STEP_TIME", AgingCvStepTime, Section);
+                Global.Mlog.Info(" AGING_CV_STEP_TIME = " + AgingCvStepTime);
                 SingletonManager.instance.SystemModel.AgingCvStepTime = Convert.ToInt32(AgingCvStepTime);
 
                 for (int i = 0; i < 6; i++)
@@ -146,7 +148,7 @@ namespace YJ_AutoClamp.ViewModels
                 Global.instance.ShowMessagebox("Save Fail.");
             }
         }
-        private void OnManual_Command(object obj)
+        private async void OnManual_Command(object obj)
         {
             switch(obj.ToString())
             {
@@ -161,15 +163,25 @@ namespace YJ_AutoClamp.ViewModels
                     if (!string.IsNullOrEmpty(HttpSendData))
                     {
                         SingletonManager.instance.HttpJsonModel.SendRequest("getPrevInspInfo", HttpSendData);
-                        while (true)
+                        //SingletonManager.instance.HttpModel.GetprocCodeData("A5102289AG188");
+                        Stopwatch sw = new Stopwatch();
+                        await Task.Run(() =>
                         {
-                            if (SingletonManager.instance.HttpJsonModel.DataSendFlag == true)
+                            while (true)
                             {
-                                Global.Mlog.Info($"HTTP Response ResultCode: {SingletonManager.instance.HttpJsonModel.ResultCode}");
-                                Global.instance.ShowMessagebox($"HTTP Response ResultCode: {SingletonManager.instance.HttpJsonModel.ResultCode}");
-                                break;
+                                if (SingletonManager.instance.HttpJsonModel.DataSendFlag == true)
+                                {
+                                    Global.instance.ShowMessagebox($"HTTP Response ResultCode: {SingletonManager.instance.HttpJsonModel.ResultCode}");
+                                    break;
+                                }
+                                if (sw.ElapsedMilliseconds > 5000) // 5초
+                                {
+                                    Global.instance.ShowMessagebox($"HTTP Data Receive Timeout.");
+                                    break;
+                                }
+                                Thread.Sleep(100); // 100ms
                             }
-                        }
+                        });
                     }
                     break;
             }

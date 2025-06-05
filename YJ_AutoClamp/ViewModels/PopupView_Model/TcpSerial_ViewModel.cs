@@ -118,7 +118,7 @@ namespace YJ_AutoClamp.ViewModels
                     bcrData[0] = "";
                     await Task.Run(() =>
                     {
-                        Stopwatch sw = Stopwatch.StartNew();
+                        Stopwatch sw = new Stopwatch();
                         sw.Restart();
                         while (true)
                         {
@@ -157,7 +157,7 @@ namespace YJ_AutoClamp.ViewModels
             NfcData = "";
             await Task.Run(() =>
             {
-                Stopwatch sw = Stopwatch.StartNew();
+                Stopwatch sw = new Stopwatch();
                 sw.Restart();
                 while (true)
                 {

@@ -171,7 +171,6 @@
     <Compile Include="Models\Serial_Model.cs" />
     <Compile Include="Models\Servo_Model.cs" />
     <Compile Include="Models\System_Model.cs" />
-    <Compile Include="Models\TcpServer_Model.cs" />
     <Compile Include="Models\Unit_Model.cs" />
     <Compile Include="SingletonManager.cs" />
     <Compile Include="Utils\InforManager.cs" />
