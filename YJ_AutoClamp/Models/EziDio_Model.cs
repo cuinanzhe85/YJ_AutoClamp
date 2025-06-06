@@ -506,7 +506,7 @@ namespace YJ_AutoClamp.Models
 
             if (nRtn != EziMOTIONPlusELib.FMM_OK)
             {
-                Global.Mlog.Info("Function(SetIO_OutputData) was failed.");
+                Global.Mlog.Info($"Function(SetIO_OutputData : Y{index.ToString("X")}) was failed.");
                 return false;
             }
             

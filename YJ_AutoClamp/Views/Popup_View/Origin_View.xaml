@@ -71,18 +71,21 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Select All" Style="{StaticResource Origin_ButtonStyle}" 
+                <Button Grid.Column="0" Content="   Servo&#x0a;Connect" Style="{StaticResource Origin_ButtonStyle}" 
+                        Command="{Binding Servo_Command}" CommandParameter="Connect"/>
+                <Button Grid.Column="1" Content="Select&#x0a;   All" Style="{StaticResource Origin_ButtonStyle}" 
                         Command="{Binding Servo_Command}" CommandParameter="All"/>
-                <Button Grid.Column="1" Content="Servo On" Style="{StaticResource Origin_ButtonStyle}" 
+                <Button Grid.Column="2" Content="Select&#x0a;   On" Style="{StaticResource Origin_ButtonStyle}" 
                         Command="{Binding Servo_Command}" CommandParameter="On"/>
-                <Button Grid.Column="2" Content="Servo Off" Style="{StaticResource Origin_ButtonStyle}" 
+                <Button Grid.Column="3" Content="Select&#x0a;   Off" Style="{StaticResource Origin_ButtonStyle}" 
                         Command="{Binding Servo_Command}" CommandParameter="Off"/>
-                <Button Grid.Column="3" Content="Alarm Reset" Style="{StaticResource Origin_ButtonStyle}" 
+                <Button Grid.Column="4" Content="Alarm&#x0a;Reset" Style="{StaticResource Origin_ButtonStyle}" 
                         Command="{Binding Servo_Command}" CommandParameter="AlarmReset"/>
-                <Button Grid.Column="4" Content="Origin" Style="{StaticResource Origin_ButtonStyle}" 
+                <Button Grid.Column="5" Content="Origin" Style="{StaticResource Origin_ButtonStyle}" 
                         Command="{Binding Servo_Command}" CommandParameter="Origin"/>
-                <Button Grid.Column="5" Content="Exit" Style="{StaticResource Origin_ButtonStyle}"
+                <Button Grid.Column="6" Content="Exit" Style="{StaticResource Origin_ButtonStyle}"
                         Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" CommandParameter="Origin"/>
             </Grid>
         </Border>

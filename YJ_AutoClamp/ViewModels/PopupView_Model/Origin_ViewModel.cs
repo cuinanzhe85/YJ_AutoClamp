@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using YJ_AutoClamp.Models;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace YJ_AutoClamp.ViewModels
 {
@@ -47,6 +48,8 @@ namespace YJ_AutoClamp.ViewModels
             set { SetValue(ref _BusyContent, value); }
         }
         public ObservableCollection<ServoSlaveViewModel> ServoSlaves { get; set; }
+        public EzMotion_Model_E Motion = SingletonManager.instance.Ez_Model;
+        public EziDio_Model Dio = SingletonManager.instance.Ez_Dio;
         public Origin_ViewModel()
         {
             ServoSlaves = new ObservableCollection<ServoSlaveViewModel>();
@@ -80,18 +83,18 @@ namespace YJ_AutoClamp.ViewModels
                 case "On":
                     foreach (var slave in ServoSlaves.Where(s => s.IsChecked))
                     {
-                        result = SingletonManager.instance.Ez_Model.SetServoOn(slave.SlaveID, true);
+                        result = Motion.SetServoOn(slave.SlaveID, true);
                         slave.Color = result ? "Bisque" : "White";
                         slave.IsChecked = false;
                     }
                     if (SingletonManager.instance.Servo_Model[(int)ServoSlave_List.Top_CV_X].IsServoOn == false)
-                        SingletonManager.instance.Ez_Model.SetServoOn((int)ServoSlave_List.Top_CV_X, true);
+                        Motion.SetServoOn((int)ServoSlave_List.Top_CV_X, true);
                     break;
                 case "Off":
                     string failedSlaves = string.Empty;
                     foreach (var slave in ServoSlaves.Where(s => s.IsChecked))
                     {
-                        result = SingletonManager.instance.Ez_Model.SetServoOn(slave.SlaveID, false);
+                        result = Motion.SetServoOn(slave.SlaveID, false);
                         if (!result)
                         {
                             if (!string.IsNullOrEmpty(failedSlaves))
@@ -111,7 +114,7 @@ namespace YJ_AutoClamp.ViewModels
                     string failedSlave = string.Empty;
                     foreach (var slave in ServoSlaves.Where(s => s.IsChecked))
                     {
-                        result = SingletonManager.instance.Ez_Model.ServoAlarmReset(slave.SlaveID);
+                        result = Motion.ServoAlarmReset(slave.SlaveID);
                         if (!result)
                         {
                             if (!string.IsNullOrEmpty(failedSlave))
@@ -138,7 +141,7 @@ namespace YJ_AutoClamp.ViewModels
                     if (Slave.IsChecked == true)
                     {
                         BusyContent = $"Please Wait. Now Servo Origin...{Slave.Name}";
-                        result = await SingletonManager.instance.Ez_Model.ServoOrigin(Slave.SlaveID);
+                        result = await Motion.ServoOrigin(Slave.SlaveID);
                         Slave.Color = result ? "PaleGreen" : "White";
                         Slave.IsChecked = false;
                         if (!result)
@@ -151,7 +154,7 @@ namespace YJ_AutoClamp.ViewModels
                     if (Slave.IsChecked == true)
                     {
                         BusyContent = $"Please Wait. Now Servo Origin...{Slave.Name}";
-                        result = await SingletonManager.instance.Ez_Model.ServoOrigin(Slave.SlaveID);
+                        result = await Motion.ServoOrigin(Slave.SlaveID);
                         Slave.Color = result ? "PaleGreen" : "White";
                         Slave.IsChecked = false;
                         if (!result)
@@ -164,7 +167,7 @@ namespace YJ_AutoClamp.ViewModels
                     if (Slave.IsChecked == true)
                     {
                         BusyContent = $"Please Wait. Now Servo Origin...{Slave.Name}";
-                        result = await SingletonManager.instance.Ez_Model.ServoOrigin(Slave.SlaveID);
+                        result = await Motion.ServoOrigin(Slave.SlaveID);
                         Slave.Color = result ? "PaleGreen" : "White";
                         Slave.IsChecked = false;
                         if (!result)
@@ -185,7 +188,7 @@ namespace YJ_AutoClamp.ViewModels
                                 if (slave.IsChecked == true)
                                 {
                                     BusyContent = $"Please Wait. Now Servo Origin...{slave.Name}";
-                                    result = await SingletonManager.instance.Ez_Model.ServoOrigin(slave.SlaveID);
+                                    result = await Motion.ServoOrigin(slave.SlaveID);
                                     slave.Color = result ? "PaleGreen" : "White";
                                     slave.IsChecked = false;
                                     if (!result)
@@ -194,7 +197,6 @@ namespace YJ_AutoClamp.ViewModels
                                     }
                                 }
                             }
-                            
                         });
                         // 모든 작업 완료 대기
                         await Task.WhenAll(tasks);
@@ -207,6 +209,47 @@ namespace YJ_AutoClamp.ViewModels
                         Global.instance.ShowMessagebox(failedMessage);
                     }
 
+                    BusyContent = string.Empty;
+                    BusyStatus = false;
+                    break;
+                case "Connect":
+                    BusyStatus = true;
+                    BusyContent = "Ez Motion and DIO Connect Start";
+                    string error = "";
+                    await Task.Run(() =>
+                    {
+                        for (int i = 0; i < (int)ServoSlave_List.Max; i++)
+                        {
+                            Motion.Close(i);
+                            Task.Delay(1000).Wait(); // 잠시 대기
+                            if (Motion.Connect(i) == false)
+                            {
+                                if (string.IsNullOrEmpty(error) == false)
+                                    error += ", ";
+                                error += (ServoSlave_List.Out_Y_Handler_Y + i).ToString();
+                            }
+                        }
+                        for (int i = 0; i < (int)EziDio_Model.DI_MAP.DI_MAX / 16; i++)
+                        {
+                            Dio.Close(i);
+                            Task.Delay(1000).Wait(); // 잠시 대기
+                            if (Dio.Connect(i) == false)
+                            {
+                                if (string.IsNullOrEmpty(error) == false)
+                                    error += ", ";
+                                error += $"Dio Slave {i}";
+
+                            }
+                        }
+                    });
+                    
+                    Global.instance.BusyStatus = false;
+                    Global.instance.BusyContent = string.Empty;
+                    if (string.IsNullOrEmpty(error) == false)
+                    {
+                        error += " Ez Motion Connect Fail";
+                        Global.instance.ShowMessagebox(error);
+                    }
                     BusyContent = string.Empty;
                     BusyStatus = false;
                     break;

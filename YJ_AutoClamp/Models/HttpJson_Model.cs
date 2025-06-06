@@ -46,6 +46,7 @@ namespace YJ_AutoClamp.Models
             DataSendFlag = false;
             ResultCode = "";
             var url = "http://168.219.108.30:81/gmes2/gmes2If.do";
+            string Ticket = "credential:TICKET-839fd18b-596e-4f08-b257-9b30dd9d2275:d76f5914-0caa-430d-837c-c9c7257e41c4:1950074a-219a-44a4-898c-47ce4d36d5ea_6da98e02-005c-4a35-89e1-b038cc885665:-1:CZXIvSBHI86/NCZAd4h9jLJ9t8TXjmtFvEahao68ImG3zSIXPn5eobN2gmEWUljlFpR|C8IJYn1v2JYWFMnxMQ==:signature=mqCuwbiVsW1NCMAkb2+Iq68DsK/SDgegRnY/aTtBwzPfkN3kRaP0qGx+GXL0YytDRHy5VRV8frT/1mPFybvhcw==";
 
             var requestData = new RequestRoot
             {
@@ -83,17 +84,29 @@ namespace YJ_AutoClamp.Models
                 Global.Mlog.Info(json);
                 try
                 {
-                    var response = await SingletonManager.instance.HttpClient.PostAsync(url, content);
-                    response.EnsureSuccessStatusCode();
+                    // HttpRequestMessage로 헤더 추가
+                    using (var request = new HttpRequestMessage(HttpMethod.Post, url))
+                    {
+                        request.Content = content;
+                        if (!string.IsNullOrEmpty(Ticket))
+                        {
+                            request.Headers.Add("x-dep-ticket", Ticket);
 
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    var responseObject = JsonSerializer.Deserialize<ResponseRoot>(responseString);
+                            Global.Mlog.Info($"HTTP Ticket : {Ticket}");
+                        }
+                            
+                        var response = await SingletonManager.instance.HttpClient.SendAsync(request);
+                        response.EnsureSuccessStatusCode();
 
-                    var result = responseObject.com_samsung_gmes2_qm_json_vo_QmSubInspForJsonSVO.qmSubInspForJson02DVO;
-                    Global.Mlog.Info($"{methodName} rsltCode: {result?.rsltCode}, errCode: {result?.errCode}");
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        var responseObject = JsonSerializer.Deserialize<ResponseRoot>(responseString);
+                        Global.Mlog.Info($"Http R : {responseString}");
+                        var result = responseObject.com_samsung_gmes2_qm_json_vo_QmSubInspForJsonSVO.qmSubInspForJson02DVO;
+                        Global.Mlog.Info($"{methodName} rsltCode: {result?.rsltCode}, errCode: {result?.errCode}");
 
-                    DataSendFlag = true;
-                    ResultCode = result?.rsltCode;
+                        DataSendFlag = true;
+                        ResultCode = result?.rsltCode;
+                    }
                 }
                 catch (TaskCanceledException)
                 {
@@ -124,6 +137,8 @@ namespace YJ_AutoClamp.Models
 
     public class QmSubInspForJson01DVO
     {
+        public string userId { get; set; }
+        public string UserNm { get; set; }
         public string fctCode { get; set; }
         public string plantCode { get; set; }
         public string inspTopCode { get; set; }
@@ -139,6 +154,8 @@ namespace YJ_AutoClamp.Models
         public string appName { get; set; }
         public string methodName { get; set; }
         public string inputSVOName { get; set; }
+        public string clientIPAddr { get; set; }
+        public string userID { get; set; }
         public string pageNo { get; set; }
         public string pageRowCount { get; set; }
     }

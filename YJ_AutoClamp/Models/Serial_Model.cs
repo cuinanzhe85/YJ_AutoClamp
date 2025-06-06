@@ -1,22 +1,13 @@
-﻿using Common.Managers;
-using Common.Mvvm;
+﻿using Common.Mvvm;
 using System;
 using System.IO.Ports;
-using System.Security.Cryptography;
 using System.Threading;
-using System.Windows.Markup;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
 
 namespace YJ_AutoClamp.Models
 {
     public class Serial_Model : BindableAndDisposable
     {
-
-        private string STX = string.Format("{0}", Convert.ToChar(0x02));
-        private string ETX = string.Format("{0}", Convert.ToChar(0x03));
         private bool _IsConnected = false;
-
         public enum SerialIndex
         {
             bcr1,
@@ -115,7 +106,7 @@ namespace YJ_AutoClamp.Models
 
             if (SerialPort.IsOpen == false)
                 return;
-
+            Global.Mlog.Info($"{PortName} : {Port} Trig Send");
             SerialPort.Write("+");
         }
 
@@ -130,10 +121,11 @@ namespace YJ_AutoClamp.Models
                 Barcode = Data.Trim();
                 if (!string.IsNullOrEmpty(Barcode))
                 {
+                    Global.Mlog.Info($"{PortName} : {Port} Receive '{Barcode}'");
                     IsReceived = true;
                 }
             }
-            else
+            else if (PortName.Contains("NFC"))
             {
                 try
                 {
@@ -142,6 +134,8 @@ namespace YJ_AutoClamp.Models
                         string[] parts = Data.Split('=');
                         NfcData = parts[1].Trim();
                         IsReceived = true;
+
+                        Global.Mlog.Info($"{PortName} : {Port} Receive '{Data}'");
                     }
                 }
                 catch

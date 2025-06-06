@@ -76,7 +76,6 @@ namespace YJ_AutoClamp
         public ObservableCollection<Lift_Model> Display_Lift { get; set; }
         public int LoadStageNo = 0;
         public int AgingCvIndex = 0;
-        public int AgingNextCv = 0;
         public int AgingLiftIndex = 0;
         public bool BottomClampDone = false;
         public bool SetNfcResult = false;
@@ -136,6 +135,7 @@ namespace YJ_AutoClamp
             HttpJsonModel = new HttpJson_Model();
             tcpClientList = new List<TcpClient>();
             clientItemList = new List<ItemClient>();
+            HttpModel = new Http_Model();
 
             // Lift Data
             LoadFloor = new ObservableCollection<int>();
@@ -358,7 +358,7 @@ namespace YJ_AutoClamp
 
 
         }
-        private async void DioBoard_Init()
+        private void DioBoard_Init()
         {
             //BusyContent
             Global.instance.BusyContent = "Dio Board Connecting...";
@@ -382,7 +382,7 @@ namespace YJ_AutoClamp
                 {
                     if (string.IsNullOrEmpty(error) == false)
                         error += ", ";
-                    error += (ServoSlave_List.Top_X_Handler_X + i).ToString();
+                    error += (ServoSlave_List.Out_Y_Handler_Y + i).ToString();
                 }
             }
             Global.instance.BusyStatus = false;
