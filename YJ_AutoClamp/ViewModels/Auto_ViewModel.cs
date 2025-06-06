@@ -71,6 +71,7 @@ namespace YJ_AutoClamp.ViewModels
                 { AutoMenu_PopupList.Initialize, () => (new Initialize_View(), new Initialize_ViewModel()) },
                 { AutoMenu_PopupList.Origin, () => (new Origin_View(), new Origin_ViewModel()) },
                 { AutoMenu_PopupList.Dio, () => (new Dio_View(), new Dio_ViewModel()) },
+                { AutoMenu_PopupList.Info, () => (new Product_View(), new Product_ViewModel()) }
             };
         }
         private async void OnRightMenu_Command(object obj)
