@@ -98,6 +98,17 @@
         <Setter Property="telerik:CornerRadiusHelper.ClipRadius" Value="8"/>
         <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
     </Style>
+    <Style TargetType="Label" x:Key="InspectionData_LableStyle">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="White"/>
+        <Setter Property="BorderThickness" Value="0,1,1,1"/>
+        <Setter Property="telerik:CornerRadiusHelper.ClipRadius" Value="0,8,8,0"/>
+    </Style>
     <!--Floor Template-->
     <DataTemplate x:Key="FloorTemplate">
         <Grid Margin="5">
