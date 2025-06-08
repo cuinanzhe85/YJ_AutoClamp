@@ -2,12 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using Telerik.Windows.Controls;
-using YJ_AutoClamp.Utils;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
-using static YJ_AutoClamp.Models.AgingConveyorPass_Model;
 using static YJ_AutoClamp.Models.EziDio_Model;
 
 namespace YJ_AutoClamp.Models
@@ -184,6 +178,8 @@ namespace YJ_AutoClamp.Models
             Out_CV_On_Wait,
             Out_CV_Tray_OK_Out,
             Out_CV_Tray_NG_Out,
+            Out_Clamp_CV_Stop,
+            Out_Clamp_CV_StopperUp_Wait,
             Out_CV_Tray_NG_Check,
             Out_CV_Off_Check,
             Out_CV_Off_Wait,
@@ -312,8 +308,10 @@ namespace YJ_AutoClamp.Models
                     break;
                 case MotionUnit_List.Lift_1:
                     if (SingletonManager.instance.EquipmentMode != EquipmentMode.AgingPass)
+                    {
                         //Aging_CV_Logic();
                         Aging_CV_StepRun_Logic();
+                    }
                     else
                     {
                         AgingConveyorPass();
@@ -448,12 +446,31 @@ namespace YJ_AutoClamp.Models
                         Out_Cv_Step = OutCvSequence.Out_CV_Tray_NG_Check;
                     }
                     break;
+                case OutCvSequence.Out_Clamp_CV_Stop:
+                    if (Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_1] != true
+                        && (Dio.DI_RAW_DATA[(int)DI_MAP.NG_BOTTOM_CV_DETECT_SS_1] == true || Dio.DI_RAW_DATA[(int)DI_MAP.NG_BOTTOM_CV_DETECT_SS_2] == true))
+                    {
+                        // cv On
+                        Dio_Output(DO_MAP.CLAMPING_CV_RUN, false);
+                        Out_Cv_Step = OutCvSequence.Out_Clamp_CV_StopperUp_Wait;
+                        _TimeDelay.Restart();
+                    }
+                    break;
+                case OutCvSequence.Out_Clamp_CV_StopperUp_Wait:
+                    if (_TimeDelay.ElapsedMilliseconds > 1000)
+                    {
+                        // 스토퍼 상승
+                        Dio_Output(DO_MAP.CLAMPING_CV_STOPER_UP_SOL, true);
+                        Out_Cv_Step = OutCvSequence.Out_CV_Tray_NG_Check;
+                    }
+                    break;
                 case OutCvSequence.Out_CV_Tray_NG_Check:
                     // Tray 도착 감지 센서 꺼질때까지 대기 후 Cv Off 
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.NG_BOTTOM_CV_DETECT_SS_2] == true)
                     {
-                        // 스토퍼 상승
-                        Dio_Output(DO_MAP.CLAMPING_CV_STOPER_UP_SOL, true);
+                        // 스토퍼 상승되여 있지 않으면 다시 상승
+                        if (Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_STOPER_UP_CYL_SS] != true)
+                            Dio_Output(DO_MAP.CLAMPING_CV_STOPER_UP_SOL, true);
                         // cv off
                         Dio_Output(DO_MAP.CLAMPING_CV_RUN, false);
                         Dio_Output(DO_MAP.NG_BOTTOM_JIG_CV_RUN, false);
@@ -1747,7 +1764,7 @@ namespace YJ_AutoClamp.Models
                     if (SingletonManager.instance.LoadStageNo == 0)
                     {
                         if (Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_1_CV_DETECT_IN_SS_1] == false
-                            || (SingletonManager.instance.AgingCvIndex < 3 && Ez_Model.IsYPickupMoveLiftSaftyPos(SingletonManager.instance.LoadStageNo) == true)
+                            || (SingletonManager.instance.AgingCvIndex < 3 && Ez_Model.IsMoveLiftLodingDone(SingletonManager.instance.LoadStageNo) == true)
                             || SingletonManager.instance.AgingCvIndex >= 3)
                         {
                             LiftWait = true;
@@ -1756,7 +1773,7 @@ namespace YJ_AutoClamp.Models
                     else if(SingletonManager.instance.LoadStageNo == 1)
                     {
                         if (Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_2_CV_DETECT_IN_SS_1] == false
-                            || (SingletonManager.instance.AgingCvIndex < 3 && Ez_Model.IsYPickupMoveLiftSaftyPos(SingletonManager.instance.LoadStageNo) == true)
+                            || (SingletonManager.instance.AgingCvIndex < 3 && Ez_Model.IsMoveLiftLodingDone(SingletonManager.instance.LoadStageNo) == true)
                             || SingletonManager.instance.AgingCvIndex >= 3)
                         {
                             LiftWait = true;
@@ -1765,7 +1782,7 @@ namespace YJ_AutoClamp.Models
                     else if (SingletonManager.instance.LoadStageNo == 2)
                     {
                         if (Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_3_CV_DETECT_IN_SS_1] == false
-                            || (SingletonManager.instance.AgingCvIndex < 3 && Ez_Model.IsYPickupMoveLiftSaftyPos(SingletonManager.instance.LoadStageNo) == true)
+                            || (SingletonManager.instance.AgingCvIndex < 3 && Ez_Model.IsMoveLiftLodingDone(SingletonManager.instance.LoadStageNo) == true)
                             || SingletonManager.instance.AgingCvIndex >= 3)
                         {
                             LiftWait = true;
@@ -1777,6 +1794,8 @@ namespace YJ_AutoClamp.Models
                         SingletonManager.instance.LoadStageNo += 1;
                         if (SingletonManager.instance.LoadStageNo >= (int)Lift_Index.Max)
                             SingletonManager.instance.LoadStageNo = 0;
+
+                        //LiftNextIndex(SingletonManager.instance.AgingCvIndex);
 
                         Out_Handle_Step = OutHandle.Idle;
                     }
@@ -2767,6 +2786,47 @@ namespace YJ_AutoClamp.Models
                 ret = Dio.DO_RAW_DATA[(int)DO_MAP.AGING_CV_LOW_INTERFACE_3];
             }
             return ret;
+        }
+        private void LiftNextIndex(int CvIndex)
+        {
+            // i<= 6 Aging Conveyor 하나만 켰을때 현재 진행했던 index를 확인할수 있도록 7번 반복한다.
+            for (int i = 0; i <= 6; i++)
+            {
+                CvIndex++; // 다음 인덱스
+                if (CvIndex >= 6)
+                    CvIndex =0; // 0~5 까지 인덱스
+                if (SingletonManager.instance.SystemModel.AgingCvNotUse[CvIndex] == "Use")
+                {
+                    if (i == 0 || i == 3)
+                    {
+                        SingletonManager.instance.LoadStageNo = 0;
+                    }
+                    else if (i == 1 || i == 4)
+                    {
+                        SingletonManager.instance.LoadStageNo = 1;
+                    }
+                    else if (i == 2 || i == 5)
+                    {
+                        SingletonManager.instance.LoadStageNo = 2;
+                    }
+                    break;
+                }
+            }
+        }
+        private void AgingCvNextIndex(int CvIndex)
+        {
+            // i<= 6 Aging Conveyor 하나만 켰을때 현재 진행했던 index를 확인할수 있도록 7번 반복한다.
+            for (int i = 0; i <= 6; i++)
+            {
+                CvIndex++; // 다음 인덱스
+                if (CvIndex >= 6)
+                    CvIndex = 0; // 0~5 까지 인덱스
+                if (SingletonManager.instance.SystemModel.AgingCvNotUse[CvIndex] == "Use")
+                {
+                    SingletonManager.instance.AgingCvIndex = CvIndex;
+                    break;
+                }
+            }
         }
         public void StartReady()
         {

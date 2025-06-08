@@ -171,7 +171,7 @@ namespace YJ_AutoClamp.ViewModels
                             {
                                 if (SingletonManager.instance.HttpJsonModel.DataSendFlag == true)
                                 {
-                                    Global.instance.ShowMessagebox($"HTTP Response ResultCode: {SingletonManager.instance.HttpJsonModel.ResultCode}");
+                                    Global.instance.ShowMessagebox($"HTTP Response ResultCode: {SingletonManager.instance.HttpJsonModel.ResultCode}", false);
                                     break;
                                 }
                                 if (sw.ElapsedMilliseconds > 5000) // 5초

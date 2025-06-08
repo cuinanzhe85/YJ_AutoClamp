@@ -487,9 +487,12 @@ namespace YJ_AutoClamp.Models
         }
         public bool SetIO_OutputData(int index, bool OnOff)
         {
+            int slave = (int)Dio_Slave.DIO_1 + (index / 16);
+            if (IsConnected[(index / 16)] == false)
+                return false;
             UpdateIO_OperData();
             // IO Bit를 통해 Slave NO를 계산한다.
-            int slave = (int)Dio_Slave.DIO_1 + (index / 16);
+            
             // 해당 Slave 의 제어해야할 bit No를 계산한다.
             int uOotBit = (int)index % 16;
 
