@@ -25,6 +25,12 @@ namespace YJ_AutoClamp.ViewModels
             get { return _UseNotUse; }
             set { SetValue(ref _UseNotUse, value); }
         }
+        private ObservableCollection<string> _AgingCvUseNotUseList = new ObservableCollection<string>();
+        public ObservableCollection<string> AgingCvUseNotUseList
+        {
+            get { return _AgingCvUseNotUseList; }
+            set { SetValue(ref _AgingCvUseNotUseList, value); }
+        }
         private ObservableCollection<string> _AgingCvList = new ObservableCollection<string>();
         public ObservableCollection<string> AgingCvList
         {
@@ -43,8 +49,8 @@ namespace YJ_AutoClamp.ViewModels
             get { return _NfcUseNotuse; }
             set { SetValue(ref _NfcUseNotuse, value); }
         }
-        private string[] _AgingCvNotUse;
-        public string[] AgingCvNotUse
+        private string _AgingCvNotUse;
+        public string AgingCvNotUse
         {
             get { return _AgingCvNotUse; }
             set { SetValue(ref _AgingCvNotUse, value); }
@@ -81,7 +87,6 @@ namespace YJ_AutoClamp.ViewModels
         }
         public SystemData_ViewModel()
         {
-            AgingCvNotUse = new string[6];
             UseNotUse.Add("NotUse");
             UseNotUse.Add("Use");
             AgingCvList.Add("Upper 1");
@@ -90,17 +95,16 @@ namespace YJ_AutoClamp.ViewModels
             AgingCvList.Add("Low 1");
             AgingCvList.Add("Low 2");
             AgingCvList.Add("Low 3");
+            AgingCvUseNotUseList.Add("All");
+            AgingCvUseNotUseList.Add("Upper");
+            AgingCvUseNotUseList.Add("Low");
 
             BcrUseNotuse = SingletonManager.instance.SystemModel.BcrUseNotUse;
             NfcUseNotuse = SingletonManager.instance.SystemModel.NfcUseNotUse;
             PickUpTimeOut = SingletonManager.instance.SystemModel.PickUpWaitTimeOutY.ToString();
             LoadFloorCount = SingletonManager.instance.SystemModel.LoadFloorCount.ToString();
             AgingCvStepTime = SingletonManager.instance.SystemModel.AgingCvStepTime.ToString();
-
-            for (int i =0; i<6; i++)
-            {
-                AgingCvNotUse[i] = SingletonManager.instance.SystemModel.AgingCvNotUse[i];
-            }
+            AgingCvNotUse = SingletonManager.instance.SystemModel.AgingCvNotUse;
         }
         private void OnSave_Command(object obj)
         {
@@ -135,12 +139,9 @@ namespace YJ_AutoClamp.ViewModels
                 Global.Mlog.Info(" AGING_CV_STEP_TIME = " + AgingCvStepTime);
                 SingletonManager.instance.SystemModel.AgingCvStepTime = Convert.ToInt32(AgingCvStepTime);
 
-                for (int i = 0; i < 6; i++)
-                {
-                    myIni.Write($"AGING_CV_NOTUSE_{i + 1}", AgingCvNotUse[i], Section);
-                    Global.Mlog.Info($" AGING_CV_NOT_USE_{i + 1} = " + AgingCvNotUse[i]);
-                    SingletonManager.instance.SystemModel.AgingCvNotUse[i] = AgingCvNotUse[i];
-                }
+                myIni.Write($"AGING_CV_USE", AgingCvNotUse, Section);
+                Global.Mlog.Info($" AGING_CV_USE = " + AgingCvNotUse);
+                SingletonManager.instance.SystemModel.AgingCvNotUse = AgingCvNotUse;
             }
             catch (Exception e)
             {

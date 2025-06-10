@@ -78,7 +78,7 @@ namespace YJ_AutoClamp
         public int AgingCvIndex = 0;
         public int AgingLiftIndex = 0;
         public bool BottomClampDone = false;
-        public bool SetNfcResult = false;
+        public bool MesResult = false;
         public bool UnitLastPositionSet = false;
         
         // 7단 Loading완료 변수 
@@ -232,6 +232,9 @@ namespace YJ_AutoClamp
                 SystemModel.AgingCvStepTime = Convert.ToInt32(valus);
             else
                 SystemModel.AgingCvStepTime = 0;
+
+            valus = myIni.Read("AGING_CV_USE", section);
+            SystemModel.AgingCvNotUse = valus;
         }
         public void ModelData_Init()
         {
@@ -249,8 +252,6 @@ namespace YJ_AutoClamp
             Current_Model.SpecFileName = iniModelFile.Read("SpecFileName", section);
             Current_Model.TeachFileName = iniModelFile.Read("TeachFileName", section);
             Current_Model.JobFileName = iniModelFile.Read("JobFileName", section);
-
-            
         }
        
         public void LoadTeachFile()
@@ -354,7 +355,14 @@ namespace YJ_AutoClamp
             SerialModel[1].Port = _Port;
 
             if (SerialModel[1].Open() == false)
-                Global.instance.ShowMessagebox($"BCR {SerialModel[1].Port} open fail.");
+                Global.instance.ShowMessagebox($"NFC {SerialModel[1].Port} open fail.");
+
+            _Port = myIni.Read("MES_PORT", section);
+            SerialModel[2].PortName = "MES";
+            SerialModel[2].Port = _Port;
+
+            if (SerialModel[2].Open() == false)
+                Global.instance.ShowMessagebox($"MES {SerialModel[2].Port} open fail.");
 
 
         }
@@ -759,6 +767,10 @@ namespace YJ_AutoClamp
                                     Global.instance.Set_TowerLamp(Global.TowerLampType.Error);
                                     IsSafetyInterLock = true;
                                 }
+                                else if (Ez_Model.ServoSlaveOriginStatus() == false)
+                                { 
+                                    Global.instance.InspectionStop();
+                                }
                                 else
                                 {
                                     for (int i = 0; i < (int)MotionUnit_List.Max; i++)
@@ -790,6 +802,7 @@ namespace YJ_AutoClamp
                                 }
                                 Unit_Model[(int)MotionUnit_List.In_CV].Return_Bottom_CV_Logic();
                                 Unit_Model[(int)MotionUnit_List.In_CV].Return_Top_CV_1_Logic();
+                                Unit_Model[(int)MotionUnit_List.Lift_1].Aging_CV_StepRun_Logic();
                                 Thread.Sleep(5);
 
                             }

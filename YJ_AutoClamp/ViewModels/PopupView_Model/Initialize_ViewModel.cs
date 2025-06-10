@@ -204,18 +204,6 @@ namespace YJ_AutoClamp.ViewModels
                     Task.Delay(100).Wait();
                 }
             });
-            // Ready Position까지 이동했으면 
-            //if (result == true)
-            //{
-            //    if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS] == true)
-            //    {
-            //        SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_Y].Out_Handle_Step = Unit_Model.OutHandle.Out_Handle_Grip_Check;
-            //    }
-            //    else
-            //    {
-            //        SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_Y].Out_Handle_Step = Unit_Model.OutHandle.Idle;
-            //    }
-            //}
             return result; // 성공 여부 반환
         }
         private async Task<bool> ServoInitZ()
@@ -241,18 +229,6 @@ namespace YJ_AutoClamp.ViewModels
                     Task.Delay(100).Wait();
                 }
             });
-            // Ready Position까지 이동했으면 
-            //if (result == true)
-            //{
-            //    if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS] == true)
-            //    {
-            //        SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_Y].Out_Handle_Step = Unit_Model.OutHandle.Out_Handle_Grip_Check;
-            //    }
-            //    else
-            //    {
-            //        SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_Y].Out_Handle_Step = Unit_Model.OutHandle.Idle;
-            //    }
-            //}
             return result; // 성공 여부 반환
         }
         private async Task<bool> ServoInitX()
@@ -365,8 +341,10 @@ namespace YJ_AutoClamp.ViewModels
                     }
                 }
             });
+            Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_RUN, false);
             SingletonManager.instance.BottomClampDone = false;
             SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Top_X].Bottom_Step = Unit_Model.BottomHandle.Idle;
+            SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_CV].Out_Cv_Step = Unit_Model.OutCvSequence.Idle;
             return result; // 성공 여부 반환
         }
         private void DoorOpenCheck()

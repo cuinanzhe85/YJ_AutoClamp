@@ -34,15 +34,14 @@ namespace YJ_AutoClamp.Models
             get { return _AgingCvStepTime; }
             set { SetValue(ref _AgingCvStepTime, value); }
         }
-        public string[] _AgingCvNotUse;
-        public string[] AgingCvNotUse
+        public string _AgingCvNotUse;
+        public string AgingCvNotUse
         {
             get { return _AgingCvNotUse; }
             set { SetValue(ref _AgingCvNotUse, value); }
         }
         public System_Model()
         {
-            AgingCvNotUse = new string[6];
         }
        
     }

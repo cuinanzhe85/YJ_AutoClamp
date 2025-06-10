@@ -317,8 +317,7 @@ namespace YJ_AutoClamp
 
                 // Tower Lamp Start
                 Set_TowerLamp(TowerLampType.Start);
-
-
+                 
                 // Inspection Thread Start
                 SendMainUiLog($"Inspection Start [ {SingletonManager.instance.EquipmentMode} Mode ]");
                 Mlog.Info($"{SingletonManager.instance.EquipmentMode.ToString()} Run Inspection Start.");
@@ -341,7 +340,7 @@ namespace YJ_AutoClamp
                 _IsInspectionBusy = false;
             }
         }
-        public async void InspectionStop()
+        public void InspectionStop()
         {
             // 중복 호출 방지
             if (_IsInspectionBusy)

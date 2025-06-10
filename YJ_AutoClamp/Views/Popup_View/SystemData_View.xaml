@@ -90,25 +90,10 @@
                         ItemsSource="{Binding AgingCvList}" SelectedItem="{Binding AgingCvSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                  <!--Aging Conveyor Use NotUse-->
-                <Label Content="Aging Upper1" Grid.Row="4" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <Label Content="Aging CV NotUse" Grid.Row="4" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
                 <telerik:RadComboBox Grid.Row="4" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
-                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[0], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <Label Content="Aging Upper2" Grid.Row="5" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
-                <telerik:RadComboBox Grid.Row="5" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
-                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[1], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <Label Content="Aging Upper3" Grid.Row="6" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
-                <telerik:RadComboBox Grid.Row="6" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
-                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[2], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-                <Label Content="Aging Low1" Grid.Row="4" Grid.Column="2" Style="{StaticResource Option_LabelStyle}"/>
-                <telerik:RadComboBox Grid.Row="4" Grid.Column="3"  Style="{StaticResource Option_ComboStyle}"
-                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[3], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <Label Content="Aging Low2" Grid.Row="5" Grid.Column="2" Style="{StaticResource Option_LabelStyle}"/>
-                <telerik:RadComboBox Grid.Row="5" Grid.Column="3"  Style="{StaticResource Option_ComboStyle}"
-                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[4], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <Label Content="Aging Low3" Grid.Row="6" Grid.Column="2" Style="{StaticResource Option_LabelStyle}"/>
-                <telerik:RadComboBox Grid.Row="6" Grid.Column="3"  Style="{StaticResource Option_ComboStyle}"
-                        ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding AgingCvNotUse[5], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        ItemsSource="{Binding AgingCvUseNotUseList}" SelectedItem="{Binding AgingCvNotUse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                
             </Grid>
         </Border>
         <!--Save / Exit-->

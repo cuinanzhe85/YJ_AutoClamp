@@ -329,8 +329,8 @@
         <!--Right Common Menu-->
         <Grid Grid.Column="1" Margin="5" Background="AliceBlue">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.68*"/>
-                <RowDefinition Height="0.32*"/>
+                <RowDefinition Height="0.75*"/>
+                <RowDefinition Height="0.25*"/>
             </Grid.RowDefinitions>
             <!--Buttons-->
             <StackPanel>
@@ -355,8 +355,8 @@
 
             <!--Products Infomations-->
             <StackPanel Grid.Row="1">
-                <telerik:RadButton Content="Input Stop" Style="{StaticResource AutoView_ButtonStyle}"
-                                         Command="{Binding RightMenu_PopupCommand}" CommandParameter="InputStop" Background="Gray"/>
+                <!--<telerik:RadButton Content="Input Stop" Style="{StaticResource AutoView_ButtonStyle}"
+                                         Command="{Binding RightMenu_PopupCommand}" CommandParameter="InputStop" Background="Gray"/>-->
                 <telerik:RadButton Content="Inspection Start" Style="{StaticResource AutoView_ButtonStyle}"
                                         IsEnabled="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsInspectionStart, Converter={StaticResource ReversBoolConverter}}"
                                         Command="{Binding RightMenu_PopupCommand}" CommandParameter="Start" Background="CadetBlue"/>

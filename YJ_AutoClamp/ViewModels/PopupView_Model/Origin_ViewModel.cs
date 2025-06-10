@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using YJ_AutoClamp.Models;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
@@ -131,15 +132,40 @@ namespace YJ_AutoClamp.ViewModels
                     }
                     break;
                 case "Origin":
+                    DoorOpenCheck();
+
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_2, false);
+                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_UP_SOL, false);
+
+                    if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_RZ_GRIP_CYL_SS] == true
+                        || Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_LZ_VACUUM_SS] == true
+                        || Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMPING_CV_DETECT_SS_4] == true)
+                    {
+                        BusyContent = string.Empty;
+                        BusyStatus = false;
+                        Global.instance.ShowMessagebox("There is a product in the Bottom handler, please remove it and proceed.");
+                        return;
+                    }
+                    SingletonManager.instance.BottomClampDone = false;
+                    SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Top_X].Bottom_Step = Unit_Model.BottomHandle.Idle;
+
                     BusyStatus = true;
                     // 선택된 슬레이브 필터링
                     var selectedSlaves = ServoSlaves.Where(slave => slave.IsChecked).ToList();
                     var failedSlavesList = new List<string>();
                     SingletonManager.instance.Ez_Dio.Set_HandlerUpDown(true);
+
                     // Servo Origin
                     var Slave = ServoSlaves[(int)ServoSlave_List.Out_Z_Handler_Z];
                     if (Slave.IsChecked == true)
                     {
+                        if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS] == true)
+                        {
+                            BusyContent = string.Empty;
+                            BusyStatus = false;
+                            Global.instance.ShowMessagebox("There is a product in the Z handler, please remove it and proceed.");
+                            return;
+                        }
                         BusyContent = $"Please Wait. Now Servo Origin...{Slave.Name}";
                         result = await Motion.ServoOrigin(Slave.SlaveID);
                         Slave.Color = result ? "PaleGreen" : "White";
@@ -148,11 +174,22 @@ namespace YJ_AutoClamp.ViewModels
                         {
                             failedSlavesList.Add(Slave.Name);
                         }
+                        // Step 초기화 설정
+                        SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_Y].Out_Handle_Step = Unit_Model.OutHandle.Idle;
                     }
                     
                     Slave = ServoSlaves[(int)ServoSlave_List.Top_X_Handler_X];
                     if (Slave.IsChecked == true)
                     {
+                        Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_1, false);
+                        if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_TR_Z_GRIP_CYL_SS] == true
+                            || Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMPING_CV_DETECT_SS_1] == true)
+                        {
+                            BusyContent = string.Empty;
+                            BusyStatus = false;
+                            Global.instance.ShowMessagebox("There is a product in the Top handler, please remove it and proceed.");
+                            return;
+                        }
                         BusyContent = $"Please Wait. Now Servo Origin...{Slave.Name}";
                         result = await Motion.ServoOrigin(Slave.SlaveID);
                         Slave.Color = result ? "PaleGreen" : "White";
@@ -161,11 +198,21 @@ namespace YJ_AutoClamp.ViewModels
                         {
                             failedSlavesList.Add(Slave.Name);
                         }
+                        // Ready Position까지 이동했으면 
+                        SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Top_X].Top_Handle_Step = Unit_Model.TopHandle.Idle;
+                        SingletonManager.instance.IsY_PickupColl = false;
                     }
                         
                     Slave = ServoSlaves[(int)ServoSlave_List.Out_Y_Handler_Y];
                     if (Slave.IsChecked == true)
                     {
+                        if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS] == true)
+                        {
+                            BusyContent = string.Empty;
+                            BusyStatus = false;
+                            Global.instance.ShowMessagebox("There is a product in the Z handler, please remove it and proceed.");
+                            return;
+                        }
                         BusyContent = $"Please Wait. Now Servo Origin...{Slave.Name}";
                         result = await Motion.ServoOrigin(Slave.SlaveID);
                         Slave.Color = result ? "PaleGreen" : "White";
@@ -174,6 +221,8 @@ namespace YJ_AutoClamp.ViewModels
                         {
                             failedSlavesList.Add(Slave.Name);
                         }
+                        // Step 초기화 설정
+                        SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_Y].Out_Handle_Step = Unit_Model.OutHandle.Idle;
                     }
                     
                     if (selectedSlaves.Any())
@@ -200,6 +249,7 @@ namespace YJ_AutoClamp.ViewModels
                         });
                         // 모든 작업 완료 대기
                         await Task.WhenAll(tasks);
+                        SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Lift_1].AgingCVStep = Unit_Model.Aging_CV_Step.Idle;
                     }
                     // 실패한 슬레이브가 있는 경우 메시지 표시
                     if (failedSlavesList.Any())
@@ -253,6 +303,32 @@ namespace YJ_AutoClamp.ViewModels
                     BusyContent = string.Empty;
                     BusyStatus = false;
                     break;
+            }
+        }
+        private void DoorOpenCheck()
+        {
+            // Safety 먼저 체크
+            if (!Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.FRONT_DOOR_SS]
+            || !Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.REAR_DOOR_SS]
+            || !Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.LEFT_L_DOOR_SS]
+            || !Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.LEFT_R_DOOR_SS])
+            {
+                Application.Current.Dispatcher.BeginInvoke(
+                                (ThreadStart)(() =>
+                                {
+                                    // Todo : Interlock Loop Stop. 진행중인 작업 모두 정지
+                                    Global.instance.InspectionStop();
+                                    // Safety Popup
+                                    Window window = new Safety_View();
+                                    Safety_ViewModel safety_ViewModel = new Safety_ViewModel();
+                                    window.DataContext = safety_ViewModel;
+                                    window.ShowDialog();
+                                    // Close
+                                    safety_ViewModel.Dispose();
+                                    safety_ViewModel = null;
+                                    window.Close();
+                                    window = null;
+                                }), DispatcherPriority.Send);
             }
         }
         #region // override

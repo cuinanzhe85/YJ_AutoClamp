@@ -414,6 +414,7 @@ namespace YJ_AutoClamp.Models
                 }
                 await Task.Delay(10);
             }
+            sw.Restart();
             // Z up
             if (iSlaveNo == (int)ServoSlave_List.Out_Z_Handler_Z)
             {
@@ -427,6 +428,8 @@ namespace YJ_AutoClamp.Models
                         double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);
                         if (GetPos == pos)
                             break ;
+                        if (sw.ElapsedMilliseconds > 5000)
+                            return false;
                         Thread.Sleep(10);
                     }
                 }
@@ -443,6 +446,26 @@ namespace YJ_AutoClamp.Models
                         double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Top_X_Handler_X)), 2);
                         if (GetPos == pos)
                             break;
+                        if (sw.ElapsedMilliseconds > 5000)
+                            return false;
+                        Thread.Sleep(10);
+                    }
+                }
+            }
+            if (iSlaveNo == (int)ServoSlave_List.Out_Y_Handler_Y)
+            {
+                if (IsOriginOK(iSlaveNo) == true)
+                {
+                    double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Home).ToString()];
+                    pos = Math.Round(pos, 2);
+                    MoveABS(iSlaveNo, pos);
+                    while (true)
+                    {
+                        double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
+                        if (GetPos == pos)
+                            break;
+                        if (sw.ElapsedMilliseconds > 10000)
+                            return false;
                         Thread.Sleep(10);
                     }
                 }
@@ -750,6 +773,17 @@ namespace YJ_AutoClamp.Models
                 return true;
             return false;
         }
+        public bool IsOutHandlerYSafetyPos()
+        {
+            double pos = 0.0;
+            pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_1).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
+            if (GetPos <= pos)
+                return true;
+            return false;
+        }
         public bool MoveOutHandlerReadyY()
         {
             double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Home).ToString()];
@@ -869,6 +903,17 @@ namespace YJ_AutoClamp.Models
             
             return false;
         }
+        public bool ServoMovePause(int Slave, int StartStop)
+        {
+            int nRtn = EziMOTIONPlusELib.FAS_MovePause(Slave, StartStop);
+            if (nRtn != EziMOTIONPlusELib.FMM_OK)
+            {
+                string strMsg = "FAS_MovePause() \nReturned: " + nRtn.ToString();
+                return false;
+            }
+            else
+                return true;
+        }
         public double GetOutZ_PutDownFloorPos()
         {
             double pos = 0.0;
@@ -883,6 +928,37 @@ namespace YJ_AutoClamp.Models
             pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_1 + SingletonManager.instance.LoadStageNo).ToString()];
             pos = Math.Round(pos, 2);
             return pos;
+        }
+        public bool ServoSlaveOriginStatus()
+        {
+            if (IsOriginOK((int)ServoSlave_List.Out_Y_Handler_Y) == false
+                || IsOriginOK((int)ServoSlave_List.Out_Z_Handler_Z) == false
+                || IsOriginOK((int)ServoSlave_List.Top_X_Handler_X) == false
+                || IsOriginOK((int)ServoSlave_List.Lift_1_Z) == false
+                || IsOriginOK((int)ServoSlave_List.Lift_2_Z) == false
+                || IsOriginOK((int)ServoSlave_List.Lift_3_Z) == false)
+            {
+                string message = IsOriginOK((int)ServoSlave_List.Out_Y_Handler_Y) == false ? "Servo Y is not Origin." : "Servo Y Origin OK.";
+                if (!string.IsNullOrEmpty(message))
+                    message += "\r\n";
+                message = IsOriginOK((int)ServoSlave_List.Out_Z_Handler_Z) == false ? "Servo Z is not Origin." : "Servo Z Origin OK.";
+                if (!string.IsNullOrEmpty(message))
+                    message += "\r\n";
+                message = IsOriginOK((int)ServoSlave_List.Top_X_Handler_X) == false ? "Servo X is not Origin." : "Servo X Origin OK.";
+                if (!string.IsNullOrEmpty(message))
+                    message += "\r\n";
+                message = IsOriginOK((int)ServoSlave_List.Lift_1_Z) == false ? "Lift 1 is not Origin." : "Lift 1 Origin OK.";
+                if (!string.IsNullOrEmpty(message))
+                    message += "\r\n";
+                message = IsOriginOK((int)ServoSlave_List.Lift_2_Z) == false ? "Lift 2 is not Origin." : "Lift 2 Origin OK.";
+                if (!string.IsNullOrEmpty(message))
+                    message += "\r\n";
+                message = IsOriginOK((int)ServoSlave_List.Lift_3_Z) == false ? "Lift 3 is not Origin." : "Lift 3 Origin OK.";
+                Global.instance.Set_TowerLamp(Global.TowerLampType.Error);
+                Global.instance.ShowMessagebox(message);
+                return false;
+            }
+            return true;
         }
         #region  //DIO Control
         public bool GetIO_InputData(int iSlaveNo, int target)

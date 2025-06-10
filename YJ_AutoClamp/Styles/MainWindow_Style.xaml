@@ -32,9 +32,9 @@
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Margin" Value="10"/>
+        <Setter Property="Margin" Value="120,10,10,10"/>
         <Setter Property="VerticalAlignment" Value="Bottom"/>
-        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="FontFamily" Value="{StaticResource ContentsFont}"/>
     </Style>
     <Style TargetType="telerik:RadButton" x:Key="MainWindow_BottomButtonStyle">
