@@ -1,4 +1,4 @@
-﻿<Window x:Class="YJ_AutoClamp.MessageBox_View"
+﻿<Window x:Class="YJ_AutoClamp.MessageBoxYesNo_View"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -42,7 +42,7 @@
                 <RowDefinition Height="0.60*"/>
                 <RowDefinition Height="0.40*"/>
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Background="{Binding IsError, Converter={StaticResource MessageboxBackgroundConverter}}" Margin="10,10,10,5">
+            <Border Grid.Row="0" Background="{Binding IsColor, Converter={StaticResource MessageboxBackgroundConverter}}" Margin="10,10,10,5">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="3"/>
                 </Border.Effect>
@@ -51,9 +51,17 @@
                     TextWrapping="Wrap" TextAlignment="Center" Padding="20">
                 </TextBlock>
             </Border>
-            <Button Grid.Row="1" Margin="10,5,10,10" Content="CONFIRM" FontSize="40" FontWeight="SemiBold" telerik:StyleManager.Theme="Material" Background="LightGray"
-                    Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" 
-                    CommandParameter="{Binding Name}"/>
+            <Grid Grid.Row="1" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Margin="5" Content="Yes" FontSize="40" FontWeight="SemiBold" telerik:StyleManager.Theme="Material" Background="LightGray"
+                        Click="Yes_Click"/>
+                <Button Grid.Column="1" Margin="5" Content="No" FontSize="40" FontWeight="SemiBold" telerik:StyleManager.Theme="Material" Background="LightGray"
+                        Click="No_Click"/>
+            </Grid>
+            
         </Grid>
     </Grid>
 </Window>

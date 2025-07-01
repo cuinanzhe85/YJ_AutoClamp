@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using YJ_AutoClamp.Utils.EzMotion_E;
 using YJ_AutoClamp.Utils.EzMotion_R;
 using YJ_AutoClamp.ViewModels;
@@ -43,13 +44,20 @@ namespace YJ_AutoClamp.Models
                     return true;
                 }
 
-                if (iSlaveNo == (int)ServoSlave_List.Out_Y_Handler_Y)   IpAddress = IPAddress.Parse("192.168.0.2");
-                if (iSlaveNo == (int)ServoSlave_List.Out_Z_Handler_Z)   IpAddress = IPAddress.Parse("192.168.0.3");
-                if (iSlaveNo == (int)ServoSlave_List.Top_X_Handler_X)     IpAddress = IPAddress.Parse("192.168.0.4");
-                if (iSlaveNo == (int)ServoSlave_List.Top_CV_X) IpAddress = IPAddress.Parse("192.168.0.5");
-                if (iSlaveNo == (int)ServoSlave_List.Lift_1_Z) IpAddress = IPAddress.Parse("192.168.0.6");
-                if (iSlaveNo == (int)ServoSlave_List.Lift_2_Z) IpAddress = IPAddress.Parse("192.168.0.7");
-                if (iSlaveNo == (int)ServoSlave_List.Lift_3_Z) IpAddress = IPAddress.Parse("192.168.0.8");
+                if (iSlaveNo == (int)ServoSlave_List.Out_Y_Handler_Y)   
+                    IpAddress = IPAddress.Parse("192.168.0.2");
+                if (iSlaveNo == (int)ServoSlave_List.Out_Z_Handler_Z)   
+                    IpAddress = IPAddress.Parse("192.168.0.3");
+                if (iSlaveNo == (int)ServoSlave_List.Top_X_Handler_X)     
+                    IpAddress = IPAddress.Parse("192.168.0.4");
+                if (iSlaveNo == (int)ServoSlave_List.Top_CV_X) 
+                    IpAddress = IPAddress.Parse("192.168.0.5");
+                if (iSlaveNo == (int)ServoSlave_List.Lift_1_Z) 
+                    IpAddress = IPAddress.Parse("192.168.0.6");
+                if (iSlaveNo == (int)ServoSlave_List.Lift_2_Z) 
+                    IpAddress = IPAddress.Parse("192.168.0.7");
+                if (iSlaveNo == (int)ServoSlave_List.Lift_3_Z) 
+                    IpAddress = IPAddress.Parse("192.168.0.8");
                 // Is not 0 == Connect Success
                 if (EziMOTIONPlusELib.FAS_ConnectTCP(IpAddress, iSlaveNo) == true)
                 {
@@ -94,9 +102,10 @@ namespace YJ_AutoClamp.Models
             bool flagServOn = false;
 
             // if ServoOnFlagBit is OFF('0'), switch to ON('1')
-            if (EziMOTIONPlusELib.FAS_GetAxisStatus(iSlaveNo, ref AxisStatus) != EziMOTIONPlusELib.FMM_OK)
+            int ret = EziMOTIONPlusELib.FAS_GetAxisStatus(iSlaveNo, ref AxisStatus);
+            if (ret != EziMOTIONPlusELib.FMM_OK)
             {
-                Global.Mlog.Info("Function(FAS_GetAxisStatus) was failed.");
+                Global.Mlog.Info($"Function(FAS_GetAxisStatus) was failed. Ez Motion Return Code [0x{ret.ToString("X")}]");
                 return false;
             }
             /*FFLAG_SERVOON*/
@@ -114,7 +123,7 @@ namespace YJ_AutoClamp.Models
             // 0 : OFF, 1 : ON
             if (EziMOTIONPlusELib.FAS_ServoEnable(iSlaveNo, cmd) != EziMOTIONPlusELib.FMM_OK)
             {
-                string strMsg = "FAS_ServoEnable() was failed : " + EziMOTIONPlusELib.FMM_OK.ToString();
+                string strMsg = "FAS_ServoEnable() was failed : 0x" + EziMOTIONPlusELib.FMM_OK.ToString("X");
                 Global.Mlog.Info(strMsg);
                 return false;
             }
@@ -136,7 +145,7 @@ namespace YJ_AutoClamp.Models
             int nRtn = EziMOTIONPlusELib.FAS_MoveStop(iSlaveNo);
             if (nRtn != EziMOTIONPlusELib.FMM_OK)
             {
-                string strMsg = "FAS_MoveStop() was failed : " + nRtn.ToString();
+                string strMsg = "FAS_MoveStop() was failed : 0x" + nRtn.ToString("X");
                 Global.Mlog.Info($"{strMsg}. Slave No : {iSlaveNo}");
                 return false;
             }
@@ -152,7 +161,7 @@ namespace YJ_AutoClamp.Models
             int nRtn = EziMOTIONPlusELib.FAS_GetAxisStatus(iSlaveNo, ref status);
             if (nRtn != EziMOTIONPlusELib.FMM_OK)
             {
-                string strMsg = "FAS_GetAxisStatus() was failed : " + nRtn.ToString();
+                string strMsg = "FAS_GetAxisStatus() was failed : 0x" + nRtn.ToString("X");
                 Global.Mlog.Info($"{strMsg}. Slave No : {iSlaveNo}");
                 return false;
             }
@@ -168,7 +177,7 @@ namespace YJ_AutoClamp.Models
             int nRtn = EziMOTIONPlusELib.FAS_GetAxisStatus(iSlaveNo, ref status);
             if (nRtn != EziMOTIONPlusELib.FMM_OK)
             {
-                string strMsg = "FAS_GetAxisStatus() was failed : " + nRtn.ToString();
+                string strMsg = "FAS_GetAxisStatus() was failed : 0x" + nRtn.ToString("X");
                 Global.Mlog.Info($"{strMsg}. Slave No : {iSlaveNo}");
                 return false;
             }
@@ -186,7 +195,7 @@ namespace YJ_AutoClamp.Models
         {
             if (EziMOTIONPlusELib.FAS_ClearPosition(iSlaveNo) != EziMOTIONPlusELib.FMM_OK)
             {
-                string strMsg = "FAS_ClearPosition() was failed : " + EziMOTIONPlusELib.FMM_OK.ToString();
+                string strMsg = "FAS_ClearPosition() was failed : 0x" + EziMOTIONPlusELib.FMM_OK.ToString("X");
                 Global.Mlog.Info(strMsg);
                 return false;
             }
@@ -201,7 +210,7 @@ namespace YJ_AutoClamp.Models
             int nRtn = EziMOTIONPlusELib.FAS_EmergencyStop(iSlaveNo);
             if (nRtn != EziMOTIONPlusELib.FMM_OK)
             {
-                string strMsg = "FAS_EmergencyStop() was failed : " + nRtn.ToString();
+                string strMsg = "FAS_EmergencyStop() was failed : 0x" + nRtn.ToString("X");
                 Global.Mlog.Info($"{strMsg}. Slave No : {iSlaveNo}");
                 return false;
             }
@@ -216,7 +225,7 @@ namespace YJ_AutoClamp.Models
             int nRtn = EziMOTIONPlusELib.FAS_ServoAlarmReset(iSlaveNo);
             if (nRtn != EziMOTIONPlusELib.FMM_OK)
             {
-                string strMsg = "FAS_AlarmReset() was failed : " + nRtn.ToString();
+                string strMsg = "FAS_AlarmReset() was failed : 0x" + nRtn.ToString("X");
                 Global.Mlog.Info($"{strMsg}. Slave No : {iSlaveNo}");
                 return false;
             }
@@ -229,9 +238,10 @@ namespace YJ_AutoClamp.Models
         public double GetActualPos(int iSlaveNo)
         {
             int lActualPos = 0;
-            if (EziMOTIONPlusELib.FAS_GetActualPos(iSlaveNo, ref lActualPos) != EziMOTIONPlusELib.FMM_OK)
+            int ret = EziMOTIONPlusELib.FAS_GetActualPos(iSlaveNo, ref lActualPos);
+            if (ret != EziMOTIONPlusELib.FMM_OK)
             {
-                Global.Mlog.Info("Function(FAS_GetActualPos) was failed.");
+                Global.Mlog.Info($"Function(FAS_GetActualPos) was failed. Ez Motion Return Code [0x{ret.ToString("X")}]");
             }
             return (double)(lActualPos/ServoScales[iSlaveNo]);
         }
@@ -244,10 +254,10 @@ namespace YJ_AutoClamp.Models
                 return false;
 
             uint vel = (uint)(ServoScales[iSlaveNo] * cServoModel.JogVelocity[speedFlag]);//(uint)(10 * ServoScales[iSlaveNo]);
-
-            if (EziMOTIONPlusELib.FAS_MoveVelocity(iSlaveNo, vel, direct) != EziMOTIONPlusELib.FMM_OK)
+            int ret = EziMOTIONPlusELib.FAS_MoveVelocity(iSlaveNo, vel, direct);
+            if (ret != EziMOTIONPlusELib.FMM_OK)
             {
-                Console.WriteLine("Function(FAS_MoveVelocity) was failed.");
+                Global.Mlog.Info($"Function(FAS_MoveVelocity) was failed. Ez Motion Return Code [0x{ret.ToString("X")}]");
                 return false;
             }
 
@@ -332,7 +342,7 @@ namespace YJ_AutoClamp.Models
         public bool SetAmpEnable(int iSlaveNo, bool bEnable)
         {
             /** AMP */
-            if ((EziMOTIONPlusELib.FAS_ServoEnable(iSlaveNo, bEnable ? 1 : 0) != EziMOTIONPlusRLib.FMM_OK))
+            if ((EziMOTIONPlusELib.FAS_ServoEnable(iSlaveNo, bEnable ? 1 : 0) != EziMOTIONPlusELib.FMM_OK))
             {
                 return false;
             }
@@ -396,8 +406,11 @@ namespace YJ_AutoClamp.Models
             await Task.Delay(200);
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            int waitTime = 60000;
-            if (iSlaveNo == (int)ServoSlave_List.Out_Y_Handler_Y)
+            int waitTime = 15000;
+            if (iSlaveNo == (int)ServoSlave_List.Out_Y_Handler_Y
+                || iSlaveNo == (int)ServoSlave_List.Lift_1_Z
+                || iSlaveNo == (int)ServoSlave_List.Lift_2_Z
+                || iSlaveNo == (int)ServoSlave_List.Lift_3_Z)
                 waitTime = 90000;
             while (true)
             {
@@ -425,7 +438,7 @@ namespace YJ_AutoClamp.Models
                     MoveABS(iSlaveNo, pos);
                     while(true)
                     {
-                        double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);
+                        double GetPos = Math.Round(SingletonManager.instance.Motion.GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);
                         if (GetPos == pos)
                             break ;
                         if (sw.ElapsedMilliseconds > 5000)
@@ -443,7 +456,7 @@ namespace YJ_AutoClamp.Models
                     MoveABS(iSlaveNo, pos);
                     while (true)
                     {
-                        double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Top_X_Handler_X)), 2);
+                        double GetPos = Math.Round(SingletonManager.instance.Motion.GetActualPos((int)(ServoSlave_List.Top_X_Handler_X)), 2);
                         if (GetPos == pos)
                             break;
                         if (sw.ElapsedMilliseconds > 5000)
@@ -461,7 +474,7 @@ namespace YJ_AutoClamp.Models
                     MoveABS(iSlaveNo, pos);
                     while (true)
                     {
-                        double GetPos = Math.Round(SingletonManager.instance.Ez_Model.GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
+                        double GetPos = Math.Round(SingletonManager.instance.Motion.GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
                         if (GetPos == pos)
                             break;
                         if (sw.ElapsedMilliseconds > 10000)
@@ -549,10 +562,25 @@ namespace YJ_AutoClamp.Models
         }
         public bool MoveTopReturnCvRun()
         {
-            return MoveJog((int)(ServoSlave_List.Top_CV_X), (int)Direction.CCW, 2);
+            //return MoveJog((int)(ServoSlave_List.Top_CV_X), (int)Direction.CCW, 2);
+            var cServoModel = SingletonManager.instance.Servo_Model[(int)(ServoSlave_List.Top_CV_X)];
+            if (cServoModel.IsEzConnected == false)
+                return false;
+
+            uint vel = (uint)(ServoScales[(int)(ServoSlave_List.Top_CV_X)] * (uint)cServoModel.Velocity);
+
+            int ret = EziMOTIONPlusELib.FAS_MoveVelocity((int)(ServoSlave_List.Top_CV_X), vel, (int)Direction.CCW);
+            if (ret != EziMOTIONPlusELib.FMM_OK)
+            {
+                Global.Mlog.Info($"Function(FAS_MoveVelocity) was failed. Ez Motion Return Code [0x{ret.ToString("X")}]");
+                return false;
+            }
+
+            return true;
         }
         public bool MoveTopReturnCvStop()
         {
+            Global.Mlog.Info($"Top Clamp Conveyor Stop");
             return ServoStop((int)(ServoSlave_List.Top_CV_X));
         }
         public bool IsTopHandlerPutDownPos()
@@ -775,12 +803,16 @@ namespace YJ_AutoClamp.Models
         }
         public bool IsOutHandlerYSafetyPos()
         {
-            double pos = 0.0;
-            pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_1).ToString()];
+            double pos1 = 0.0;
+            double pos2 = 0.0;
+            pos1 = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Home).ToString()];
             // 소수점아래 2자리까지비교
-            pos = Math.Round(pos, 2);
+            pos1 = Math.Round(pos1, 2);
+            pos2 = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Put_Down_1).ToString()];
+            // 소수점아래 2자리까지비교
+            pos2 = Math.Round(pos2, 2);
             double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
-            if (GetPos <= pos)
+            if (GetPos <= pos1 || GetPos <= pos2)
                 return true;
             return false;
         }
@@ -914,6 +946,28 @@ namespace YJ_AutoClamp.Models
             else
                 return true;
         }
+        public int SetServoAccel(int slave,  int Accel)
+        {
+            int nRtn = EziMOTIONPlusELib.FAS_SetParameter(slave, 3, Accel);
+            if (nRtn != EziMOTIONPlusELib.FMM_OK)
+            {
+                string strMsg = "FAS_SetParameter() Accel \nReturned: " + nRtn.ToString();
+                return nRtn;
+            }
+            else
+                return nRtn;
+        }
+        public int SetServoDccel(int slave,  int Dccel)
+        {
+            int nRtn = EziMOTIONPlusELib.FAS_SetParameter(slave, 4, Dccel);
+            if (nRtn != EziMOTIONPlusELib.FMM_OK)
+            {
+                string strMsg = "FAS_SetParameter() Dccel \nReturned: " + nRtn.ToString();
+                return nRtn;
+            }
+            else
+                return nRtn;
+        }
         public double GetOutZ_PutDownFloorPos()
         {
             double pos = 0.0;
@@ -938,24 +992,14 @@ namespace YJ_AutoClamp.Models
                 || IsOriginOK((int)ServoSlave_List.Lift_2_Z) == false
                 || IsOriginOK((int)ServoSlave_List.Lift_3_Z) == false)
             {
-                string message = IsOriginOK((int)ServoSlave_List.Out_Y_Handler_Y) == false ? "Servo Y is not Origin." : "Servo Y Origin OK.";
-                if (!string.IsNullOrEmpty(message))
-                    message += "\r\n";
-                message = IsOriginOK((int)ServoSlave_List.Out_Z_Handler_Z) == false ? "Servo Z is not Origin." : "Servo Z Origin OK.";
-                if (!string.IsNullOrEmpty(message))
-                    message += "\r\n";
-                message = IsOriginOK((int)ServoSlave_List.Top_X_Handler_X) == false ? "Servo X is not Origin." : "Servo X Origin OK.";
-                if (!string.IsNullOrEmpty(message))
-                    message += "\r\n";
-                message = IsOriginOK((int)ServoSlave_List.Lift_1_Z) == false ? "Lift 1 is not Origin." : "Lift 1 Origin OK.";
-                if (!string.IsNullOrEmpty(message))
-                    message += "\r\n";
-                message = IsOriginOK((int)ServoSlave_List.Lift_2_Z) == false ? "Lift 2 is not Origin." : "Lift 2 Origin OK.";
-                if (!string.IsNullOrEmpty(message))
-                    message += "\r\n";
-                message = IsOriginOK((int)ServoSlave_List.Lift_3_Z) == false ? "Lift 3 is not Origin." : "Lift 3 Origin OK.";
-                Global.instance.Set_TowerLamp(Global.TowerLampType.Error);
-                Global.instance.ShowMessagebox(message);
+                string message = IsOriginOK((int)ServoSlave_List.Out_Y_Handler_Y) == false ? "Servo Y is not Origin.\r\n" : "";
+                message = IsOriginOK((int)ServoSlave_List.Out_Z_Handler_Z) == false ? "Servo Z is not Origin.\r\n" : "";
+                message = IsOriginOK((int)ServoSlave_List.Top_X_Handler_X) == false ? "Servo X is not Origin.\r\n" : "";
+                message = IsOriginOK((int)ServoSlave_List.Lift_1_Z) == false ? "Lift 1 is not Origin.\r\n" : "";
+                message = IsOriginOK((int)ServoSlave_List.Lift_2_Z) == false ? "Lift 2 is not Origin.\r\n" : "";
+                message = IsOriginOK((int)ServoSlave_List.Lift_3_Z) == false ? "Lift 3 is not Origin." : "";
+                
+                Global.instance.ShowMessagebox(message, true, true);
                 return false;
             }
             return true;

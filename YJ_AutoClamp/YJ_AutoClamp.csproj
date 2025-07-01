@@ -165,24 +165,17 @@
     <Compile Include="Converters\UtilConverter.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Helpers\DoubleClickBehavior.cs" />
-    <Compile Include="Models\AgingConveyorPass_Model.cs" />
+    <Compile Include="Models\Aging_Model.cs" />
     <Compile Include="Models\Channel_Model.cs" />
     <Compile Include="Models\EziDio_Model.cs" />
     <Compile Include="Models\EzMotion_Model_E.cs" />
     <Compile Include="Models\EzMotion_Model_R.cs" />
-    <Compile Include="Models\HttpJson_Model.cs" />
     <Compile Include="Models\Initialize_Model.cs" />
-    <Compile Include="Models\MESSocket.cs" />
-    <Compile Include="Models\NFC_HID.cs" />
-    <Compile Include="Models\NmcDio_Model.cs" />
-    <Compile Include="Models\NMC_Model.cs" />
-    <Compile Include="Models\Http_Model.cs" />
     <Compile Include="Models\Serial_Model.cs" />
     <Compile Include="Models\Servo_Model.cs" />
     <Compile Include="Models\System_Model.cs" />
     <Compile Include="Models\Unit_Model.cs" />
     <Compile Include="SingletonManager.cs" />
-    <Compile Include="Utils\InforManager.cs" />
     <Compile Include="Utils\ItemClient.cs" />
     <Compile Include="Utils\ListBoxScrollIntoViewBehavior.cs" />
     <Compile Include="Utils\Servo_LIB_EziMOTIONPlusE.cs" />
@@ -190,7 +183,6 @@
     <Compile Include="Utils\Servo_MOTION_DEFINE_R.cs" />
     <Compile Include="Utils\PopupManager.cs" />
     <Compile Include="Utils\Servo_MOTION_DEFINE_E.cs" />
-    <Compile Include="Utils\Servo_NMCMotionSDK.cs" />
     <Compile Include="Utils\TimerDelay.cs" />
     <Compile Include="Utils\UtilMessage.cs" />
     <Compile Include="Utils\UtilProtocol.cs" />
@@ -199,6 +191,7 @@
     <Compile Include="Utils\WindowManager.cs" />
     <Compile Include="ViewModels\Auto_ViewModel.cs" />
     <Compile Include="ViewModels\Child_ViewModel.cs" />
+    <Compile Include="ViewModels\DioManager_ViewModel.cs" />
     <Compile Include="ViewModels\Data_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\Dio_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\EquipmentMode_ViewModel.cs" />
@@ -206,9 +199,9 @@
     <Compile Include="ViewModels\MainWindow_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\Initialize_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\JogVelocity_ViewModel.cs" />
-    <Compile Include="ViewModels\PopupView_Model\ModelData_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\MotorVelocity_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\Origin_ViewModel.cs" />
+    <Compile Include="ViewModels\PopupView_Model\AgingStep_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\Product_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\Safety_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\SystemData_ViewModel.cs" />
@@ -239,6 +232,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Views\Popup_View\MessageBoxYesNo_View.xaml.cs">
+      <DependentUpon>MessageBoxYesNo_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popup_View\AgingStep_View.xaml.cs">
+      <DependentUpon>AgingStep_View.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popup_View\Product_View.xaml.cs">
       <DependentUpon>Product_View.xaml</DependentUpon>
     </Compile>
@@ -247,9 +246,6 @@
     </Compile>
     <Compile Include="Views\Popup_View\MessageBox_View.xaml.cs">
       <DependentUpon>MessageBox_View.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popup_View\ModelData_View.xaml.cs">
-      <DependentUpon>ModelData_View.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popup_View\MotorVelocity_View.xaml.cs">
       <DependentUpon>MotorVelocity_View.xaml</DependentUpon>
@@ -263,8 +259,14 @@
     <Compile Include="Views\Popup_View\SystemData_View.xaml.cs">
       <DependentUpon>SystemData_View.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popup_View\Number_View.xaml.cs">
+      <DependentUpon>Number_View.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popup_View\TcpSerial_View.xaml.cs">
       <DependentUpon>TcpSerial_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DioManager_View.xaml.cs">
+      <DependentUpon>DioManager_View.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Teach_View.xaml.cs">
       <DependentUpon>Teach_View.xaml</DependentUpon>
@@ -292,6 +294,10 @@
     <Page Include="Styles\SafetyView_Style.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\DioView_Style.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\TeachView_Style.xaml">
       <SubType>Designer</SubType>
@@ -325,6 +331,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popup_View\MessageBoxYesNo_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popup_View\AgingStep_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popup_View\Product_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -336,10 +350,6 @@
     <Page Include="Views\Popup_View\MessageBox_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popup_View\ModelData_View.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popup_View\MotorVelocity_View.xaml">
       <SubType>Designer</SubType>
@@ -357,9 +367,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popup_View\Number_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popup_View\TcpSerial_View.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DioManager_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Teach_View.xaml">
       <SubType>Designer</SubType>

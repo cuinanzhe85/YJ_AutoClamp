@@ -1,0 +1,20 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:helpers="clr-namespace:Telerik.Windows.Controls.Theming.Helpers;assembly=Telerik.Windows.Controls">
+
+    <Style TargetType="telerik:RadButton" x:Key="Dio_ButtonStyle">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="2"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Crystal"/>
+        <Setter Property="helpers:ThemeHelper.MouseOverBrush" Value="Transparent"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+   
+</ResourceDictionary>

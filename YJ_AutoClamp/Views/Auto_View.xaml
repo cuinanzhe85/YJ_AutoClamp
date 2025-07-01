@@ -15,9 +15,7 @@
         </ResourceDictionary>
     </mvvm:BaseUserControl.Resources>
     <Grid>
-        <Grid.Effect>
-            <DropShadowEffect ShadowDepth="2"/>
-        </Grid.Effect>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.8*"/>
             <ColumnDefinition Width="0.2*"/>
@@ -29,8 +27,9 @@
                 <RowDefinition Height="0.2*"/>
             </Grid.RowDefinitions>
             <!--Main Contents Area-->
-            <Border Background="LightGray" CornerRadius="8" Margin="3" BorderThickness="0.5" BorderBrush="Black">
+            <Border Background="LightGray" CornerRadius="8" Margin="5,3,2,2" BorderThickness="0.5" BorderBrush="Black">
                 <Grid>
+                    
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -44,7 +43,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <!--Information Display Area-->
-                    <Border Grid.Column="4" Grid.Row="1" Grid.RowSpan="2" Margin="0,100,7.5,10" CornerRadius="8" Background="AliceBlue">
+                    <Border Grid.Column="4" Grid.Row="1" Grid.RowSpan="2" Margin="0,50,7.5,10" CornerRadius="8" Background="AliceBlue">
                         <Border.Effect>
                             <DropShadowEffect ShadowDepth="2"/>
                         </Border.Effect>
@@ -54,23 +53,26 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="0.18*"/>
-                                <RowDefinition Height="0.1*"/>
-                                <RowDefinition Height="0.18*"/>
-                                <RowDefinition Height="0.18*"/>
-                                <RowDefinition Height="0.18*"/>
-                                <RowDefinition Height="0.18*"/>
+                                <RowDefinition Height="0.16*"/>
+                                <RowDefinition Height="0.04*"/>
+                                <RowDefinition Height="0.16*"/>
+                                <RowDefinition Height="0.16*"/>
+                                <RowDefinition Height="0.16*"/>
+                                <RowDefinition Height="0.16*"/>
+                                <RowDefinition Height="0.16*"/>
                             </Grid.RowDefinitions>
-                            <Label Grid.Row="0" Grid.Column="0" Content="T/T (Sec)" Margin="2,2,2,2" Background="LightSteelBlue" Foreground="Black" FontSize="12" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="0" Grid.Column="0" Content="T/T (Sec)" Margin="0,2,2,2" Background="LightSlateGray" Foreground="White" FontSize="12" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
 
-                            <Label Grid.Row="2" Grid.ColumnSpan="2" Content="Current Set Count" Background="LightSteelBlue" Foreground="Black" Style="{StaticResource Inside_LabelStyle}" FontSize="14"  Margin="02,-5,0,2"/>
-                            <Label Grid.Row="3" Grid.Column="0" Content="Input C/V" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
-                            <Label Grid.Row="4" Grid.Column="0" Content="Loader" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="2" Grid.ColumnSpan="2" Content="Current Set Count" Margin="0,2,2,2" Background="LightSlateGray" Foreground="White" Style="{StaticResource Inside_LabelStyle}" FontSize="14"/>
+                            <Label Grid.Row="3" Grid.Column="0" Content="Input C/V" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="4" Grid.Column="0" Content="Loading" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="5" Grid.Column="0" Content="Aging" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
 
-                            <Label Grid.Row="0" Grid.Column="2" Content="{Binding Channels[0].TactTime}"  Style="{StaticResource InspectionData_LableStyle}"/>
-                            <Label Grid.Row="3" Grid.Column="2" Content="{Binding Channels[0].InputCount}" Style="{StaticResource InspectionData_LableStyle}"/>
-                            <Label Grid.Row="4" Grid.Column="2" Content="{Binding Channels[0].LoadCount}" Style="{StaticResource InspectionData_LableStyle}"/>
-                            <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Content="UnClamp LAN" Margin="0,2,0,2" FontSize="12" FontWeight="Bold" Padding="0" 
+                            <Label Grid.Row="0" Grid.Column="2" Content="{Binding Channels[0].TactTime}"  Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
+                            <Label Grid.Row="3" Grid.Column="2" Content="{Binding Channels[0].InputCount}" Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
+                            <Label Grid.Row="4" Grid.Column="2" Content="{Binding Channels[0].LoadCount}" Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
+                            <Label Grid.Row="5" Grid.Column="2" Content="{Binding Channels[0].AgingCvTotalCount}" Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
+                            <Label Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Content="IP:192.168.10.20" Margin="0,2,0,2" FontSize="15" FontWeight="Bold" Padding="0"
                                    Background="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsIF_Connected_1, Converter={StaticResource ConnectionColorConverter}}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8"/>
                         </Grid>
                     </Border>
@@ -202,6 +204,29 @@
                                    Visibility="{Binding DisplayUI_Dio[19], Converter={StaticResource BoolenVisibleConverter}}"/>
                         </Grid>
                     </Grid>
+                    <!--MES Result-->
+                    <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Margin="10">
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.3*"/>
+                                <ColumnDefinition Width="0.7*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="MES Result" Margin="2" Background="LightSlateGray" Foreground="White" FontSize="15" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" telerik:CornerRadiusHelper.ClipRadius="8,8,8,8"/>
+
+                            <Label Grid.Row="2" Grid.Column="0" Content="C/N No." Background="LightSteelBlue" Foreground="Black" Style="{StaticResource Inside_LabelStyle}" FontSize="15"  Margin="2"  telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="2" Grid.Column="2" Content="{Binding Channels[0].CnNomber}"  Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="0,2,2,2"/>
+
+                            <Label Grid.Row="3" Grid.Column="0" Content="Result" Background="LightSteelBlue" Foreground="Black" Style="{StaticResource Inside_LabelStyle}" FontSize="15"  Margin="2"  telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="3" Grid.Column="2" Content="{Binding Channels[0].MesResult}"  Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="0,2,2,2"
+                                   Background="{Binding Channels[0].MesResult, Converter={StaticResource OkNgColorConverter}}"/>
+                        </Grid>
+                    </Border>
                     <!--Top Handler-->
                     <Grid Grid.Column="2" Grid.Row="2" Margin="5,-5,5,05">
                         <Grid.RowDefinitions>
@@ -262,8 +287,11 @@
                 </Grid>
             </Border>
             <!--Outside Area-->
-            <Border Grid.Row="1" CornerRadius="8">
+            <Border Grid.Row="1" CornerRadius="8" Margin="3,0,0,0">
                 <Grid>
+                    <Grid.Effect>
+                        <DropShadowEffect ShadowDepth="2"/>
+                    </Grid.Effect>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.5*"/>
                         <ColumnDefinition Width="0.5*"/>
@@ -284,7 +312,7 @@
                                     <RowDefinition Height="0.2*"/>
                                     <RowDefinition Height="0.8*"/>
                                 </Grid.RowDefinitions>
-                                <Label Content="Sensor 1" BorderThickness="2" Margin="22,10,22,-10" Style="{StaticResource Outside_SensorLabelStyle}"
+                                <Label Content="TOP" BorderThickness="2" Margin="22,10,22,-10" Style="{StaticResource Outside_SensorLabelStyle}"
                                        Background="{Binding DisplayUI_Dio[2], Converter={StaticResource ConnectionColorConverter}}"/>
                                 <Image Grid.Row="1" Style="{StaticResource Outside_ImageStyle}" 
                                        Visibility="{Binding DisplayUI_Dio[2], Converter={StaticResource BoolenVisibleConverter}}"/>
@@ -295,7 +323,7 @@
                                     <RowDefinition Height="0.2*"/>
                                     <RowDefinition Height="0.8*"/>
                                 </Grid.RowDefinitions>
-                                <Label Content="Sensor 2" BorderThickness="2" Margin="22,10,22,-10" Style="{StaticResource Outside_SensorLabelStyle}"
+                                <Label Content="SET" BorderThickness="2" Margin="22,10,22,-10" Style="{StaticResource Outside_SensorLabelStyle}"
                                        Background="{Binding DisplayUI_Dio[3], Converter={StaticResource ConnectionColorConverter}}"/>
                                 <Image Grid.Row="1" Style="{StaticResource Outside_ImageStyle}" 
                                        Visibility="{Binding DisplayUI_Dio[3], Converter={StaticResource BoolenVisibleConverter}}"/>
@@ -328,6 +356,9 @@
         </Grid>
         <!--Right Common Menu-->
         <Grid Grid.Column="1" Margin="5" Background="AliceBlue">
+            <Grid.Effect>
+                <DropShadowEffect ShadowDepth="2"/>
+            </Grid.Effect>
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.75*"/>
                 <RowDefinition Height="0.25*"/>
@@ -344,13 +375,13 @@
                                    Command="{Binding RightMenu_PopupCommand}" CommandParameter="Dio"/>
                 <telerik:RadButton Content="Product Info" Background="MediumSeaGreen" Style="{StaticResource AutoView_ButtonStyle}"
                                    Command="{Binding RightMenu_PopupCommand}" CommandParameter="Info"/>
-                <telerik:RadButton Command="{Binding RightMenu_PopupCommand}" CommandParameter="Safety"
+                <!--<telerik:RadButton Command="{Binding RightMenu_PopupCommand}" CommandParameter="Safety"
                                    Background="#FFDE00" Foreground="Black" Style="{StaticResource AutoView_ButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/Resources/warning_black.png" Stretch="Fill" Width="24" Height="24" Margin="0,-5,8,-5"/>
                         <Label Content="SAFETY MODE" Foreground="Black" FontWeight="Bold" Padding="0"/>
                     </StackPanel>
-                </telerik:RadButton>
+                </telerik:RadButton>-->
             </StackPanel>
 
             <!--Products Infomations-->

@@ -3,6 +3,36 @@ using System.Windows.Data;
 
 namespace YJ_AutoClamp.Converters
 {
+    public class OkNgColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            try
+            {
+                string m = (string)value;
+                if (m == "OK")
+                {
+                    return "LawnGreen";
+                }
+                else if (m == "NG")
+                {
+                    return "Orange";
+                }
+                else
+                {
+                    return "White";
+                }
+            }
+            catch
+            {
+                return "White";
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     public class ConnectionColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

@@ -42,9 +42,9 @@ namespace YJ_AutoClamp.ViewModels
         public ICommand PageButton_Command { get; private set; }
         public ICommand OutputToggle_Command { get; private set; }
 
-        public int InputLastpage { get; set; } = (SingletonManager.instance.Ez_Dio.Dio_InputCount / 16) + 1;
-        public int OutputLastpage { get; set; } = (SingletonManager.instance.Ez_Dio.Dio_OutputCount / 16) + 1;
-        public int[] DioRange { get; set; } = { SingletonManager.instance.Ez_Dio.Dio_InputCount, SingletonManager.instance.Ez_Dio.Dio_OutputCount };
+        public int InputLastpage { get; set; } = (SingletonManager.instance.Dio.Dio_InputCount / 16) + 1;
+        public int OutputLastpage { get; set; } = (SingletonManager.instance.Dio.Dio_OutputCount / 16) + 1;
+        public int[] DioRange { get; set; } = { SingletonManager.instance.Dio.Dio_InputCount, SingletonManager.instance.Dio.Dio_OutputCount };
         #endregion
         private int _InputCurrentPage = 1;
         public int InputCurrentPage
@@ -85,7 +85,7 @@ namespace YJ_AutoClamp.ViewModels
         }
         private void UupdateTimer_Initialize()
         {
-            UupdateTimer = new Timer(1000);
+            UupdateTimer = new Timer(500);
             UupdateTimer.Elapsed += OnTimerElapsed;
             UupdateTimer.AutoReset = true;
             UupdateTimer.Start();
@@ -98,13 +98,13 @@ namespace YJ_AutoClamp.ViewModels
         {
             for (int i = 0; i < DisplayedInputData.Count; i++)
             {
-                if (DisplayedInputData[i].Status != SingletonManager.instance.Ez_Dio.DI_RAW_DATA[(InputCurrentPage - 1) * 16 + i])
-                    DisplayedInputData[i].Status = SingletonManager.instance.Ez_Dio.DI_RAW_DATA[(InputCurrentPage - 1) * 16 + i];
+                if (DisplayedInputData[i].Status != SingletonManager.instance.Dio.DI_RAW_DATA[(InputCurrentPage - 1) * 16 + i])
+                    DisplayedInputData[i].Status = SingletonManager.instance.Dio.DI_RAW_DATA[(InputCurrentPage - 1) * 16 + i];
             }
             for (int i = 0; i < DisplayedOutputData.Count; i++)
             {
-                if (DisplayedOutputData[i].Status != SingletonManager.instance.Ez_Dio.DO_RAW_DATA[(OutputCurrentPage - 1) * 16 + i])
-                    DisplayedOutputData[i].Status = SingletonManager.instance.Ez_Dio.DO_RAW_DATA[(OutputCurrentPage - 1) * 16 + i];
+                if (DisplayedOutputData[i].Status != SingletonManager.instance.Dio.DO_RAW_DATA[(OutputCurrentPage - 1) * 16 + i])
+                    DisplayedOutputData[i].Status = SingletonManager.instance.Dio.DO_RAW_DATA[(OutputCurrentPage - 1) * 16 + i];
             }
         }
         private void UpdateInputPageDisplay()
@@ -114,9 +114,9 @@ namespace YJ_AutoClamp.ViewModels
             for (int i = 0; i < 16; i++)
             {
                 // 기존 객체 업데이트
-                DisplayedInputData[i].Address = SingletonManager.instance.Ez_Dio.Input_Address[startIndex + i];
-                DisplayedInputData[i].Label = SingletonManager.instance.Ez_Dio.Input_Label[startIndex + i];
-                DisplayedInputData[i].Status = SingletonManager.instance.Ez_Dio.DI_RAW_DATA[startIndex + i];
+                DisplayedInputData[i].Address = SingletonManager.instance.Dio.Input_Address[startIndex + i];
+                DisplayedInputData[i].Label = SingletonManager.instance.Dio.Input_Label[startIndex + i];
+                DisplayedInputData[i].Status = SingletonManager.instance.Dio.DI_RAW_DATA[startIndex + i];
             }
         }
         private void UpdateOutputPageDisplay()
@@ -126,9 +126,9 @@ namespace YJ_AutoClamp.ViewModels
             for (int i = 0; i < 16; i++)
             {
                 // 기존 객체의 데이터 갱신
-                DisplayedOutputData[i].Address = SingletonManager.instance.Ez_Dio.Output_Address[startIndex + i];
-                DisplayedOutputData[i].Label = SingletonManager.instance.Ez_Dio.Output_Label[startIndex + i];
-                DisplayedOutputData[i].Status = SingletonManager.instance.Ez_Dio.DO_RAW_DATA[startIndex + i];
+                DisplayedOutputData[i].Address = SingletonManager.instance.Dio.Output_Address[startIndex + i];
+                DisplayedOutputData[i].Label = SingletonManager.instance.Dio.Output_Label[startIndex + i];
+                DisplayedOutputData[i].Status = SingletonManager.instance.Dio.DO_RAW_DATA[startIndex + i];
                 DisplayedOutputData[i].Index = startIndex + i;
             }
         }
@@ -196,10 +196,10 @@ namespace YJ_AutoClamp.ViewModels
         {
             int startIndex = (OutputCurrentPage - 1) * 16;
             int index = (int)parameter + startIndex;
-            if (SingletonManager.instance.Ez_Dio.DO_RAW_DATA[index] == false)
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData(index, true);
+            if (SingletonManager.instance.Dio.DO_RAW_DATA[index] == false)
+                SingletonManager.instance.Dio.SetIO_OutputData(index, true);
             else
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData(index, false);
+                SingletonManager.instance.Dio.SetIO_OutputData(index, false);
         }
         #region override
         protected override void InitializeCommands()

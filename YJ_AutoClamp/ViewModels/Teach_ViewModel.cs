@@ -1,17 +1,12 @@
 ﻿using Common.Commands;
 using Common.Managers;
-using HelixToolkit.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using Telerik.Windows.Data;
 using YJ_AutoClamp.Models;
@@ -95,10 +90,10 @@ namespace YJ_AutoClamp.ViewModels
         public ICommand ServoMove_Command { get; private set; }
         public ICommand TeachingMove_Command { get; private set; }
         public ICommand TeachingSave_Command { get; private set; }
-        public ICommand DioControl_Command { get; private set; }
+
         #endregion
 
-        private readonly EzMotion_Model_E EzModel = SingletonManager.instance.Ez_Model;
+        private readonly EzMotion_Model_E EzModel = SingletonManager.instance.Motion;
         private readonly RadObservableCollection<Servo_Model> ServoModel = SingletonManager.instance.Servo_Model;
 
         #region// Update Thread
@@ -175,7 +170,7 @@ namespace YJ_AutoClamp.ViewModels
         }
         #endregion
 
-        private EziDio_Model _Dio = SingletonManager.instance.Ez_Dio;
+        private EziDio_Model _Dio = SingletonManager.instance.Dio;
         public EziDio_Model Dio
         {
             get { return _Dio; }
@@ -572,9 +567,17 @@ namespace YJ_AutoClamp.ViewModels
                     {
                         return;
                     }
+                    if ( EzModel.IsOutHandlerPickupPosY() == true)
+                    {
+                        Global.instance.ShowMessagebox("Pleass Check Servo Y Position");
+                        return;
+                    }
                     Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
                     Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
-                    EzModel.MoveABS((int)ServoSlave_List.Top_X_Handler_X, TeachPosition[(int)TeachingSection.Top_Handler_X]);
+                    if (EzModel.MoveABS((int)ServoSlave_List.Top_X_Handler_X, TeachPosition[(int)TeachingSection.Top_Handler_X])==false)
+                    {
+                        Global.instance.ShowMessagebox("Top X Servo Move Fail");
+                    }
                     break;
                 case "Out_Y_Handler":
                     if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
@@ -583,123 +586,49 @@ namespace YJ_AutoClamp.ViewModels
                     }
                     if (EzModel.IsOutHandlerReadyDoneZ() == false)
                     {
-                        MessageBox.Show("Z is not ready position.", "Servo Move", MessageBoxButton.OK);
+                        Global.instance.ShowMessagebox("Z is not ready position.");
                         return;
                     }
-                    EzModel.MoveABS((int)ServoSlave_List.Out_Y_Handler_Y, TeachPosition[(int)TeachingSection.Out_Handler_Y]);
+                    if (EzModel.IsTopHandlerPutDownPos() == true)
+                    {
+                        Global.instance.ShowMessagebox("Top Handler is not Ready position.");
+                        return;
+                    }
+                    if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_X_LEFT_CYL_SS] != true)
+                    {
+                        Global.instance.ShowMessagebox("Bottom Handler is not Left Position.");
+                        return;
+                    }
+                    if (EzModel.MoveABS((int)ServoSlave_List.Out_Y_Handler_Y, TeachPosition[(int)TeachingSection.Out_Handler_Y])== false)
+                    {
+                        Global.instance.ShowMessagebox("Loading Y Servo Move Fail");
+                    }
                     break;
                 case "Out_Z_Handler":
                     if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
                     {
                         return;
                     }
-                    EzModel.MoveABS((int)ServoSlave_List.Out_Z_Handler_Z, TeachPosition[(int)TeachingSection.Out_Handler_Z]);
+                    if (EzModel.MoveABS((int)ServoSlave_List.Out_Z_Handler_Z, TeachPosition[(int)TeachingSection.Out_Handler_Z])== false)
+                    {
+                        Global.instance.ShowMessagebox("Loading Z Servo Move Fail");
+                    }
                     break;
                 case "Lift":
                     if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
                     {
                         return;
                     }
-                    EzModel.MoveABS((int)ServoSlave_List.Lift_1_Z + Selected_LiftIndex, TeachPosition[(int)TeachingSection.Lift]);
+                    if (EzModel.MoveABS((int)ServoSlave_List.Lift_1_Z + Selected_LiftIndex, TeachPosition[(int)TeachingSection.Lift])== false)
+                    {
+                        Global.instance.ShowMessagebox("Lift Serfo Move Fail");
+                    }
                     break;
             }
             if (UpdateTimer.IsEnabled == false)
                 UpdateTimer.Start();
         }
-        private void OnDioControl_Command(object obj)
-        {
-            if (string.IsNullOrEmpty(obj.ToString()))
-                return;
-            if (obj.ToString() == "TopRetCV")
-            {
-                if (TopCVRunStop == true)
-                    EzModel.MoveJog((int)ServoSlave_List.Top_CV_X, (int)Direction.CCW, 2);
-                else
-                    EzModel.ServoStop((int)ServoSlave_List.Top_CV_X);
-            }
-            else if (obj.ToString() == "ClampL")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_LZ_UP_CYL_SS] == true)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_LZ_DOWN_SOL, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_LZ_DOWN_SOL, false);
-            }
-            else if (obj.ToString() == "ClampR")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_RZ_UP_CYL_SS] == true)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_RZ_DOWN_SOL, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_RZ_DOWN_SOL, false);
-            }
-            else if (obj.ToString() == "TopUpDown1")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_TR_Z_UP_CYL_SS_1] == true)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
-            }
-            else if (obj.ToString() == "TopUpDown2")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_TR_Z_UP_CYL_SS_2] == true)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, false);
-            }
-            else if (obj.ToString() == "BottomGrip")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_RZ_UNGRIP_CYL_SS] == true)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_RZ_GRIP_SOL, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_RZ_GRIP_SOL, false);
-            }
-            else if (obj.ToString() == "TopGrip")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_RT_Z_UNGRIP_CYL_SS] == true)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_GRIP_SOL, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_GRIP_SOL, false);
-            }
-            else if (obj.ToString() == "LoadGrip")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMP_LD_Z_UNGRIP_CYL_SS] == true)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_LD_Z_GRIP_SOL, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_LD_Z_GRIP_SOL, false);
-            }
-            else if (obj.ToString() == "BottomCenter")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMPING_CV_CENTERING_CYL_SS_2_BWD] == true)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_2, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_2, false);
-            }
-            else if (obj.ToString() == "TopCenter")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMPING_CV_CENTERING_CYL_SS_1_BWD] == true)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_1, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_1, false);
-            }
-            else if (obj.ToString() == "InputCenter")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.IN_CV_UNALIGN_CYL_SS] == false)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.IN_SET_CV_CENTERING, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.IN_SET_CV_CENTERING, false);
-            }
-            else if (obj.ToString() == "LeftRight")
-            {
-                if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_X_LEFT_CYL_SS] == false)
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_FORWARD_SOL, true);
-                else
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_FORWARD_SOL, false);
-            }
-            else
-            {
-                int index = int.Parse(obj.ToString());
-                Dio.SetIO_OutputData(index, Dio.DO_OPER_DATA[index]);
-            }
-        }
+        
         #region // override
         protected override void InitializeCommands()
         {
@@ -707,14 +636,12 @@ namespace YJ_AutoClamp.ViewModels
             ServoMove_Command = new RelayCommand(OnServoMove_Command);
             TeachingMove_Command = new RelayCommand(OnTeachingMove_Command);
             TeachingSave_Command = new RelayCommand(OnTeachingSave_Command);
-            DioControl_Command = new RelayCommand(OnDioControl_Command);
         }
         protected override void DisposeManaged()
         {
             ServoMove_Command = null;
             TeachingSave_Command = null;
             TeachingMove_Command = null;
-            DioControl_Command = null;
 
             UnitList.Clear();
             UnitList = null;

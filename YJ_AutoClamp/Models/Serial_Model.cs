@@ -10,7 +10,7 @@ namespace YJ_AutoClamp.Models
         private bool _IsConnected = false;
         public enum SerialIndex
         {
-            bcr1,
+            //bcr1,
             Nfc,
             Mes,
             Max
@@ -152,25 +152,29 @@ namespace YJ_AutoClamp.Models
                 {
                     if (!string.IsNullOrEmpty(Data))
                     {
-                        string[] parts = Data.Split('=');
-                        NfcData = parts[1].Trim();
-                        IsReceived = true;
-
+                        if (Data.Contains("="))
+                        {
+                            string[] parts = Data.Split('=');
+                            NfcData = parts[1].Trim();
+                            IsReceived = true;
+                        }
                         Global.Mlog.Info($"{PortName} : {Port} Receive '{Data}'");
                     }
                 }
                 catch
                 {
                     IsReceived = false;
+                    Global.ExceptionLog.ErrorFormat($"NFC Data Read Error - {Data}");
                 }
             }
             else if (PortName.Contains("MES"))
             {
-                MesResult = Data.Trim();
-                if (!string.IsNullOrEmpty(MesResult))
+                
+                if (!string.IsNullOrEmpty(Data))
                 {
-                    Global.Mlog.Info($"{PortName} : {Port} Receive '{MesResult}'");
                     IsReceived = true;
+                    MesResult = Data.Trim();
+                    Global.Mlog.Info($"{PortName} : {Port} Receive '{MesResult}'");
                 }
             }
             else

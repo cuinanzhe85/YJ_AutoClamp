@@ -14,6 +14,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -46,6 +47,7 @@ namespace YJ_AutoClamp
         }
         // Log Set
         public static ILog Mlog;
+        public static ILog TTlog;
         public static ILog ExceptionLog;
 
         private readonly ConcurrentQueue<Tuple<string, string>> SequenceLogQueue = new ConcurrentQueue<Tuple<string, string>>();
@@ -78,9 +80,9 @@ namespace YJ_AutoClamp
         public string IniSystemPath { get; set; } = Environment.CurrentDirectory + @"\Config\System.ini";
         public string IniVelocityPath { get; set; } = Environment.CurrentDirectory + @"\Config\Velocity.ini";
         public string IniTeachPath { get; set; } = Environment.CurrentDirectory + @"\Config\Teach\Teaching.ini";
-        public string IniModelPath { get; set; } = Environment.CurrentDirectory + @"\Config\Model";
-        public string IniSpecPath { get; set; } = Environment.CurrentDirectory + @"\Config\Spec";
         public string IniAgingPath { get; set; } = Environment.CurrentDirectory + @"\Aging";
+        public string IniMesLogPath { get; set; } = Environment.CurrentDirectory + @"\MES";
+        public string AlarmLogPath { get; set; } = Environment.CurrentDirectory + @"\Alarm";
         public string IniSequencePath { get; set; } = Environment.CurrentDirectory + @"\Config\Sequence.ini";
 
         private bool _BusyStatus = true;
@@ -116,6 +118,7 @@ namespace YJ_AutoClamp
             ClockTimer.Start();
             // Log Set
             Mlog = CreateLog4NetLogger("Mlog");
+            TTlog = CreateLog4NetLogger("TACTTIME");
             ExceptionLog = CreateLog4NetLogger("Exception");
             // Sequence Log Worker Start
             StartSequenceLogWorker();
@@ -123,7 +126,7 @@ namespace YJ_AutoClamp
         }
         private void ClockTimer_Tick(object sender, EventArgs e)
         {
-            NowDate = DateTime.Now.ToString("yyyy - MM - dd. HH : mm : ss");
+            NowDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             if(SingletonManager.instance.IsSafetyInterLock == true)
             {
@@ -158,13 +161,14 @@ namespace YJ_AutoClamp
                     }
                     catch (Exception ex)
                     {
-                        ExceptionLog?.Error("Error writing Sequence log", ex);
+                        Global.ExceptionLog.Error($"SequenceLogThreadWorker - {ex.ToString()}");
                     }
                 }
                 else
                 {
                     Thread.Sleep(100); // 큐가 비었으면 잠시 대기
                 }
+                Thread.Sleep(2);
             }
         }
         public ILog CreateLog4NetLogger(string logname)
@@ -221,6 +225,14 @@ namespace YJ_AutoClamp
             SingletonManager.instance.Channel_Model[0].LoadCount = count.ToString();
             myIni.Write("LOAD_COUNT", count.ToString(), section);
         }
+        public void MES_LOG(string cn, string Result)
+        {
+            string Path = Global.instance.IniMesLogPath + $@"\{DateTime.Now.ToString("yyyyMMdd")}.ini";
+            var myIni = new IniFile(Path);
+            string section = "MES";
+            string writedata = cn + " = " + Result;
+            myIni.Write(DateTime.Now.ToString("HH:mm:ss:fff"), writedata, section);
+        }
         public void LoadingTactTimeStart()
         {
             TactTimeSw.Restart();
@@ -233,18 +245,62 @@ namespace YJ_AutoClamp
                 long minutes = elapsedMs / 60000;
                 long seconds = (elapsedMs % 60000) / 1000;
                 long milliseconds = elapsedMs % 1000;
-                SingletonManager.instance.Channel_Model[0].TactTime = $"{minutes:D2}:{seconds:D2}:{milliseconds:D1}";
+                double tt = TactTimeSw.ElapsedMilliseconds / 1000.0;
+                tt = Math.Round(tt, 1);
+                SingletonManager.instance.Channel_Model[0].TactTime = $"{tt.ToString()}";//"{seconds:D2}:{milliseconds:D1}";
             }
         }
-        public void ShowMessagebox(string message, bool isError = true)
+        public void WriteAlarmLog(string message, string section = "ALARM")
+        {
+            try
+            {
+                message.Replace("\r\n", " ");
+                string logFile = Path.Combine(AlarmLogPath, $"{DateTime.Now:yyyyMMdd}.txt");
+
+                string time = DateTime.Now.ToString("yyyyMMdd HH:mm:ss:fff");
+                string logLine = $"{time},{message}";
+
+                // 파일에 append
+                File.AppendAllText(logFile, logLine + Environment.NewLine);
+            }
+            catch (Exception ex)
+            {
+                Global.ExceptionLog.Error($"WriteAlarmLog - {ex.ToString()}");
+            }
+        }
+        public void ShowMessagebox(string message, bool isError = true, bool buzzOn = false, bool Alarm = false)
         {
             try
             {
                 // UI 쓰레드에서 동작하도록 보장
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    var view = new MessageBox_View(message, isError);
-                    view.Show();
+                    if (buzzOn == true)
+                    {
+                        Mlog.Info($"Error Message : {message}");
+                        Global.instance.Set_TowerLamp(Global.TowerLampType.Error);
+                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
+                        var view = new MessageBox_View(message, isError);
+                        view.ShowDialog();
+                        Global.instance.Set_TowerLamp(Global.TowerLampType.Stop);
+                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
+                    }
+                    else if (Alarm == true)
+                    {
+                        Mlog.Info($"Error Message : {message}");
+                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, true);
+                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
+                        Thread.Sleep(1000);
+                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
+                        var view = new MessageBox_View(message, isError);
+                        view.ShowDialog();
+                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
+                    }
+                    else
+                    {
+                        var view = new MessageBox_View(message, isError);
+                        view.Show();
+                    }
                 });
             }
             catch (Exception ex)
@@ -269,35 +325,35 @@ namespace YJ_AutoClamp
             switch (type)
             {
                 case TowerLampType.Start:
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, false);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, false);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, true);
                     break;
                 case TowerLampType.Init:
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, true);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, true);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, true);
                     break;
                 case TowerLampType.Stop:
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, true);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, false);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, false);
                     break;
                 case TowerLampType.Error:
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, true);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, false);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, false);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, false);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, false);
                     break;
                 case TowerLampType.Operator:
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, true);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, false);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, false);
                     break;
                 case TowerLampType.InputStop:
                 case TowerLampType.OutputStop:
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, true);
-                    SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_YELLOW, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_GREEN, true);
                     break;
             }
         }
@@ -322,8 +378,8 @@ namespace YJ_AutoClamp
                 SendMainUiLog($"Inspection Start [ {SingletonManager.instance.EquipmentMode} Mode ]");
                 Mlog.Info($"{SingletonManager.instance.EquipmentMode.ToString()} Run Inspection Start.");
 
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_STOP, false);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_START, true);
+                SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_STOP, false);
+                SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_START, true);
 
                 SingletonManager.instance.IsInspectionStart = true;
 
@@ -357,8 +413,8 @@ namespace YJ_AutoClamp
 
                 // Tower Lamp Stop
                 Set_TowerLamp(TowerLampType.Stop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_STOP, true);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_START, false);
+                SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_STOP, true);
+                SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_START, false);
 
             }
             finally

@@ -66,6 +66,24 @@ namespace YJ_AutoClamp.Models
             get { return _LoadCount; }
             set { SetValue(ref _LoadCount, value); }
         }
+        private string _CnNomber;
+        public string CnNomber
+        {
+            get { return _CnNomber; }
+            set { SetValue(ref _CnNomber, value); }
+        }
+        private string _MesResult;
+        public string MesResult
+        {
+            get { return _MesResult; }
+            set { SetValue(ref _MesResult, value); }
+        }
+        private string _AgingCvTotalCount;
+        public string AgingCvTotalCount
+        {
+            get { return _AgingCvTotalCount; }
+            set { SetValue(ref _AgingCvTotalCount, value); }
+        }
         // Stopwatch 및 DispatcherTimer 추가
         private Stopwatch _Stopwatch;
         public Channel_Model(ChannelList channel)
@@ -76,6 +94,7 @@ namespace YJ_AutoClamp.Models
             this.Barcode = string.Empty;
             this.InputCount = "0";
             this.LoadCount = "0";
+            this.AgingCvTotalCount = "0";
 
             // Stop watch 초기화
             _Stopwatch = new Stopwatch();

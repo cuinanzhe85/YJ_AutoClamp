@@ -33,8 +33,8 @@
                 </LinearGradientBrush>
             </Grid.Background>
             <StackPanel Orientation="Horizontal">
-                <telerik:RadGlyph Glyph="&#xe13b;" Margin="15,0" FontSize="18" Foreground="White"/>
-                <Label Content="System Data" Foreground="White" FontSize="13" FontWeight="SemiBold" Padding="0,6" VerticalContentAlignment="Center"/>
+                <telerik:RadGlyph Glyph="&#xe124;" Margin="15,0" FontSize="18" Foreground="White"/>
+                <Label Content="Product Info" Foreground="White" FontSize="13" FontWeight="SemiBold" Padding="0,6" VerticalContentAlignment="Center"/>
             </StackPanel>
             <telerik:RadButton Style="{StaticResource Exit_ButtonStyle}"
                    Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" CommandParameter="Product Info">
@@ -51,6 +51,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <!--Input Count-->
                 <Label Grid.Row="0" Grid.Column="0" Content="Input SET Count" Style="{StaticResource Option_LabelStyle}"/>
@@ -58,6 +59,9 @@
                 <!--Loading Count-->
                 <Label Grid.Row="0" Grid.Column="1" Content="Loading Count" Style="{StaticResource Option_LabelStyle}"/>
                 <Label Grid.Row="1" Grid.Column="1" Content="{Binding Channels[0].LoadCount}" Style="{StaticResource Product_LabelStyle}"/>
+                <!--Loading Count-->
+                <Label Grid.Row="0" Grid.Column="2" Content="Aging SET Count" Style="{StaticResource Option_LabelStyle}"/>
+                <Label Grid.Row="1" Grid.Column="2" Content="{Binding Channels[0].AgingCvTotalCount}" Style="{StaticResource Product_LabelStyle}"/>
 
             </Grid>
         </Border>

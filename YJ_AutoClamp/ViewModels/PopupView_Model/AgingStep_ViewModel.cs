@@ -1,5 +1,6 @@
 ﻿using Common.Commands;
 using Common.Managers;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Data;
@@ -7,7 +8,7 @@ using YJ_AutoClamp.Models;
 
 namespace YJ_AutoClamp.ViewModels
 {
-    public class Product_ViewModel : Child_ViewModel
+    public class AgingStep_ViewModel : Child_ViewModel
     {
         #region // ICommands
         public ICommand Reset_Command { get; private set; }
@@ -15,8 +16,13 @@ namespace YJ_AutoClamp.ViewModels
         public RadObservableCollection<Channel_Model> Channels
         {
             get { return SingletonManager.instance.Channel_Model; }
-        } 
-        public Product_ViewModel()
+        }
+        private ObservableCollection<Aging_Model> _AgingCvList = SingletonManager.instance.Display_AgingCv;
+        public ObservableCollection<Aging_Model> AgingCvList
+        {
+            get { return _AgingCvList; }
+        }
+        public AgingStep_ViewModel()
         {
             InitializeCommands();
         }

@@ -28,7 +28,7 @@
         <Grid.Effect>
             <DropShadowEffect ShadowDepth="2"/>
         </Grid.Effect>
-        <telerik:RadTileList TilePlaceHolderSide="220" Margin="70,0,0,0">
+        <telerik:RadTileList TilePlaceHolderSide="220" Margin="70,0,0,0"  telerik:TouchManager.TouchMode="None">
             <telerik:Tile Background="Gray" Style="{StaticResource Tile_Style}"
                           Command="{Binding TileButton_Command}" CommandParameter="System">
                 <StackPanel VerticalAlignment="Center">

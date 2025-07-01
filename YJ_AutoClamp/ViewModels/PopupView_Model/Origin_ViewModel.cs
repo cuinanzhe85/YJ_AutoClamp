@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using YJ_AutoClamp.Models;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
+using static YJ_AutoClamp.Models.EziDio_Model;
 
 namespace YJ_AutoClamp.ViewModels
 {
@@ -49,8 +49,8 @@ namespace YJ_AutoClamp.ViewModels
             set { SetValue(ref _BusyContent, value); }
         }
         public ObservableCollection<ServoSlaveViewModel> ServoSlaves { get; set; }
-        public EzMotion_Model_E Motion = SingletonManager.instance.Ez_Model;
-        public EziDio_Model Dio = SingletonManager.instance.Ez_Dio;
+        public EzMotion_Model_E Motion = SingletonManager.instance.Motion;
+        public EziDio_Model Dio = SingletonManager.instance.Dio;
         public Origin_ViewModel()
         {
             ServoSlaves = new ObservableCollection<ServoSlaveViewModel>();
@@ -86,7 +86,7 @@ namespace YJ_AutoClamp.ViewModels
                     {
                         result = Motion.SetServoOn(slave.SlaveID, true);
                         slave.Color = result ? "Bisque" : "White";
-                        slave.IsChecked = false;
+                        //slave.IsChecked = false;
                     }
                     if (SingletonManager.instance.Servo_Model[(int)ServoSlave_List.Top_CV_X].IsServoOn == false)
                         Motion.SetServoOn((int)ServoSlave_List.Top_CV_X, true);
@@ -102,7 +102,7 @@ namespace YJ_AutoClamp.ViewModels
                                 failedSlaves += ", ";
                             failedSlaves += slave.Name;
                         }
-                        slave.IsChecked = false;
+                        //slave.IsChecked = false;
                     }
                     if (!string.IsNullOrEmpty(failedSlaves))
                     {
@@ -122,7 +122,7 @@ namespace YJ_AutoClamp.ViewModels
                                 failedSlave += ", ";
                             failedSlave += slave.Name;
                         }
-                        slave.IsChecked = false;
+                        //slave.IsChecked = false;
                     }
                     if (!string.IsNullOrEmpty(failedSlave))
                     {
@@ -132,7 +132,8 @@ namespace YJ_AutoClamp.ViewModels
                     }
                     break;
                 case "Origin":
-                    DoorOpenCheck();
+                    if (DoorOpenCheck() == true)
+                        break;
 
                     Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_2, false);
                     Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_UP_SOL, false);
@@ -143,17 +144,18 @@ namespace YJ_AutoClamp.ViewModels
                     {
                         BusyContent = string.Empty;
                         BusyStatus = false;
-                        Global.instance.ShowMessagebox("There is a product in the Bottom handler, please remove it and proceed.");
+                        Global.instance.ShowMessagebox("There is a product in the Bottom handler, please remove it and proceed.\r\n(바텀 핸들 세트/클램프 제거 해주세요)");
                         return;
                     }
                     SingletonManager.instance.BottomClampDone = false;
                     SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Top_X].Bottom_Step = Unit_Model.BottomHandle.Idle;
+                    SingletonManager.instance.Unit_Model[(int)MotionUnit_List.In_CV].TopCvStep = Unit_Model.Top_CV.Idle;
 
                     BusyStatus = true;
                     // 선택된 슬레이브 필터링
                     var selectedSlaves = ServoSlaves.Where(slave => slave.IsChecked).ToList();
                     var failedSlavesList = new List<string>();
-                    SingletonManager.instance.Ez_Dio.Set_HandlerUpDown(true);
+                    SingletonManager.instance.Dio.Set_HandlerUpDown(true);
 
                     // Servo Origin
                     var Slave = ServoSlaves[(int)ServoSlave_List.Out_Z_Handler_Z];
@@ -163,13 +165,13 @@ namespace YJ_AutoClamp.ViewModels
                         {
                             BusyContent = string.Empty;
                             BusyStatus = false;
-                            Global.instance.ShowMessagebox("There is a product in the Z handler, please remove it and proceed.");
+                            Global.instance.ShowMessagebox("There is a product in the Z handler, please remove it and proceed.\r\n(로딩 핸들 클램프 제거 해주세요)");
                             return;
                         }
                         BusyContent = $"Please Wait. Now Servo Origin...{Slave.Name}";
                         result = await Motion.ServoOrigin(Slave.SlaveID);
-                        Slave.Color = result ? "PaleGreen" : "White";
-                        Slave.IsChecked = false;
+                        Slave.Color = result ? "LawnGreen" : "White";
+                        //Slave.IsChecked = false;
                         if (!result)
                         {
                             failedSlavesList.Add(Slave.Name);
@@ -187,13 +189,13 @@ namespace YJ_AutoClamp.ViewModels
                         {
                             BusyContent = string.Empty;
                             BusyStatus = false;
-                            Global.instance.ShowMessagebox("There is a product in the Top handler, please remove it and proceed.");
+                            Global.instance.ShowMessagebox("There is a product in the Top handler, please remove it and proceed.\r\n(탑 핸들 클램프 제거 해주세요)");
                             return;
                         }
                         BusyContent = $"Please Wait. Now Servo Origin...{Slave.Name}";
                         result = await Motion.ServoOrigin(Slave.SlaveID);
-                        Slave.Color = result ? "PaleGreen" : "White";
-                        Slave.IsChecked = false;
+                        Slave.Color = result ? "LawnGreen" : "White";
+                        //Slave.IsChecked = false;
                         if (!result)
                         {
                             failedSlavesList.Add(Slave.Name);
@@ -210,19 +212,20 @@ namespace YJ_AutoClamp.ViewModels
                         {
                             BusyContent = string.Empty;
                             BusyStatus = false;
-                            Global.instance.ShowMessagebox("There is a product in the Z handler, please remove it and proceed.");
+                            Global.instance.ShowMessagebox("There is a product in the Z handler, please remove it and proceed.\r\n(로딩 핸들 클램프 제거 해주세요)");
                             return;
                         }
                         BusyContent = $"Please Wait. Now Servo Origin...{Slave.Name}";
                         result = await Motion.ServoOrigin(Slave.SlaveID);
-                        Slave.Color = result ? "PaleGreen" : "White";
-                        Slave.IsChecked = false;
+                        Slave.Color = result ? "LawnGreen" : "White";
+                        //Slave.IsChecked = false;
                         if (!result)
                         {
                             failedSlavesList.Add(Slave.Name);
                         }
                         // Step 초기화 설정
                         SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_Y].Out_Handle_Step = Unit_Model.OutHandle.Idle;
+                        SingletonManager.instance.IsY_PickupColl = false;
                     }
                     
                     if (selectedSlaves.Any())
@@ -238,11 +241,15 @@ namespace YJ_AutoClamp.ViewModels
                                 {
                                     BusyContent = $"Please Wait. Now Servo Origin...{slave.Name}";
                                     result = await Motion.ServoOrigin(slave.SlaveID);
-                                    slave.Color = result ? "PaleGreen" : "White";
-                                    slave.IsChecked = false;
+                                    slave.Color = result ? "LawnGreen" : "White";
+                                    //slave.IsChecked = false;
                                     if (!result)
                                     {
                                         failedSlavesList.Add(slave.Name);
+                                    }
+                                    else
+                                    {
+                                        Motion.MoveLiftLoding(slave.SlaveID); // 로딩 위치로 이동
                                     }
                                 }
                             }
@@ -258,20 +265,27 @@ namespace YJ_AutoClamp.ViewModels
                         Global.Mlog.Error(failedMessage);
                         Global.instance.ShowMessagebox(failedMessage);
                     }
+                    else
+                    {
+                        Global.instance.ShowMessagebox("Origin Success", false);
+                    }
 
                     BusyContent = string.Empty;
                     BusyStatus = false;
                     break;
                 case "Connect":
                     BusyStatus = true;
-                    BusyContent = "Ez Motion and DIO Connect Start";
+                    BusyContent = "Ez Connect Start";
                     string error = "";
-                    await Task.Run(() =>
+                    await Task.Run(async () =>
                     {
+                        BusyContent = "Ez Motion Connect ...";
                         for (int i = 0; i < (int)ServoSlave_List.Max; i++)
                         {
+                            BusyContent = $"Ez Motion Slave {i}";
                             Motion.Close(i);
-                            Task.Delay(1000).Wait(); // 잠시 대기
+                            await Task.Delay(1000); // 잠시 대기
+                            
                             if (Motion.Connect(i) == false)
                             {
                                 if (string.IsNullOrEmpty(error) == false)
@@ -279,16 +293,17 @@ namespace YJ_AutoClamp.ViewModels
                                 error += (ServoSlave_List.Out_Y_Handler_Y + i).ToString();
                             }
                         }
+                        BusyContent = "Ez DIO Connect ...";
                         for (int i = 0; i < (int)EziDio_Model.DI_MAP.DI_MAX / 16; i++)
                         {
+                            BusyContent = $"Ez DIO Slave {Dio_Slave.DIO_1 + i}";
                             Dio.Close(i);
-                            Task.Delay(1000).Wait(); // 잠시 대기
+                            await Task.Delay(1000); // 잠시 대기
                             if (Dio.Connect(i) == false)
                             {
                                 if (string.IsNullOrEmpty(error) == false)
                                     error += ", ";
-                                error += $"Dio Slave {i}";
-
+                                error += $"Dio Slave {Dio_Slave.DIO_1 + i}";
                             }
                         }
                     });
@@ -297,7 +312,7 @@ namespace YJ_AutoClamp.ViewModels
                     Global.instance.BusyContent = string.Empty;
                     if (string.IsNullOrEmpty(error) == false)
                     {
-                        error += " Ez Motion Connect Fail";
+                        error += " Ez Connect Fail";
                         Global.instance.ShowMessagebox(error);
                     }
                     BusyContent = string.Empty;
@@ -305,7 +320,7 @@ namespace YJ_AutoClamp.ViewModels
                     break;
             }
         }
-        private void DoorOpenCheck()
+        private bool DoorOpenCheck()
         {
             // Safety 먼저 체크
             if (!Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.FRONT_DOOR_SS]
@@ -329,7 +344,9 @@ namespace YJ_AutoClamp.ViewModels
                                     window.Close();
                                     window = null;
                                 }), DispatcherPriority.Send);
+                return true;
             }
+            return false;
         }
         #region // override
         protected override void InitializeCommands()

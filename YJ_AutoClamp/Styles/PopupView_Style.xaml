@@ -120,7 +120,7 @@
     </DataTemplate>
     <!--Equipment Mode Select View-->
     <Style TargetType="telerik:RadRadioButton" x:Key="ModeSelect_RadioStyle">
-        <Setter Property="Margin" Value="5,5,5,0"/>
+        <Setter Property="Margin" Value="10,10,10,0"/>
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="FontSize" Value="35"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -188,7 +188,7 @@
     <Style TargetType="Button" x:Key="Origin_ButtonStyle">
         <Setter Property="Margin" Value="5, 10"/>
         <Setter Property="Focusable" Value="False"/>
-        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontSize" Value="25"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="Black"/>
         <Setter Property="Background" Value="LightSteelBlue"/>
@@ -276,5 +276,47 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="White"/>
         <Setter Property="telerik:CornerRadiusHelper.ClipRadius" Value="8"/>
+    </Style>
+    <Style TargetType="telerik:RadButton" x:Key="Number_ButtonStyle">
+        <Setter Property="Grid.Column" Value="3"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="FontSize" Value="25"/>
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Crystal"/>
+    </Style>
+    <Style TargetType="Label" x:Key="Floor_LabelStyle">
+        <Setter Property="BorderBrush" Value="DimGray"/>
+        <Setter Property="BorderThickness" Value="1,1,1,0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="7"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <!--Floor Template-->
+    <DataTemplate x:Key="FloorTemplate">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.7*"/>
+                <RowDefinition Height="0.3*"/>
+            </Grid.RowDefinitions>
+            <UniformGrid Grid.Row="0" Rows="5">
+                <Label Content="5" Background="{Binding Floor[4], FallbackValue=false, Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}"/>
+                <Label Content="4" Background="{Binding Floor[3], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}"/>
+                <Label Content="3" Background="{Binding Floor[2], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}"/>
+                <Label Content="2" Background="{Binding Floor[1], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}"/>
+                <Label Content="1" Background="{Binding Floor[0], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}" BorderThickness="1" />
+            </UniformGrid>
+            <Label Grid.Row="1" Content="00:00:00" HorizontalContentAlignment="Center"/>
+        </Grid>
+    </DataTemplate>
+    <Style TargetType="telerik:RadRadioButton" x:Key="Radio_ButtonStyle">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
     </Style>
 </ResourceDictionary>

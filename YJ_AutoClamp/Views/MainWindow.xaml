@@ -8,6 +8,7 @@
         mc:Ignorable="d"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:utils="clr-namespace:YJ_AutoClamp.Utils"
+        xmlns:mvvm="clr-namespace:Common.Mvvm;assembly=Common"
         Name="Main" 
         WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <Viewbox Stretch="Uniform">
@@ -33,15 +34,18 @@
                     <ColumnDefinition Width="0.3*"/>
                 </Grid.ColumnDefinitions>
                 <!--부서명-->
-                <Label Content="{Binding DepartmentName}" Style="{StaticResource MainWindow_DepartmentLabelStyle}"/>
+                <!--<Label Content="{Binding DepartmentName}" Style="{StaticResource MainWindow_DepartmentLabelStyle}"/>-->
+                <TextBlock Style="{StaticResource MainWindow_TopTbStyle}" Margin="10">
+                        <Run Text="{Binding Source={x:Static local:Global.instance},Path=NowDate}"/><LineBreak/>
+                        <Run Text="{Binding DepartmentName}"/>
+                </TextBlock>
                 <!--설비명-->
                 <Label Grid.Column="1" Content="{Binding SoftwareName}" Style="{StaticResource MainWindow_HeaderLabelStyle}"/>
                 <!--모델명 / 시간-->
                 <TextBlock Grid.Column="2" Style="{StaticResource MainWindow_TopTbStyle}">
                     <Run Text="Software : " />
-                    <Run Text="{Binding SoftwareVersion}"/><LineBreak/>
-                    <Run Text="{Binding Source={x:Static local:Global.instance},Path=NowDate}"/>
-                    
+                    <Run Text="{Binding SoftwareVersion}"/>
+
                 </TextBlock>
             </Grid>
             <!--Content-->
@@ -65,6 +69,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <!--Auto-->
                         <telerik:RadButton Grid.Column="0" Style="{StaticResource MainWindow_BottomButtonStyle}" 
@@ -82,8 +87,16 @@
                                 <Label Content="Teach" Style="{StaticResource MainWindow_BottomLabelStyle}"/>
                             </StackPanel>
                         </telerik:RadButton>
+                        <!--DIO-->
+                        <telerik:RadButton Grid.Column="2" Style="{StaticResource MainWindow_BottomButtonStyle}"
+                            Command="{Binding BottomMenu_ButtonCommands}" CommandParameter="DIO">
+                            <StackPanel Orientation="Vertical">
+                                <telerik:RadGlyph Glyph="&#xe020;" Style="{StaticResource MainWindow_BottomIconStyle}"/>
+                                <Label Content="Maint" Style="{StaticResource MainWindow_BottomLabelStyle}"/>
+                            </StackPanel>
+                        </telerik:RadButton>
                         <!--Data-->
-                        <telerik:RadButton Grid.Column="2" Style="{StaticResource MainWindow_BottomButtonStyle}" 
+                        <telerik:RadButton Grid.Column="3" Style="{StaticResource MainWindow_BottomButtonStyle}" 
                                            Command="{Binding BottomMenu_ButtonCommands}" CommandParameter="Data">
                             <StackPanel Orientation="Vertical">
                                 <telerik:RadGlyph Glyph="&#xe628;" Style="{StaticResource MainWindow_BottomIconStyle}"/>

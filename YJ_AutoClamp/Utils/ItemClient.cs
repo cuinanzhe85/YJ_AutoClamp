@@ -1,11 +1,7 @@
 ﻿using Common.Managers;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace YJ_AutoClamp.Utils
 {
@@ -91,9 +87,40 @@ namespace YJ_AutoClamp.Utils
 
             if (string.IsNullOrEmpty(strProtocol))
                 return "FAIL"; // FAIL 반환
+            string[] Splits = strProtocol.Split(':');
+            string values = string.Empty;
+            if (Splits[0] == "AGING")
+            {
+                var myIni = new IniFile((Global.instance.IniAgingPath + @"\AgingRecord.ini"));
+                values = myIni.Read(strProtocol, "AGING");
+            }
+            else if (Splits[0] == "UNCLAMP_COUNT")
+            {
+                if (!string.IsNullOrEmpty(Splits[1]))
+                {
+                    var myIni = new IniFile(Global.instance.IniSystemPath);
+                    values = myIni.Read("AGING_COUNT", "SYSTEM");
+                    if (string.IsNullOrEmpty(values))
+                    {
+                        values = "0";
+                    }
+                    int loadingCoung= (int)Convert.ToInt32(SingletonManager.instance.Channel_Model[0].LoadCount);
+                    int AgingCoung = (int)Convert.ToInt32(values);
+                    int UnclampCoung = (int)Convert.ToInt32(Splits[1]);
+                    if (loadingCoung > UnclampCoung)
+                    {
+                        SingletonManager.instance.Channel_Model[0].AgingCvTotalCount = ((loadingCoung + AgingCoung) - UnclampCoung).ToString();
+                        
+                        myIni.Write("AGING_COUNT", SingletonManager.instance.Channel_Model[0].AgingCvTotalCount, "SYSTEM");
+                    }
+                    else
+                    {
+                        SingletonManager.instance.Channel_Model[0].AgingCvTotalCount = SingletonManager.instance.Channel_Model[0].LoadCount;
+                    }
+                    values = $"AGING_TOTAL_COUNT:{SingletonManager.instance.Channel_Model[0].AgingCvTotalCount}";
+                }
+            }
 
-            var myIni = new IniFile((Global.instance.IniAgingPath + @"\AgingRecord.ini"));
-            string values =  myIni.Read(strProtocol, "AGING");
             if (!string.IsNullOrEmpty(values))
                 return values;
             else

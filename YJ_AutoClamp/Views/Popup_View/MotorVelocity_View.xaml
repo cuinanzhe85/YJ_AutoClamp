@@ -112,13 +112,13 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Accelerate, StringFormat=N2}"
+                                <TextBlock Text="{Binding Accelerate}"
                                            VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding Accelerate, StringFormat=N2}"
+                                <TextBox Text="{Binding Accelerate}"
                                          VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>

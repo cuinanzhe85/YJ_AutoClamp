@@ -398,9 +398,9 @@ namespace YJ_AutoClamp.Models
                     Global.Mlog.Info($"EziMotion DIO Board Connect Success. IP Address : {IpAddress.ToString()}, Slave : {slave}");
 
                     // Thread Start
-                    DioThread = new Thread(ThreadReceive);
-                    DioThread.Start();
-                    IsDioThreadRunning = true;
+                    //DioThread = new Thread(ThreadReceive);
+                    //DioThread.Start();
+                    //IsDioThreadRunning = true;
                     return true;
                 }
                 // Is 0 == Connect Fail
@@ -445,7 +445,15 @@ namespace YJ_AutoClamp.Models
                 Global.ExceptionLog.Info(e.ToString());
             }
         }
-
+        public void DioThreadStart()
+        {
+            if (DioThread == null || !DioThread.IsAlive)
+            {
+                DioThread = new Thread(ThreadReceive);
+                DioThread.Start();
+                IsDioThreadRunning = true;
+            }
+        }
         public void GetIO_InputData(int slave)
         {
             uint dwInput = 0;
@@ -456,7 +464,6 @@ namespace YJ_AutoClamp.Models
             if (nRtn == EziMOTIONPlusELib.FMM_OK)
             {
                 UpdateRawData(slave,DI_RAW_DATA, dwInput,false);
-                UpdateUiDio();
             }
         }
         public uint GetIO_OutputData(int slave)
@@ -509,7 +516,7 @@ namespace YJ_AutoClamp.Models
 
             if (nRtn != EziMOTIONPlusELib.FMM_OK)
             {
-                Global.Mlog.Info($"Function(SetIO_OutputData : Y{index.ToString("X")}) was failed.");
+                Global.Mlog.Info($"Function(SetIO_OutputData : Y{index.ToString("X")}) was failed. Ez DIO Return Code [0x{nRtn.ToString("X")}]");
                 return false;
             }
             
@@ -539,25 +546,46 @@ namespace YJ_AutoClamp.Models
         public void ThreadReceive()
         {
             UpdateIO_OperData();
+            //int _OutputIndex = 0;
             while (!_shouldStop)
             {
                 try
                 {
-                    for (int i = 0; i < ((int)DI_MAP.DI_MAX / 16); i++)
-                    {
-                        // Get Input Data
-                        GetIO_InputData(i);
-                        Thread.Sleep(2);
-
-                    }
-                    for (int j = 0; j < (int)DO_MAP.DO_MAX / 16; j++)
-                    {
-                        // Get Output Data
-                        GetIO_OutputData(j);
-                        Thread.Sleep(2);
-                    }
-                    
-
+                    // Get Input Data
+                    GetIO_InputData(0);
+                    GetIO_InputData(1);
+                    GetIO_InputData(2);
+                    GetIO_InputData(3);
+                    GetIO_InputData(4);
+                    GetIO_InputData(5);
+                    GetIO_InputData(6);
+                    GetIO_InputData(7);
+                    Thread.Sleep(2);
+                    GetIO_OutputData(0);
+                    GetIO_OutputData(1);
+                    GetIO_OutputData(2);
+                    GetIO_OutputData(3);
+                    GetIO_OutputData(4);
+                    Thread.Sleep(2);
+                    //for (int i = 0; i < ((int)DI_MAP.DI_MAX / 16); i++)
+                    //{
+                    //    // Get Input Data
+                    //    GetIO_InputData(i);
+                    //    Thread.Sleep(2);
+                    //    if (_OutputIndex >= ((int)DO_MAP.DO_MAX / 16))
+                    //        _OutputIndex = 0;
+                    //    // Get Output Data
+                    //    GetIO_OutputData(_OutputIndex);
+                    //    Thread.Sleep(2);
+                    //    _OutputIndex++;
+                    //}
+                    //for (int j = 0; j < (int)DO_MAP.DO_MAX / 16; j++)
+                    //{
+                    //    // Get Output Data
+                    //    GetIO_OutputData(j);
+                    //    Thread.Sleep(2);
+                    //}
+                    UpdateUiDio();
                 }
                 catch (Exception e)
                 {
@@ -566,7 +594,7 @@ namespace YJ_AutoClamp.Models
                     Global.ExceptionLog.ErrorFormat($"{System.Reflection.MethodBase.GetCurrentMethod().Name} - {error}");
                 }
 
-                Thread.Sleep(5);
+                //Thread.Sleep(5);
             }
             // 스레드 종료 후 상태 업데이트
             IsDioThreadRunning = false;
@@ -627,6 +655,12 @@ namespace YJ_AutoClamp.Models
             // LINQ를 사용하여 필요한 값만 추출
             for (int i = 0; i < DisplayDio_List.Count; i++)
             {
+                // 인덱스 체크
+                if (i >= SingletonManager.instance.DisplayUI_Dio.Count)
+                    break;
+                int diIndex = DisplayDio_List[i];
+                if (diIndex < 0 || diIndex >= DI_RAW_DATA.Count)
+                    continue;
                 if (SingletonManager.instance.DisplayUI_Dio[i] != DI_RAW_DATA[DisplayDio_List[i]])
                     SingletonManager.instance.DisplayUI_Dio[i] = DI_RAW_DATA[DisplayDio_List[i]];
             }
@@ -635,6 +669,8 @@ namespace YJ_AutoClamp.Models
             foreach (var mapping in DisplayExistMapping)
             {
                 int targetIndex = DisplayDio_List.Count + (int)mapping.Key;
+                if (targetIndex < 0 || targetIndex >= SingletonManager.instance.DisplayUI_Dio.Count)
+                    continue;
                 bool newValue = mapping.Value();
                 if (SingletonManager.instance.DisplayUI_Dio[targetIndex] != newValue)
                 {

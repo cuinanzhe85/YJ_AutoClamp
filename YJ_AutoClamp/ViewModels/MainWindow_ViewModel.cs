@@ -4,7 +4,7 @@ using Common.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
+using System.Diagnostics.Eventing.Reader;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,13 +13,11 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using YJ_AutoClamp.Models;
 using YJ_AutoClamp.Utils;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace YJ_AutoClamp.ViewModels
 {
     public class MainWindow_ViewModel : BaseMainControlViewModel
     {
-        public NFC_HID NFC_HID { get; set; }
         #region // ICommand Property
         public ICommand BottomMenu_ButtonCommands { get; private set; }
         #endregion
@@ -44,7 +42,7 @@ namespace YJ_AutoClamp.ViewModels
         private readonly Dictionary<MainWindow_PopupList, Func<(Window, Child_ViewModel)>> PopupFactories;
         #endregion
 
-        private string _DepartmentName = "Mobile";
+        private string _DepartmentName = "SmartFactory Group(MX)";
         public string DepartmentName
         {
             get { return _DepartmentName; }
@@ -56,7 +54,7 @@ namespace YJ_AutoClamp.ViewModels
             get { return _SoftwareName; }
             set { SetValue(ref _SoftwareName, value); }
         }
-        private string _SoftwareVersion = "[ Ver 1.0.0 ]";
+        private string _SoftwareVersion = "[ 25-07-01 T1 ]";
         public string SoftwareVersion
         {
             get { return _SoftwareVersion; }
@@ -81,6 +79,8 @@ namespace YJ_AutoClamp.ViewModels
             Modules.Add(new ModuleDescription() { ModuleType = typeof(Data_ViewModel), ViewType = typeof(Data_View) });
             Modules.Add(new ModuleDescription() { ModuleType = typeof(Teach_ViewModel), ViewType = typeof(Teach_View) });
             Modules.Add(new ModuleDescription() { ModuleType = typeof(Log_ViewModel), ViewType = typeof(Log_View) });
+            Modules.Add(new ModuleDescription() { ModuleType = typeof(DioManager_ViewModel), ViewType = typeof(DioManager_View) });
+            
             ModulesManager = new ModulesManager(new ViewsManager(Modules), Modules);
 
             // Loading Backgorund Thread
@@ -101,16 +101,12 @@ namespace YJ_AutoClamp.ViewModels
             //Run
             SingletonManager.instance.Run();
 
-            if(SingletonManager.instance.MESSocket.IsConnected())
-            {
-                SingletonManager.instance.MESSocket.ConnectRequest();
-            }
-
             Application.Current.Dispatcher.BeginInvoke(
                 (ThreadStart)(() =>
                 {
                     //NFC_HID = new NFC_HID();
-                   
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_STOP, true);
+                    SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.OP_BOX_START, false);
                     MainContents_ViewModel = CreateAndCacheViewModel<Auto_ViewModel>("Auto");
                 }), DispatcherPriority.Send);
         }
@@ -134,7 +130,7 @@ namespace YJ_AutoClamp.ViewModels
         }
         // Center Contents 변경 함수
         public void ChangeMainContentsView<TViewModel>(string key) where TViewModel : Child_ViewModel, new()
-        {
+         {
             // 현재 ViewModel이 동일한지 확인합니다.
             if (MainContents_ViewModel != null && ViewModelCache.ContainsKey(key) && ViewModelCache[key] == MainContents_ViewModel)
                 return;
@@ -161,10 +157,39 @@ namespace YJ_AutoClamp.ViewModels
                     ChangeMainContentsView<Auto_ViewModel>("Auto");
                     break;
                 case "Data":
-                    ChangeMainContentsView<Data_ViewModel>("Data");
+                    if (SingletonManager.instance.IsInspectionStart != true)
+                    {
+                        var window = new Number_View();
+                        if (window.ShowDialog() == true)
+                        {
+                            string enteredPassword = window.ResultPassword;
+                            if (enteredPassword.Equals("0000"))
+                            {
+                                ChangeMainContentsView<Data_ViewModel>("Data");
+                            }
+                            else
+                            {
+                                Global.instance.ShowMessagebox("Password entry failed");
+                            }
+                        }
+                        
+                    }
                     break;
                 case "Teach":
-                    ChangeMainContentsView<Teach_ViewModel>("Teach");
+                    if (SingletonManager.instance.IsInspectionStart != true)
+                    {
+                        // Tower Lamp Operator
+                        Global.instance.Set_TowerLamp(Global.TowerLampType.Operator);
+                        ChangeMainContentsView<Teach_ViewModel>("Teach");
+                    }
+                    break;
+                case "DIO":
+                    if (SingletonManager.instance.IsInspectionStart != true)
+                    {
+                        // Tower Lamp Operator
+                        Global.instance.Set_TowerLamp(Global.TowerLampType.Operator);
+                        ChangeMainContentsView<DioManager_ViewModel>("DIO");
+                    }
                     break;
                 case "Log":
                     ChangeMainContentsView<Log_ViewModel>("Log");
@@ -173,7 +198,25 @@ namespace YJ_AutoClamp.ViewModels
                     WindowManager.Instance.MinimizeCommand.Execute("Main");
                     break;
                 case "Exit":
-                    SoftwareExit();
+                    // 검사가 진행중이라면, 검사 종료를 먼저 하고 종료해야함
+                    if (SingletonManager.instance.IsInspectionStart == true)
+                    {
+                        Global.instance.ShowMessagebox("Inspection is running. Please Stop Inspection First");
+                        break;
+                    }
+                    Application.Current.Dispatcher.BeginInvoke(
+                    (ThreadStart)(() =>
+                    {
+                        var msgBox = new MessageBoxYesNo_View("Confirm! Are You Ready Exit Program?");
+                        bool? result = msgBox.ShowDialog();
+                        if (result == true)
+                        {
+                            // Yes 클릭
+                            SoftwareExit();
+                        }
+
+                    }), DispatcherPriority.Send);
+                    
                     break;
             }
         }
@@ -212,14 +255,20 @@ namespace YJ_AutoClamp.ViewModels
             await Task.Run(() =>
             {
                 SingletonManager.instance.BackgroundThread_Stop();
+                // TCP Server Stop
                 SingletonManager.instance.InterfaceServerStop();
+
+                SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BTM_RETURN_CV_RUN, false);
+                SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BTM_RETURN_CV_RUN_2, false);
+                SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_RETURN_CV_RUN, false);
+                SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_RETURN_CV_RUN_2, false);
                 // Servo Stop
                 for (int i = 0; i < (int)ServoSlave_List.Max; i++)
                 {
-                    SingletonManager.instance.Ez_Model.ServoStop(i);
+                    SingletonManager.instance.Motion.ServoStop(i);
                 }
                 // Dio Thread Stop
-                SingletonManager.instance.Ez_Dio.DioThreadStop();
+                SingletonManager.instance.Dio.DioThreadStop();
                 
                 // Bcr Close
                 for (int i = 0; i < (int)Serial_Model.SerialIndex.Max; i++)
@@ -229,7 +278,7 @@ namespace YJ_AutoClamp.ViewModels
 
                 for (int i = 0; i < (int)EziDio_Model.DI_MAP.DI_MAX / 16; i++)
                 {
-                    SingletonManager.instance.Ez_Dio.Close(i);
+                    SingletonManager.instance.Dio.Close(i);
                 }
             });
 

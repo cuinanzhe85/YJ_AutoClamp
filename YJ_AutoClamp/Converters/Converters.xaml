@@ -10,6 +10,7 @@
     <local:BoolenVisibleConverter x:Key="BoolenVisibleConverter"/>
     <local:BoolenVisibleReversConverter x:Key="BoolenVisibleReversConverter"/>
 
+    <local:OkNgColorConverter x:Key="OkNgColorConverter"/>
     <local:FloorColorConverter x:Key="FloorColorConverter"/>
     <local:ConnectionColorConverter x:Key="ConnectionColorConverter"/>
     <local:ChannelStatusColorConverter x:Key="ChannelStatusColorConverter"/>

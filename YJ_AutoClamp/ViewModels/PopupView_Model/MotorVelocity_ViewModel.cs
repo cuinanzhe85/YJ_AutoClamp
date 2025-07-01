@@ -48,7 +48,10 @@ namespace YJ_AutoClamp.ViewModels
             {
                 var originalServo = SingletonManager.instance.Servo_Model[i];
                 var updatedServo = ServoModels[i];
-
+                if (updatedServo.Accelerate > 1000)
+                {
+                    updatedServo.Accelerate = 1000;
+                }
                 // 원래 데이터에 변경된 값 반영
                 originalServo.Velocity = updatedServo.Velocity;
                 originalServo.Accelerate = updatedServo.Accelerate;
@@ -59,12 +62,36 @@ namespace YJ_AutoClamp.ViewModels
                 // INI 파일에 기록
                 string servoName = originalServo.ServoName.ToString();
                 iniFile.Write($"{servoName}_Velocity", originalServo.Velocity.ToString("F2"), section);
-                iniFile.Write($"{servoName}_Accelerate", originalServo.Accelerate.ToString("F2"), section);
-                iniFile.Write($"{servoName}_Decelerate", originalServo.Accelerate.ToString("F2"), section);
+                iniFile.Write($"{servoName}_Accelerate", originalServo.Accelerate.ToString("D"), section);
+                iniFile.Write($"{servoName}_Decelerate", originalServo.Accelerate.ToString("D"), section);
                 iniFile.Write($"{servoName}_Measurement_Vel", originalServo.Measurement_Vel.ToString("F2"), section);
                 iniFile.Write($"{servoName}_Barcode_Vel", originalServo.Barcode_Vel.ToString("F2"), section);
             }
-
+            string massage = string.Empty;
+            for (int i = 0; i < SingletonManager.instance.Servo_Model.Count; i++)
+            {
+                int acc = SingletonManager.instance.Servo_Model[i].Accelerate;
+                int ret = SingletonManager.instance.Motion.SetServoAccel(i, acc);
+                if (ret != 0)
+                {
+                    massage += $"{SingletonManager.instance.Servo_Model[i].ServoName} Accel set fail. Error code: {ret}";
+                    Global.Mlog.Info(massage);
+                    massage += "\r\n";
+                }
+                ret = SingletonManager.instance.Motion.SetServoDccel(i, acc);
+                if (ret != 0)
+                {
+                    massage += $"{SingletonManager.instance.Servo_Model[i].ServoName} Dccel set fail. Error code: {ret}";
+                    Global.Mlog.Info(massage);
+                    massage += "\r\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(massage))
+            {
+                Global.instance.ShowMessagebox(massage, true);
+                
+                return;
+            }
             Global.instance.ShowMessagebox("Motor velocity settings have been successfully saved.",false);
         }
         #region // override

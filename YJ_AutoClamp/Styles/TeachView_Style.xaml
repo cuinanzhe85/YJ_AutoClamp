@@ -76,8 +76,8 @@
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="Margin" Value="5,2,5,2.5"/>
-        <Setter Property="telerik_helpers:ThemeHelper.MouseOverBrush" Value="#6FBFBF"/>
-        <Setter Property="telerik_helpers:ThemeHelper.PressedBrush" Value="#5FAEAE"/>
+        <Setter Property="telerik_helpers:ThemeHelper.MouseOverBrush" Value="Orange"/>
+        <Setter Property="telerik_helpers:ThemeHelper.PressedBrush" Value="Orange"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
     </Style>

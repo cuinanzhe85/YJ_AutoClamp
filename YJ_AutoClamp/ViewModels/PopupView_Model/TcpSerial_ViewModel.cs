@@ -3,12 +3,9 @@ using Common.Managers;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Xml.Linq;
-using YJ_AutoClamp.Models;
 using static YJ_AutoClamp.Models.Serial_Model;
 
 namespace YJ_AutoClamp.ViewModels
@@ -74,10 +71,8 @@ namespace YJ_AutoClamp.ViewModels
             foreach (string port in ports)
                 PortNames.Add(port);
 
-            bcrData.Add("Empty");
-            BarCodePort = SingletonManager.instance.SerialModel[0].Port;
-            NfcPort = SingletonManager.instance.SerialModel[1].Port;
-            MesPort = SingletonManager.instance.SerialModel[2].Port;
+            NfcPort = SingletonManager.instance.SerialModel[(int)SerialIndex.Nfc].Port;
+            MesPort = SingletonManager.instance.SerialModel[(int)SerialIndex.Mes].Port;
 
         }
         private void OnSave_Command(object obj)
@@ -93,18 +88,18 @@ namespace YJ_AutoClamp.ViewModels
                 // Gocator Front,Rear Ip Set
                 string Section = "SERIAL";
                 // Serial : Bacorde, Label
-                myIni.Write("BARCODE_PORT", BarCodePort, Section);
-                Global.Mlog.Info(" BARCODE_PORT = " + BarCodePort);
+                //myIni.Write("BARCODE_PORT", BarCodePort, Section);
+                //Global.Mlog.Info(" BARCODE_PORT = " + BarCodePort);
 
-                SingletonManager.instance.SerialModel[0].Port = BarCodePort;
+                //SingletonManager.instance.SerialModel[0].Port = BarCodePort;
 
                 myIni.Write("NFC_PORT", NfcPort, Section);
                 Global.Mlog.Info(" NFC_PORT = " + NfcPort);
-                SingletonManager.instance.SerialModel[1].Port = NfcPort;
+                SingletonManager.instance.SerialModel[(int)SerialIndex.Nfc].Port = NfcPort;
 
                 myIni.Write("MES_PORT", MesPort, Section);
                 Global.Mlog.Info(" MES_PORT = " + MesPort);
-                SingletonManager.instance.SerialModel[2].Port = MesPort;
+                SingletonManager.instance.SerialModel[(int)SerialIndex.Mes].Port = MesPort;
 
             }
             catch(Exception e)
@@ -117,16 +112,16 @@ namespace YJ_AutoClamp.ViewModels
         {
             switch(obj.ToString())
             {
-                case "BcrPortOpen":
-                    SingletonManager.instance.SerialModel[(int)SerialIndex.bcr1].PortName = "BARCODE_PORT";
-                    if (SingletonManager.instance.SerialModel[(int)SerialIndex.bcr1].Open() == true)
-                        MessageBox.Show("BCR Port Open Success.");
-                    else
-                        MessageBox.Show("BCR Port Open Fail.");
-                    break;
-                case "BcrTest":
-                    BcrTest();
-                    break;
+                //case "BcrPortOpen":
+                //    SingletonManager.instance.SerialModel[(int)SerialIndex.bcr1].PortName = "BARCODE_PORT";
+                //    if (SingletonManager.instance.SerialModel[(int)SerialIndex.bcr1].Open() == true)
+                //        MessageBox.Show("BCR Port Open Success.");
+                //    else
+                //        MessageBox.Show("BCR Port Open Fail.");
+                //    break;
+                //case "BcrTest":
+                //    BcrTest();
+                //    break;
                 case "NfcPortOpen":
 
                     SingletonManager.instance.SerialModel[(int)SerialIndex.Nfc].PortName = "NFC_PORT";
@@ -158,7 +153,9 @@ namespace YJ_AutoClamp.ViewModels
             if (SingletonManager.instance.SerialModel[(int)SerialIndex.Nfc].IsConnected != true)
                 return;
             NfcData = "";
-            await Task.Run(() =>
+            SingletonManager.instance.SerialModel[(int)SerialIndex.Nfc].IsReceived = false;
+            SingletonManager.instance.SerialModel[(int)SerialIndex.Nfc].NfcData = string.Empty;
+            await Task.Run(async() =>
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Restart();
@@ -169,11 +166,12 @@ namespace YJ_AutoClamp.ViewModels
                         NfcData = SingletonManager.instance.SerialModel[(int)SerialIndex.Nfc].NfcData;
                         break;
                     }
-                    if (sw.ElapsedMilliseconds > 10000)
+                    if (sw.ElapsedMilliseconds > 5000)
                     {
                         MessageBox.Show("NFC read fail.", "NFC");
                         break;
                     }
+                    await Task.Delay(100); // Wait for 100ms before checking again
                 }
             });
         }

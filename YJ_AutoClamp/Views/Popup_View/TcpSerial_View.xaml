@@ -61,33 +61,32 @@
                 </Grid.ColumnDefinitions>
                 
                 
-                <Label Content="Barcode Port" Grid.Row="0" Grid.Column="0" Style="{StaticResource SerialPort_LabelStyle}"/>
-
+                <!--<Label Content="Barcode Port" Grid.Row="0" Grid.Column="0" Style="{StaticResource SerialPort_LabelStyle}"/>
                 <telerik:RadComboBox Grid.Column="1" Grid.Row="0" Style="{StaticResource SerialPort_CboxStyle}"
-                                     ItemsSource="{Binding PortNames}" SelectedItem="{Binding BarCodePort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                     ItemsSource="{Binding PortNames}" SelectedItem="{Binding BarCodePort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
                 
-                <Label Content="NFC Port" Grid.Row="1" Grid.Column="0" Style="{StaticResource SerialPort_LabelStyle}"/>
-                <telerik:RadComboBox Grid.Column="1" Grid.Row="1" Style="{StaticResource SerialPort_CboxStyle}"
+                <Label Content="NFC Port" Grid.Row="0" Grid.Column="0" Style="{StaticResource SerialPort_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Column="1" Grid.Row="0" Style="{StaticResource SerialPort_CboxStyle}"
                         ItemsSource="{Binding PortNames}" SelectedItem="{Binding NfcPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 
-                <Label Content="MES Port" Grid.Row="2" Grid.Column="0" Style="{StaticResource SerialPort_LabelStyle}"/>
-                <telerik:RadComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource SerialPort_CboxStyle}"
+                <Label Content="MES Port" Grid.Row="1" Grid.Column="0" Style="{StaticResource SerialPort_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource SerialPort_CboxStyle}"
                         ItemsSource="{Binding PortNames}" SelectedItem="{Binding MesPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 
-                <Button Grid.Column="2" Grid.Row="0" Margin="5" Content="Port Open" Command="{Binding Comport_Command}" CommandParameter="BcrPortOpen" Style="{StaticResource SerialPort_ButtonStyle}"/>
+                <!--<Button Grid.Column="2" Grid.Row="0" Margin="5" Content="Port Open" Command="{Binding Comport_Command}" CommandParameter="BcrPortOpen" Style="{StaticResource SerialPort_ButtonStyle}"/>
                 <StackPanel Grid.Column="3" Grid.Row="0" Margin="5">
                     <Button Content="Bar Code Test" Command="{Binding Comport_Command}" CommandParameter="BcrTest" Style="{StaticResource SerialPort_ButtonStyle}"/>
                     <Label  Content="{Binding bcrData[0]}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
-                </StackPanel>
-                <Button Grid.Column="2" Grid.Row="1" Margin="5" Content="Port Open" Command="{Binding Comport_Command}" CommandParameter="NfcPortOpen" Style="{StaticResource SerialPort_ButtonStyle}"/>
-                <StackPanel Grid.Column="3" Grid.Row="1" Margin="5">
+                </StackPanel>-->
+                <Button Grid.Column="2" Grid.Row="0" Margin="5" Content="Port Open" Command="{Binding Comport_Command}" CommandParameter="NfcPortOpen" Style="{StaticResource SerialPort_ButtonStyle}"/>
+                <StackPanel Grid.Column="3" Grid.Row="0" Margin="5">
                     <Button Content="NFC Test" Command="{Binding Comport_Command}" CommandParameter="NfcTest" Style="{StaticResource SerialPort_ButtonStyle}"/>
-                    <Label  Content="{Binding NfcData}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
+                    <TextBox  Text="{Binding NfcData, UpdateSourceTrigger=PropertyChanged}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"  Margin="5,10"/>
                 </StackPanel>
                 <!--MES Port Test-->
-                <Button Grid.Column="2" Grid.Row="2" Margin="5" Content="Port Open" Command="{Binding Comport_Command}" CommandParameter="MesPortOpen" Style="{StaticResource SerialPort_ButtonStyle}"/>
-                <StackPanel Grid.Column="3" Grid.Row="2" Margin="5">
+                <Button Grid.Column="2" Grid.Row="1" Margin="5" Content="Port Open" Command="{Binding Comport_Command}" CommandParameter="MesPortOpen" Style="{StaticResource SerialPort_ButtonStyle}"/>
+                <StackPanel Grid.Column="3" Grid.Row="1" Margin="5">
                     <Button Content="Mes Send" Command="{Binding Comport_Command}" CommandParameter="MesTest" Style="{StaticResource SerialPort_ButtonStyle}"/>
                     <TextBox  Text="{Binding MesData, UpdateSourceTrigger=PropertyChanged}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20" Margin="5,10"/>
                 </StackPanel>

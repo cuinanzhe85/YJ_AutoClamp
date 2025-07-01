@@ -16,7 +16,6 @@ namespace YJ_AutoClamp.ViewModels
     {
         #region // ICommands
         public ICommand Save_Command { get; private set; }
-        public ICommand Manual_Command { get; private set; }
         #endregion
 
         private ObservableCollection<string> _UseNotUse = new ObservableCollection<string>();
@@ -110,7 +109,7 @@ namespace YJ_AutoClamp.ViewModels
         {
             try
             {
-                if (MessageBox.Show("Do you want to save the modification data?.", "System Data", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
+                if (MessageBox.Show("Do you want to save the modification data?.", "System Manager", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
                 {
                     return;
                 }
@@ -119,18 +118,22 @@ namespace YJ_AutoClamp.ViewModels
                 // Gocator Front,Rear Ip Set
                 string Section = "SYSTEM";
                 // Serial : Bacorde, Label
-                myIni.Write("BARCODE_USE", BcrUseNotuse, Section);
-                Global.Mlog.Info(" BARCODE_USE = " + BcrUseNotuse);
-                SingletonManager.instance.SystemModel.BcrUseNotUse = BcrUseNotuse;
+                //myIni.Write("BARCODE_USE", BcrUseNotuse, Section);
+                //Global.Mlog.Info(" BARCODE_USE = " + BcrUseNotuse);
+                //SingletonManager.instance.SystemModel.BcrUseNotUse = BcrUseNotuse;
 
                 myIni.Write("NFC_USE", NfcUseNotuse, Section);
                 Global.Mlog.Info(" NFC_USE = " + NfcUseNotuse);
                 SingletonManager.instance.SystemModel.NfcUseNotUse = NfcUseNotuse;
+                SingletonManager.instance.Channel_Model[0].MesResult = NfcUseNotuse;
 
                 myIni.Write("PICKUP_TIMEOUT", PickUpTimeOut, Section);
                 Global.Mlog.Info(" PICKUP_TIMEOUT = " + PickUpTimeOut);
                 SingletonManager.instance.SystemModel.PickUpWaitTimeOutY = Convert.ToInt32(PickUpTimeOut);
 
+                int floorcount = Convert.ToInt32(LoadFloorCount);
+                if (floorcount > 5)
+                    LoadFloorCount = "5";
                 myIni.Write("LOAD_FLOOR_COUNT", LoadFloorCount, Section);
                 Global.Mlog.Info(" LOAD_FLOOR_COUNT = " + LoadFloorCount);
                 SingletonManager.instance.SystemModel.LoadFloorCount = Convert.ToInt32(LoadFloorCount);
@@ -149,109 +152,15 @@ namespace YJ_AutoClamp.ViewModels
                 Global.instance.ShowMessagebox("Save Fail.");
             }
         }
-        private async void OnManual_Command(object obj)
-        {
-            switch(obj.ToString())
-            {
-                case "StepRun":
-                    AgingStepRun();
-                    break;
-                case "HTTP_TEST":
-                    if (string.IsNullOrEmpty(HttpSendData))
-                    {
-                        HttpSendData = SingletonManager.instance.SerialModel[(int)SerialIndex.Nfc].NfcData;
-                    }
-                    if (!string.IsNullOrEmpty(HttpSendData))
-                    {
-                        SingletonManager.instance.HttpJsonModel.SendRequest("getPrevInspInfo", HttpSendData);
-                        //SingletonManager.instance.HttpModel.GetprocCodeData("A5102289AG188");
-                        Stopwatch sw = new Stopwatch();
-                        await Task.Run(() =>
-                        {
-                            while (true)
-                            {
-                                if (SingletonManager.instance.HttpJsonModel.DataSendFlag == true)
-                                {
-                                    Global.instance.ShowMessagebox($"HTTP Response ResultCode: {SingletonManager.instance.HttpJsonModel.ResultCode}", false);
-                                    break;
-                                }
-                                if (sw.ElapsedMilliseconds > 5000) // 5초
-                                {
-                                    Global.instance.ShowMessagebox($"HTTP Data Receive Timeout.");
-                                    break;
-                                }
-                                Thread.Sleep(100); // 100ms
-                            }
-                        });
-                    }
-                    break;
-            }
-        }
-        private void AgingStepRun()
-        {
-            Stopwatch sw = Stopwatch.StartNew();
-
-            AgingCvRunStop(true);
-            sw.Restart();
-            while (true)
-            {
-                if (sw.ElapsedMilliseconds > SingletonManager.instance.SystemModel.AgingCvStepTime) // ms
-                {
-                    AgingCvRunStop(false);
-                    break;
-                }
-            }
-        }
-        void AgingCvRunStop(bool runStop)
-        {
-            if (AgingCvSelected == "Upper 1")
-            {
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.LIFT_CV_RUN_1, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_UPPER_RUN_1_1, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_UPPER_RUN_1_2, runStop);
-            }
-            else if (AgingCvSelected == "Upper 2")
-            {
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.LIFT_CV_RUN_2, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_UPPER_RUN_2_1, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_UPPER_RUN_2_2, runStop);
-            }
-            else if (AgingCvSelected == "Upper 3")
-            {
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.LIFT_CV_RUN_3, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_UPPER_RUN_3_1, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_UPPER_RUN_3_2, runStop);
-            }
-            else if (AgingCvSelected == "Low 1")
-            {
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.LIFT_CV_RUN_1, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_LOW_RUN_1_1, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_LOW_RUN_1_2, runStop);
-            }
-            else if (AgingCvSelected == "Low 2")
-            {
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.LIFT_CV_RUN_2, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_LOW_RUN_2_1, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_LOW_RUN_2_2, runStop);
-            }
-            else if (AgingCvSelected == "Low 3")
-            {
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.LIFT_CV_RUN_3, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_LOW_RUN_3_1, runStop);
-                SingletonManager.instance.Ez_Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.AGING_INVERT_CV_LOW_RUN_3_2, runStop);
-            }
-        }
         #region override
         protected override void InitializeCommands()
         {
             base.InitializeCommands();
             Save_Command = new RelayCommand(OnSave_Command);
-            Manual_Command = new RelayCommand(OnManual_Command);
         }
         protected override void DisposeManaged()
         {
             Save_Command = null;
-            Manual_Command = null;
             base.DisposeManaged();
         }
         #endregion

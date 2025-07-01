@@ -1,0 +1,176 @@
+﻿<mvvm:BaseUserControl x:Class="YJ_AutoClamp.DioManager_View"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:YJ_AutoClamp"
+      xmlns:mvvm="clr-namespace:Common.Mvvm;assembly=Common"
+      xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+      xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:h="http://helix-toolkit.org/wpf"
+      mc:Ignorable="d">
+    <mvvm:BaseUserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/DioView_Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </mvvm:BaseUserControl.Resources>
+    <Grid Margin="0,10,0,10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Column="0" Grid.Row="0" Header="Loading/Lift" BorderThickness="2" FontWeight="SemiBold" Foreground="OrangeRed" FontSize="15">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <telerik:RadButton Grid.Column="0" Grid.Row="0" Content="Grip/UnGrip" Style="{StaticResource Dio_ButtonStyle}"
+                Command="{Binding Dio_Command}" CommandParameter="Z_GripUnGrip" Background="{Binding DioUI[26], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="0" Content="Lift1 CV Run/Stop" Style="{StaticResource Dio_ButtonStyle}"
+                Command="{Binding Dio_Command}" CommandParameter="LiftCvRunStop1" Background="{Binding DioUI[20], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="1" Content="Lift2 CV Run/Stop" Style="{StaticResource Dio_ButtonStyle}"
+                Command="{Binding Dio_Command}" CommandParameter="LiftCvRunStop2" Background="{Binding DioUI[21], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="2" Content="Lift3 CV Run/Stop" Style="{StaticResource Dio_ButtonStyle}"
+                Command="{Binding Dio_Command}" CommandParameter="LiftCvRunStop3" Background="{Binding DioUI[22], Converter={StaticResource ConnectionColorConverter}}"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Grid.Row="0" Header="Aging Conveyor" BorderThickness="2" FontWeight="SemiBold" Foreground="OrangeRed" FontSize="15">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <telerik:RadButton Grid.Column="0" Grid.Row="0" Content="Upper #1" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="Upper1" Background="{Binding DioUI[48], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="0" Content="Upper #2" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="Upper2" Background="{Binding DioUI[49], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="2" Grid.Row="0" Content="Upper #3" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="Upper3" Background="{Binding DioUI[50], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="0" Grid.Row="1" Content="Low #1" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="Low1" Background="{Binding DioUI[51], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="1" Content="Low #2" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="Low2" Background="{Binding DioUI[52], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="2" Grid.Row="1" Content="Low #3" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="Low3" Background="{Binding DioUI[53], Converter={StaticResource ConnectionColorConverter}}"/>
+                <Border Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <telerik:RadButton Grid.Column="0" Content="Upper #1&#x0a;Step Run" Style="{StaticResource Dio_ButtonStyle}" FontSize="12" IsEnabled="{Binding DioUI[48], Converter={StaticResource ReversBoolConverter}}"
+                                Command="{Binding Dio_Command}" CommandParameter="StepRun1" Background="{Binding DioUI[48], Converter={StaticResource ConnectionColorConverter}}"/>
+                        <telerik:RadButton Grid.Column="1" Content="Upper #2&#x0a;Step Run" Style="{StaticResource Dio_ButtonStyle}"  FontSize="12"  IsEnabled="{Binding DioUI[49], Converter={StaticResource ReversBoolConverter}}"
+                                Command="{Binding Dio_Command}" CommandParameter="StepRun2" Background="{Binding DioUI[49], Converter={StaticResource ConnectionColorConverter}}"/>
+                        <telerik:RadButton Grid.Column="2" Content="Upper #3&#x0a;Step Run" Style="{StaticResource Dio_ButtonStyle}" FontSize="12"  IsEnabled="{Binding DioUI[50], Converter={StaticResource ReversBoolConverter}}"
+                                Command="{Binding Dio_Command}" CommandParameter="StepRun3" Background="{Binding DioUI[50], Converter={StaticResource ConnectionColorConverter}}"/>
+                        <telerik:RadButton Grid.Column="3" Content="Low #1&#x0a;Step Run" Style="{StaticResource Dio_ButtonStyle}" FontSize="12" IsEnabled="{Binding DioUI[51], Converter={StaticResource ReversBoolConverter}}"
+                                Command="{Binding Dio_Command}" CommandParameter="StepRun4" Background="{Binding DioUI[51], Converter={StaticResource ConnectionColorConverter}}"/>
+                        <telerik:RadButton Grid.Column="4" Content="Low #1&#x0a;Step Run" Style="{StaticResource Dio_ButtonStyle}" FontSize="12" IsEnabled="{Binding DioUI[52], Converter={StaticResource ReversBoolConverter}}"
+                                Command="{Binding Dio_Command}" CommandParameter="StepRun5" Background="{Binding DioUI[52], Converter={StaticResource ConnectionColorConverter}}"/>
+                        <telerik:RadButton Grid.Column="5" Content="Low #1&#x0a;Step Run" Style="{StaticResource Dio_ButtonStyle}"  FontSize="12" IsEnabled="{Binding DioUI[53], Converter={StaticResource ReversBoolConverter}}"
+                                Command="{Binding Dio_Command}" CommandParameter="StepRun6" Background="{Binding DioUI[53], Converter={StaticResource ConnectionColorConverter}}"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Column="0" Grid.Row="1" Header="SET Handler" BorderThickness="2" FontWeight="SemiBold" Foreground="OrangeRed" FontSize="15">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <telerik:RadButton Grid.Column="0" Grid.Row="0" Content="Up/Down" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="SetUpDown" Background="{Binding DioUI[27], Converter={StaticResource ConnectionColorConverter}}">
+                </telerik:RadButton>
+                <telerik:RadButton Grid.Column="1" Grid.Row="0" Content="Centering FWD/BWD" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="SetCenter" Background="{Binding DioUI[28], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="0" Grid.Row="1" Content="Turn On/Off" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="Turn" Background="{Binding DioUI[31], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="1" Content="Conveyor Run/Stop" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="SetCvRunStop" Background="{Binding DioUI[16], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="1" Content="Vacuum On/Off" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="Vacuum" Background="{Binding DioUI[33], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="0" Grid.Row="2" Content="Left/Right" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="LR" Background="{Binding DioUI[29], Converter={StaticResource ConnectionColorConverter}}"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Grid.Row="1" Header="Bottom Handler" BorderThickness="2" FontWeight="SemiBold" Foreground="OrangeRed" FontSize="15">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <telerik:RadButton Grid.Column="0" Grid.Row="0" Content="Up/Down" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="BottomUpDown" Background="{Binding DioUI[30], Converter={StaticResource ConnectionColorConverter}}">
+                </telerik:RadButton>
+                <telerik:RadButton Grid.Column="1" Grid.Row="0" Content="Grip/UnGrip" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="BottomGripUnGrip" Background="{Binding DioUI[32], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="0" Grid.Row="1" Content="FWD/BWD" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="BottomCenter" Background="{Binding DioUI[35], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="1" Content="CV Up/Down" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="CvUpDown" Background="{Binding DioUI[36], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="0" Grid.Row="2" Content="Conveyor Run/Stop" Style="{StaticResource Dio_ButtonStyle}"
+                    Command="{Binding Dio_Command}" CommandParameter="BottomCvRunStop" Background="{Binding DioUI[17], Converter={StaticResource ConnectionColorConverter}}"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Column="0" Grid.Row="2" Header="Top Handler" BorderThickness="2" FontWeight="SemiBold" Foreground="OrangeRed" FontSize="15">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <telerik:RadButton Grid.Column="0" Grid.Row="0" Content="Up/Down 1" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="TopUpDown1" Background="{Binding DioUI[38], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="0" Content="Up/Down 2" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="TopUpDown2" Background="{Binding DioUI[39], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="0" Grid.Row="1" Content="Grip/UnGrip" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="TopGripUnGrip" Background="{Binding DioUI[40], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="1" Content="FWD/BWD" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="TopCenter" Background="{Binding DioUI[34], Converter={StaticResource ConnectionColorConverter}}"/>
+                <telerik:RadButton Grid.Column="0" Grid.Row="2" Content="CV Run" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="TopCvRun"/>
+                <telerik:RadButton Grid.Column="1" Grid.Row="2" Content="CV Stop" Style="{StaticResource Dio_ButtonStyle}"
+                        Command="{Binding Dio_Command}" CommandParameter="TopCvStop"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</mvvm:BaseUserControl>

@@ -34,7 +34,7 @@
             </Grid.Background>
             <StackPanel Orientation="Horizontal">
                 <telerik:RadGlyph Glyph="&#xe13b;" Margin="15,0" FontSize="18" Foreground="White"/>
-                <Label Content="System Data" Foreground="White" FontSize="13" FontWeight="SemiBold" Padding="0,6" VerticalContentAlignment="Center"/>
+                <Label Content="System Manager" Foreground="White" FontSize="13" FontWeight="SemiBold" Padding="0,6" VerticalContentAlignment="Center"/>
             </StackPanel>
             <telerik:RadButton Style="{StaticResource Exit_ButtonStyle}"
                            Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" CommandParameter="SystemData">
@@ -69,29 +69,20 @@
                 <Label Content="Load Floor Count" Grid.Row="0" Grid.Column="2" Style="{StaticResource Option_LabelStyle}"/>
                 <telerik:RadWatermarkTextBox Grid.Row="0" Grid.Column="3" Text="{Binding LoadFloorCount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
                 
-                <Label Content="BarCode Use" Grid.Row="1" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <!--<Label Content="BarCode Use" Grid.Row="1" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
                 <telerik:RadComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Option_ComboStyle}"
-                     ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding BcrUseNotuse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                     ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding BcrUseNotuse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
 
-                <Label Content="NFC Use" Grid.Row="2" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
-                <telerik:RadComboBox Grid.Row="2" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
+                <Label Content="NFC Use" Grid.Row="3" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="3" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
                      ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding NfcUseNotuse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <StackPanel Grid.Row="2" Grid.Column="2">
-                    <Label Content="prodcMagtNo"  Style="{StaticResource Option_LabelStyle}"/>
-                    <telerik:RadWatermarkTextBox Text="{Binding HttpSendData, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}" Margin="0,-5,0,2" FontSize="15"/>
-                </StackPanel>
-                <Button Grid.Row="2" Grid.Column="3" Content="HTTP Test" FontSize="20" FontWeight="Bold" Command="{Binding Manual_Command}" CommandParameter="HTTP_TEST" Margin="5"/>
-
-                <Label Content="Aging CV Step Time(ms)" Grid.Row="3" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
-                <telerik:RadWatermarkTextBox Grid.Row="3" Grid.Column="1" Text="{Binding AgingCvStepTime, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
-                <Button Grid.Row="3" Grid.Column="2" Content="Step Run" FontSize="20" FontWeight="Bold" 
-                        Command="{Binding Manual_Command}" CommandParameter="StepRun" Margin="5"/>
-                <telerik:RadComboBox Grid.Row="3" Grid.Column="3"  Style="{StaticResource Option_ComboStyle}"
-                        ItemsSource="{Binding AgingCvList}" SelectedItem="{Binding AgingCvSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Content="Aging CV Step Time(ms)" Grid.Row="2" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadWatermarkTextBox Grid.Row="2" Grid.Column="1" Text="{Binding AgingCvStepTime, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
+                
 
                  <!--Aging Conveyor Use NotUse-->
-                <Label Content="Aging CV NotUse" Grid.Row="4" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
-                <telerik:RadComboBox Grid.Row="4" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
+                <Label Content="Aging CV Use" Grid.Row="1" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="1" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
                         ItemsSource="{Binding AgingCvUseNotUseList}" SelectedItem="{Binding AgingCvNotUse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 
             </Grid>

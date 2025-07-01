@@ -15,7 +15,6 @@ namespace YJ_AutoClamp.ViewModels
     {
         #region // ICommands
         public ICommand RightMenu_PopupCommand { get; private set; }
-        public ICommand PointView_PopupCommand { get; private set; }
         #endregion
 
         #region // PopupManager
@@ -72,6 +71,7 @@ namespace YJ_AutoClamp.ViewModels
                 { AutoMenu_PopupList.Origin, () => (new Origin_View(), new Origin_ViewModel()) },
                 { AutoMenu_PopupList.Dio, () => (new Dio_View(), new Dio_ViewModel()) },
                 { AutoMenu_PopupList.Info, () => (new Product_View(), new Product_ViewModel()) }
+                //{ AutoMenu_PopupList.Info, () => (new AgingStep_View(), new AgingStep_ViewModel()) }
             };
         }
         private async void OnRightMenu_Command(object obj)
@@ -92,20 +92,16 @@ namespace YJ_AutoClamp.ViewModels
                 if (SingletonManager.instance.IsInspectionStart == true)
                     Global.instance.InspectionStop();
             }
-            else if (cmd == "InputStop")
-            {
-                if (SingletonManager.instance.IsInspectionInputStop == false)
-                {
-                    SingletonManager.instance.IsInspectionInputStop = true;
-                    SingletonManager.instance.IsInspectionStart = false;
-                }
-                else
-                {
-                    SingletonManager.instance.IsInspectionInputStop = false;
-                }
-            }
+           
             else
             {
+                if (SingletonManager.instance.IsInspectionStart == true)
+                {
+                    if (obj.ToString() != "Info")
+                    {
+                        return;
+                    }
+                }
                 if (Enum.TryParse(obj.ToString(), out AutoMenu_PopupList popup))
                 {
                     PopupManager.ShowPopupView(PopupFactories, popup);
@@ -116,44 +112,17 @@ namespace YJ_AutoClamp.ViewModels
                 }
             }
         }
-        private void OnPointView_Command(object obj)
-        {
-            if(obj.ToString() == "0")
-            {
-                SingletonManager.instance.Channel_Model[0].Status = ChannelStatus.RUNNING;
-                SingletonManager.instance.Channel_Model[0].Barcode = "12345678";
-                SingletonManager.instance.Channel_Model[0].StartTactTime();
-            }
-            else if (obj.ToString() == "1")
-            {
-                SingletonManager.instance.Channel_Model[1].Status = ChannelStatus.OK;
-                SingletonManager.instance.Channel_Model[1].Barcode = "12345678";
-                SingletonManager.instance.Channel_Model[1].TactTime = "10";
-            }
-            else if (obj.ToString() == "2")
-            {
-                SingletonManager.instance.Channel_Model[2].Status = ChannelStatus.NG;
-                SingletonManager.instance.Channel_Model[2].Barcode = "12345678";
-                SingletonManager.instance.Channel_Model[2].TactTime = "10";
-            }
-            else
-            {
-                SingletonManager.instance.Channel_Model[0].StopTactTime();
-            }
-        }
         #region override
         protected override void InitializeCommands()
         {
             base.InitializeCommands();
 
             RightMenu_PopupCommand = new RelayCommand(OnRightMenu_Command);
-            PointView_PopupCommand = new RelayCommand(OnPointView_Command);
         }
         protected override void DisposeManaged()
         {
             // ICommands 해제
             RightMenu_PopupCommand = null;
-            PointView_PopupCommand = null;
 
             // PopupFactories 해제
             if (PopupFactories != null)

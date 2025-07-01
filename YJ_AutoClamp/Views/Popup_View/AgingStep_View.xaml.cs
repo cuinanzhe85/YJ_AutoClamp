@@ -3,11 +3,10 @@
 namespace YJ_AutoClamp
 {
     /// <summary>
-    /// ModelData_View.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class ModelData_View : Window
+    public partial class AgingStep_View : Window
     {
-        public ModelData_View()
+        public AgingStep_View()
         {
             InitializeComponent();
         }

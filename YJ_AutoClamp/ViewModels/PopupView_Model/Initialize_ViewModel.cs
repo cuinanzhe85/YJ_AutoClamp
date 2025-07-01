@@ -1,14 +1,11 @@
 ﻿using Common.Commands;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using YJ_AutoClamp.Models;
-using static YJ_AutoClamp.Models.MESSocket;
 
 namespace YJ_AutoClamp.ViewModels
 {
@@ -22,6 +19,7 @@ namespace YJ_AutoClamp.ViewModels
             Out_Handler,
             Bottom_Handler,
             Top_Handler,
+            Lift,
             Max
         }
         private bool _BusyStatus;
@@ -36,11 +34,21 @@ namespace YJ_AutoClamp.ViewModels
             get { return _BusyContent; }
             set { SetValue(ref _BusyContent, value); }
         }
-        private EziDio_Model Dio = SingletonManager.instance.Ez_Dio;
-        private EzMotion_Model_E Ez_Model = SingletonManager.instance.Ez_Model;
+        private bool _SafetyInterlock = false;
+        public bool SafetyInterlock
+        {
+            get { return _SafetyInterlock; }
+            set { SetValue(ref _SafetyInterlock, value); }
+        }
+
+        private Initialize_Model InitModel;
+        private EziDio_Model Dio = SingletonManager.instance.Dio;
+        private EzMotion_Model_E Ez_Model = SingletonManager.instance.Motion;
         public ObservableCollection<ServoSlaveViewModel> ServoSlaves { get; set; }
         public Initialize_ViewModel()
         {
+            InitModel = new Initialize_Model();
+
             ServoSlaves = new ObservableCollection<ServoSlaveViewModel>();
 
             for (int i = 0; i < (int)InitializeList.Max; i++)
@@ -69,7 +77,8 @@ namespace YJ_AutoClamp.ViewModels
                         ServoSlaves[i].IsChecked = false;
                     break;
                 case "Init":
-                    DoorOpenCheck();
+                    if (DoorOpenCheck() == true)
+                        break;
                     BusyStatus = true;
                     // Functions
                     string failedSlave = string.Empty;
@@ -77,48 +86,7 @@ namespace YJ_AutoClamp.ViewModels
 
                     foreach (var slave in ServoSlaves.Where(s => s.IsChecked))
                     {
-                        // Y,Z Handler Ready 위치 이동
-                        if (slave.Name == "Out Handler")
-                        {
-                            if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS] == true)
-                            {
-                                BusyContent = string.Empty;
-                                BusyStatus = false;
-                                Global.instance.ShowMessagebox("There is a product in the Z handler, please remove it and proceed.");
-                                return;
-                            }
-                            BusyContent = "Out Z Initializing...";
-                            result = await ServoInitZ();
-                            slave.Color = result ? "Bisque" : "White";
-                            if (!result)
-                            {
-                                if (!string.IsNullOrEmpty(failedSlave))
-                                    failedSlave += ", ";
-                                failedSlave += slave.Name;
-                            }
-                            if (result == true)
-                            {
-                                BusyContent = "Out Y Initializing...";
-                                result = await ServoInitY();
-                                slave.Color = result ? "Bisque" : "White";
-                                if (!result)
-                                {
-                                    if (!string.IsNullOrEmpty(failedSlave))
-                                        failedSlave += ", ";
-                                    failedSlave += slave.Name;
-                                }
-                            }
-                            if (!string.IsNullOrEmpty(failedSlave))
-                            {
-                                string failedMessage = $"Failed to Out Handler Init: {failedSlave}";
-                                Global.Mlog.Error(failedMessage);
-                                Global.instance.ShowMessagebox(failedMessage);
-                            }
-                            // Step 초기화 설정
-                            SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_Y].Out_Handle_Step = Unit_Model.OutHandle.Idle;
-                            slave.IsChecked = false;
-                        }
-                        else if (slave.Name == "Bottom Handler")
+                        if (slave.Name == "Bottom Handler")
                         {
                             Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_2, false);
                             Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_UP_SOL, false);
@@ -133,37 +101,87 @@ namespace YJ_AutoClamp.ViewModels
                                 return;
                             }
                             BusyContent = "Bottom Handler Initializing...";
-                            result = await BottomHandlerInit();
-                            slave.Color = result ? "Bisque" : "White";
+                            result = await InitModel.BottomHandlerInit();
+                            slave.Color = result ? "LawnGreen" : "White";
                             if (!result)
                             {
                                 if (!string.IsNullOrEmpty(failedSlave))
                                     failedSlave += ", ";
                                 failedSlave += slave.Name;
                             }
-                            slave.IsChecked = false;
+                            //slave.IsChecked = false;
                         }
+                        // Y,Z Handler Ready 위치 이동
+                        else if (slave.Name == "Out Handler")
+                        {
+                            if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMP_LD_Z_GRIP_CYL_SS] == true)
+                            {
+                                BusyContent = string.Empty;
+                                BusyStatus = false;
+                                Global.instance.ShowMessagebox("There is a product in the Z handler, please remove it and proceed.");
+                                return;
+                            }
+                            Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_LD_Z_GRIP_SOL, false);
+                            BusyContent = "Out Z Initializing...";
+                            result = await InitModel.ServoInitZ();
+                            slave.Color = result ? "LawnGreen" : "White";
+                            if (!result)
+                            {
+                                if (!string.IsNullOrEmpty(failedSlave))
+                                    failedSlave += ", ";
+                                failedSlave += slave.Name;
+                            }
+                            if (result == true)
+                            {
+                                BusyContent = "Out Y Initializing...";
+                                result = await InitModel.ServoInitY();
+                                slave.Color = result ? "LawnGreen" : "White";
+                                if (!result)
+                                {
+                                    if (!string.IsNullOrEmpty(failedSlave))
+                                        failedSlave += ", ";
+                                    failedSlave += slave.Name;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(failedSlave))
+                            {
+                                string failedMessage = $"Failed to Out Handler Init: {failedSlave}";
+                                Global.Mlog.Error(failedMessage);
+                                Global.instance.ShowMessagebox(failedMessage);
+                            }
+                            
+                            //slave.IsChecked = false;
+                        }
+                        
                         else if (slave.Name == "Top Handler")
                         {
                             Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_CENTERING_SOL_1, false);
-                            if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_TR_Z_GRIP_CYL_SS] == true
+
+                            if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_RT_Z_UNGRIP_CYL_SS] != true
                                 || Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.CLAMPING_CV_DETECT_SS_1] == true)
                             {
                                 BusyContent = string.Empty;
                                 BusyStatus = false;
-                                Global.instance.ShowMessagebox("There is a product in the Top handler, please remove it and proceed.");
+                                Global.instance.ShowMessagebox("There is a product in the Top handler, please remove it and proceed.\r\n(탑 핸들 클램프 제거 해주세요)");
                                 return;
                             }
                             BusyContent = "Top Handler Initializing...";
-                            result = await ServoInitX();
-                            slave.Color = result ? "Bisque" : "White";
+                            result = await InitModel.ServoInitX();
+                            slave.Color = result ? "LawnGreen" : "White";
                             if (!result)
                             {
                                 if (!string.IsNullOrEmpty(failedSlave))
                                     failedSlave += ", ";
                                 failedSlave += slave.Name;
                             }
-                            slave.IsChecked = false;
+                            //slave.IsChecked = false;
+                        }
+                        else if (slave.Name == "Lift")
+                        {
+                            BusyContent = "Lift Initializing...";
+                            result = await InitModel.LiftInit();
+                            slave.Color = result ? "LawnGreen" : "White";
+                            //slave.IsChecked = false;
                         }
                     }
                     if (!string.IsNullOrEmpty(failedSlave))
@@ -171,183 +189,17 @@ namespace YJ_AutoClamp.ViewModels
                         failedSlave += " Initial faile";
                         Global.instance.ShowMessagebox(failedSlave);
                     }
+                    else
+                    {
+                        Global.instance.ShowMessagebox("Initialize Success",false);
+                    }
                     BusyContent = string.Empty;
                     BusyStatus = false;
                     break;
             }
         }
-        private async Task<bool> ServoInitY()
-        {
-            if (Ez_Model.IsOutHandlerReadyDoneZ() == false)
-            {
-                Global.instance.ShowMessagebox("Y initialization failed. Move the Z axis to Ready position.");
-                return false; // 실패 시 false 반환
-            }
-            if (Ez_Model.MoveOutHandlerReadyY()== false)
-                return false; // 실패 시 false 반환
-            bool result = false;
-            await Task.Run(() =>
-            {
-                Stopwatch sw = new Stopwatch();
-                while (true)
-                {
-                    if (Ez_Model.IsMoveOutHandlerReadyY() == true)
-                    {
-                        result = true;
-                        break; // 성공 시 루프 종료
-                    }
-                    if (sw.ElapsedMilliseconds > 10000)
-                    {
-                        result = false; // 10초 후에 중단
-                        break; // 10초 후에 중단
-                    }
-                    Task.Delay(100).Wait();
-                }
-            });
-            return result; // 성공 여부 반환
-        }
-        private async Task<bool> ServoInitZ()
-        {
-            if (Ez_Model.MoveOutHandlerRadyZ() == false)
-                return false; // 실패 시 false 반환
-            bool result = false;
-            await Task.Run(() =>
-            {
-                Stopwatch sw = new Stopwatch();
-                while (true)
-                {
-                    if (Ez_Model.IsOutHandlerReadyDoneZ() == true)
-                    {
-                        result = true;
-                        break; // 성공 시 루프 종료
-                    }
-                    if (sw.ElapsedMilliseconds > 10000)
-                    {
-                        result = false; // 10초 후에 중단
-                        break; // 10초 후에 중단
-                    }
-                    Task.Delay(100).Wait();
-                }
-            });
-            return result; // 성공 여부 반환
-        }
-        private async Task<bool> ServoInitX()
-        {
-            if (Ez_Model.IsOutHandlerPickupPosY() == true)
-            {
-                Global.instance.ShowMessagebox("X initialization failed. Move the Y axis to Ready position.");
-                return false; // 실패 시 false 반환
-            }
-            
-            bool result = false;
-            await Task.Run(() =>
-            {
-                
-                Stopwatch sw = new Stopwatch();
-                
-                Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
-                Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, false);
-                sw.Restart();
-                while (true)
-                {
-                    if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_TR_Z_UP_CYL_SS_1] == true
-                        && Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TOP_JIG_TR_Z_UP_CYL_SS_2] == true)
-                    {
-                        result = true;
-                        break; // 핸들러가 Down 상태로 이동했으면 루프 종료
-                    }
-                    if (sw.ElapsedMilliseconds > 3000)
-                    {
-                        Global.instance.ShowMessagebox("Top Handler Up failed.");
-                        result = false;
-                        break; // 3초 후에 중단
-                    }
-                }
-                if (result == true)
-                {
-                    if (Ez_Model.MoveTopHandlerPickUpPos() == false)
-                    {
-                        result = false; // 실패 시 false 반환
-                    }
-                    sw.Restart();
-                    while (true)
-                    {
-                        if (Ez_Model.IsTopHandlerPickUpPos() == true)
-                        {
-                            result = true;
-                            break; // 성공 시 루프 종료
-                        }
-                        if (sw.ElapsedMilliseconds > 5000)
-                        {
-                            result = false; // 10초 후에 중단
-                            break; // 10초 후에 중단
-                        }
-                        Task.Delay(100).Wait();
-                    }
-                }
-            });
-            // Ready Position까지 이동했으면 
-            SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Top_X].Top_Handle_Step = Unit_Model.TopHandle.Idle;
-            SingletonManager.instance.IsY_PickupColl = false;
-
-            return result; // 성공 여부 반환
-        }
-        private async Task<bool> BottomHandlerInit()
-        {
-            bool result = false;
-           
-            Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_LZ_VACUUM_SOL, false);
-            await Task.Run(() =>
-            {
-                Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_RZ_DOWN_SOL, false);
-                Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_LZ_DOWN_SOL, false);
-                Stopwatch sw = new Stopwatch();
-                sw.Restart();
-
-                while (true)
-                {
-                    if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_LZ_UP_CYL_SS] == true
-                        && Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_RZ_UP_CYL_SS] == true)
-                    {
-                        result = true;
-                        break; // 핸들러가 Up 상태로 이동했으면 루프 종료
-                    }
-                    if (sw.ElapsedMilliseconds > 3000)
-                    {
-                        result = false;
-                        Global.instance.ShowMessagebox("Bottom Handler Up failed.");
-                    }
-                    Task.Delay(100).Wait(); // 100ms 대기
-                }
-                if (result == true)
-                {
-                    // Bottom Handler Left Move
-                    Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TRANSFER_FORWARD_SOL, true);
-                    sw.Restart();
-                    while (true)
-                    {
-                        if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_X_LEFT_CYL_SS] == true)
-                        {
-                            result = true;
-                            break; // 핸들러가 Up 상태로 이동했으면 루프 종료
-                        }
-                        if (sw.ElapsedMilliseconds > 3000)
-                        {
-                            result = false;
-                            Global.instance.ShowMessagebox("Bottom Handler Left move failed.");
-                            break;
-                        }
-                        Task.Delay(100).Wait(); // 100ms 대기
-                    }
-                }
-            });
-            Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.CLAMPING_CV_RUN, false);
-            SingletonManager.instance.BottomClampDone = false;
-            SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Top_X].Bottom_Step = Unit_Model.BottomHandle.Idle;
-            SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Out_CV].Out_Cv_Step = Unit_Model.OutCvSequence.Idle;
-            return result; // 성공 여부 반환
-        }
-        private void DoorOpenCheck()
+       
+        private bool DoorOpenCheck()
         {
             // Safety 먼저 체크
             if (!Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.FRONT_DOOR_SS]
@@ -371,7 +223,11 @@ namespace YJ_AutoClamp.ViewModels
                                     window.Close();
                                     window = null;
                                 }), DispatcherPriority.Send);
+
+                return true;
             }
+            else
+                return false;
         }
         #region // override
         protected override void InitializeCommands()

@@ -27,8 +27,8 @@ namespace YJ_AutoClamp.Models
         public double Velocity { get; set; }
         public double Measurement_Vel { get; set; }
         public double Barcode_Vel { get; set; }
-        public double Accelerate { get; set; }
-        public double Decelerate { get; set; }
+        public int Accelerate { get; set; }
+        public int Decelerate { get; set; }
         public double MaxSpeed { get; set; }
         public List<double> JogVelocity { get; set; } // Jog 속도. Low, Middle, High
         public Servo_Model(ServoSlave_List iSlaveNo)
