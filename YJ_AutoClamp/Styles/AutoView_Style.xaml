@@ -130,4 +130,24 @@
             </UniformGrid>
         </Grid>
     </DataTemplate>
+    <Style x:Key="Count_TextStyle" TargetType="telerik:RadWatermarkTextBox">
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="2,-3,2,2"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+    </Style>
+    <Style x:Key="Inspection_Label" TargetType="Label">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="0,2,2,2"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="telerik:CornerRadiusHelper.ClipRadius" Value="8,0,0,8"/>
+    </Style>
 </ResourceDictionary>

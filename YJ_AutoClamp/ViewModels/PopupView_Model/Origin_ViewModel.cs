@@ -249,7 +249,7 @@ namespace YJ_AutoClamp.ViewModels
                                     }
                                     else
                                     {
-                                        Motion.MoveLiftLoding(slave.SlaveID); // 로딩 위치로 이동
+                                        Motion.MoveLiftLoading(slave.SlaveID); // 로딩 위치로 이동
                                     }
                                 }
                             }

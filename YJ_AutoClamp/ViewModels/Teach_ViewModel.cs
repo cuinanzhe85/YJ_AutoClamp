@@ -20,12 +20,14 @@ namespace YJ_AutoClamp.ViewModels
         Top_X_Handler_Put_Down,
         Top_X_Handler_NG_Port,
         Out_Y_Handler_Home,
-        Out_Y_Handler_Pick_Up,
+        Out_Y_Handler_Pick_Up1,
+        Out_Y_Handler_Pick_Up2,
         Out_Y_Handler_Put_Down_1,
         Out_Y_Handler_Put_Down_2,
         Out_Y_Handler_Put_Down_3,
         Out_Z_Handler_Home,
-        Out_Z_Handler_Pick_Up,
+        Out_Z_Handler_Pick_Up1,
+        Out_Z_Handler_Pick_Up2,
         Out_Z_Handler_Put_Down_1,
         Out_Z_Handler_Put_Down_2,
         Out_Z_Handler_Put_Down_3,
@@ -567,7 +569,7 @@ namespace YJ_AutoClamp.ViewModels
                     {
                         return;
                     }
-                    if ( EzModel.IsOutHandlerPickupPosY() == true)
+                    if ( EzModel.IsOutHandlerPickupPosY_2() == true || EzModel.IsOutHandlerPickupPosY_1() == true)
                     {
                         Global.instance.ShowMessagebox("Pleass Check Servo Y Position");
                         return;
@@ -584,21 +586,21 @@ namespace YJ_AutoClamp.ViewModels
                     {
                         return;
                     }
-                    if (EzModel.IsOutHandlerReadyDoneZ() == false)
-                    {
-                        Global.instance.ShowMessagebox("Z is not ready position.");
-                        return;
-                    }
+                    //if (EzModel.IsOutHandlerReadyDoneZ() == false)
+                    //{
+                    //    Global.instance.ShowMessagebox("Z is not ready position.");
+                    //    return;
+                    //}
                     if (EzModel.IsTopHandlerPutDownPos() == true)
                     {
                         Global.instance.ShowMessagebox("Top Handler is not Ready position.");
                         return;
                     }
-                    if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_X_LEFT_CYL_SS] != true)
-                    {
-                        Global.instance.ShowMessagebox("Bottom Handler is not Left Position.");
-                        return;
-                    }
+                    //if (Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.TRANSFER_X_LEFT_CYL_SS] != true)
+                    //{
+                    //    Global.instance.ShowMessagebox("Bottom Handler is not Left Position.");
+                    //    return;
+                    //}
                     if (EzModel.MoveABS((int)ServoSlave_List.Out_Y_Handler_Y, TeachPosition[(int)TeachingSection.Out_Handler_Y])== false)
                     {
                         Global.instance.ShowMessagebox("Loading Y Servo Move Fail");

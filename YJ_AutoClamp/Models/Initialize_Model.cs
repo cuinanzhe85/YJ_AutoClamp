@@ -78,7 +78,7 @@ namespace YJ_AutoClamp.Models
         {
             Ez_Model.ServoMovePause((int)ServoSlave_List.Out_Z_Handler_Z, 0);
             Ez_Model.ServoStop((int)ServoSlave_List.Out_Z_Handler_Z);
-            if (Ez_Model.IsOutHandlerPickupPosY() == true)
+            if (Ez_Model.IsOutHandlerPickupPosY_2() == true || Ez_Model.IsOutHandlerPickupPosY_2() == true)
             {
                 Global.instance.ShowMessagebox("X initialization failed. Move the Y axis to Ready position.\r\n(로딩 Y 대기위치로 이동후 다시 진행하세요.)");
                 return false; // 실패 시 false 반환
@@ -239,16 +239,16 @@ namespace YJ_AutoClamp.Models
                 }
                 await Task.Run(async () =>
                 {
-                    Ez_Model.MoveLiftLoding(0);
+                    Ez_Model.MoveLiftLoading(0);
                     Thread.Sleep(200);
-                    Ez_Model.MoveLiftLoding(1);
+                    Ez_Model.MoveLiftLoading(1);
                     Thread.Sleep(200);
-                    Ez_Model.MoveLiftLoding(2);
+                    Ez_Model.MoveLiftLoading(2);
                     Thread.Sleep(200);
                     Stopwatch sw = new Stopwatch();
                     while (true)
                     {
-                        if (Ez_Model.IsMoveLiftLodingDone(0) == true && Ez_Model.IsMoveLiftLodingDone(1) == true && Ez_Model.IsMoveLiftLodingDone(2) == true)
+                        if (Ez_Model.IsMoveLiftLoadingDone(0) == true && Ez_Model.IsMoveLiftLoadingDone(1) == true && Ez_Model.IsMoveLiftLoadingDone(2) == true)
                         {
                             result = true;
                             break; // 성공 시 루프 종료

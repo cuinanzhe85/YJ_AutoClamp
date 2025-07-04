@@ -107,15 +107,16 @@ namespace YJ_AutoClamp.Utils
                     int loadingCoung= (int)Convert.ToInt32(SingletonManager.instance.Channel_Model[0].LoadCount);
                     int AgingCoung = (int)Convert.ToInt32(values);
                     int UnclampCoung = (int)Convert.ToInt32(Splits[1]);
-                    if (loadingCoung > UnclampCoung)
+                    if (AgingCoung > 0)
                     {
-                        SingletonManager.instance.Channel_Model[0].AgingCvTotalCount = ((loadingCoung + AgingCoung) - UnclampCoung).ToString();
-                        
-                        myIni.Write("AGING_COUNT", SingletonManager.instance.Channel_Model[0].AgingCvTotalCount, "SYSTEM");
+                        //SingletonManager.instance.Channel_Model[0].AgingCvTotalCount = ((loadingCoung - UnclampCoung) + AgingCoung).ToString();
+                        AgingCoung-=1;
+                        //SingletonManager.instance.Channel_Model[0].AgingCvTotalCount = AgingCoung.ToString();
+                        //myIni.Write("AGING_COUNT", SingletonManager.instance.Channel_Model[0].AgingCvTotalCount, "SYSTEM");
                     }
                     else
                     {
-                        SingletonManager.instance.Channel_Model[0].AgingCvTotalCount = SingletonManager.instance.Channel_Model[0].LoadCount;
+                        //SingletonManager.instance.Channel_Model[0].AgingCvTotalCount = SingletonManager.instance.Channel_Model[0].LoadCount;
                     }
                     values = $"AGING_TOTAL_COUNT:{SingletonManager.instance.Channel_Model[0].AgingCvTotalCount}";
                 }

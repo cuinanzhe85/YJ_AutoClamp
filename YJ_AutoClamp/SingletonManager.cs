@@ -75,7 +75,7 @@ namespace YJ_AutoClamp
 
         public ObservableCollection<int> LoadFloor { get; set; }
         public ObservableCollection<Lift_Model> Display_Lift { get; set; }
-        public ObservableCollection<Aging_Model> Display_AgingCv { get; set; }
+        public ObservableCollection<Aging_Model> Aging_Model { get; set; }
         public int LoadStageNo = 0;
         public int LoadAgingCvIndex = 0;
         public int AgingCvIndex = 0;
@@ -131,9 +131,9 @@ namespace YJ_AutoClamp
             for (int i = 0; i < 3; i++)
                 Display_Lift.Add(new Lift_Model("LIFT " + (i + 1)));
 
-            Display_AgingCv = new ObservableCollection<Aging_Model>();
+            Aging_Model = new ObservableCollection<Aging_Model>();
             for (int i = 0; i < 6; i++)
-                Display_AgingCv.Add(new Aging_Model());
+                Aging_Model.Add(new Aging_Model(i));
 
             for (int i = 0; i < (int)SerialIndex.Max; i++)
             {
@@ -187,8 +187,8 @@ namespace YJ_AutoClamp
             if (!Directory.Exists(teachFolder))
                 Directory.CreateDirectory(teachFolder);
             //Aging 폴거가 없으면 생성
-            //if (!Directory.Exists(agingFolder))
-            //    Directory.CreateDirectory(agingFolder);
+            if (!Directory.Exists(agingFolder))
+                Directory.CreateDirectory(agingFolder);
             //MES LOG 폴거가 없으면 생성
             if (!Directory.Exists(mesLogFolder))
                 Directory.CreateDirectory(mesLogFolder);
@@ -217,11 +217,17 @@ namespace YJ_AutoClamp
             else
                 SystemModel.LoadFloorCount = 0;
 
-                valus = myIni.Read("LOAD_COUNT", section);
+            valus = myIni.Read("LOAD_COUNT", section);
             if (string.IsNullOrEmpty(valus))
                 Channel_Model[0].LoadCount = "0";
             else
                 Channel_Model[0].LoadCount = valus;
+
+            valus = myIni.Read("AGING_CV_COUNT", section);
+            if (string.IsNullOrEmpty(valus))
+                Channel_Model[0].AgingCvTotalCount = "0";
+            else
+                Channel_Model[0].AgingCvTotalCount = valus;
 
             valus = myIni.Read("AGING_CV_STEP_TIME", section);
             if (!string.IsNullOrEmpty(valus))
@@ -232,8 +238,8 @@ namespace YJ_AutoClamp
             valus = myIni.Read("AGING_CV_USE", section);
             SystemModel.AgingCvNotUse = valus;
 
-            valus = myIni.Read("AGING_COUNT", "SYSTEM");
-            Channel_Model[0].AgingCvTotalCount = valus;
+            //valus = myIni.Read("AGING_COUNT", "SYSTEM");
+            //Channel_Model[0].AgingCvTotalCount = valus;
         }
        
         public void LoadTeachFile()
@@ -705,8 +711,8 @@ namespace YJ_AutoClamp
                     if (IsWorkingUnitsProcThread == true)
                     {
                         // Emergency 상시 체크
-                        if (!Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.FRONT_OP_EMERGENCY_FEEDBACK]
-                            || !Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.REAR_OP_EMERGENCY_FEEDBACK])
+                        if (!Dio.DI_RAW_DATA[(int)DI_MAP.FRONT_OP_EMERGENCY_FEEDBACK]
+                            || !Dio.DI_RAW_DATA[(int)DI_MAP.REAR_OP_EMERGENCY_FEEDBACK])
                         {
                             Global.instance.SafetyErrorMessage = "EMERGENCY Button Operation! ";
                             IsSafetyInterLock = true;

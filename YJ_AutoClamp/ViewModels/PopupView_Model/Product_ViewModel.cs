@@ -28,13 +28,11 @@ namespace YJ_AutoClamp.ViewModels
             }
             Channels[0].InputCount = "0";
             Channels[0].LoadCount = "0";
-            Channels[0].AgingCvTotalCount = "0";
 
             var myIni = new IniFile(Global.instance.IniSystemPath);
             string section = "SYSTEM";
             myIni.Write("INPUT_COUNT", Channels[0].InputCount, section);
             myIni.Write("LOAD_COUNT", Channels[0].LoadCount, section);
-            myIni.Write("AGING_CV_COUNT", Channels[0].AgingCvTotalCount, section);
         }
         #region override
         protected override void InitializeCommands()

@@ -7,7 +7,6 @@ namespace YJ_AutoClamp.Models
 {
     public class Serial_Model : BindableAndDisposable
     {
-        private bool _IsConnected = false;
         public enum SerialIndex
         {
             //bcr1,
@@ -15,6 +14,8 @@ namespace YJ_AutoClamp.Models
             Mes,
             Max
         }
+        private bool _IsConnected = false;
+
         public bool IsConnected
         {
             get { return _IsConnected; }

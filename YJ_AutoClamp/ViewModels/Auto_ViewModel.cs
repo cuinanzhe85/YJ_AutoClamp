@@ -25,6 +25,7 @@ namespace YJ_AutoClamp.ViewModels
             Origin,
             Dio,
             Info,
+            Aging
         }
         private readonly Dictionary<AutoMenu_PopupList, Func<(Window, Child_ViewModel)>> PopupFactories;
         #endregion
@@ -70,8 +71,8 @@ namespace YJ_AutoClamp.ViewModels
                 { AutoMenu_PopupList.Initialize, () => (new Initialize_View(), new Initialize_ViewModel()) },
                 { AutoMenu_PopupList.Origin, () => (new Origin_View(), new Origin_ViewModel()) },
                 { AutoMenu_PopupList.Dio, () => (new Dio_View(), new Dio_ViewModel()) },
-                { AutoMenu_PopupList.Info, () => (new Product_View(), new Product_ViewModel()) }
-                //{ AutoMenu_PopupList.Info, () => (new AgingStep_View(), new AgingStep_ViewModel()) }
+                { AutoMenu_PopupList.Info, () => (new Product_View(), new Product_ViewModel()) },
+                { AutoMenu_PopupList.Aging, () => (new AgingStep_View(), new AgingStep_ViewModel()) }
             };
         }
         private async void OnRightMenu_Command(object obj)
@@ -84,7 +85,7 @@ namespace YJ_AutoClamp.ViewModels
             }
             else if (cmd == "Start")
             {
-                if(SingletonManager.instance.IsInspectionStart == false)
+                if (SingletonManager.instance.IsInspectionStart == false)
                     await Global.instance.InspectionStart();
             }
             else if (cmd == "Stop")
@@ -97,7 +98,8 @@ namespace YJ_AutoClamp.ViewModels
             {
                 if (SingletonManager.instance.IsInspectionStart == true)
                 {
-                    if (obj.ToString() != "Info")
+                    if (obj.ToString() != "Info"
+                        && obj.ToString() != "Aging")
                     {
                         return;
                     }

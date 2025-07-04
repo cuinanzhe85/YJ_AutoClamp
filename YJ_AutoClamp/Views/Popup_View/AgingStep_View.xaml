@@ -51,12 +51,11 @@
         <Border Grid.Row="0" Margin="10,10" Background="WhiteSmoke" CornerRadius="8">
             <Grid Margin="5">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="0.15*"/>
-                    <RowDefinition Height="0.15*"/>
-                    <RowDefinition Height="0.15*"/>
-                    <RowDefinition Height="0.15*"/>
-                    <RowDefinition Height="0.15*"/>
-                    <RowDefinition Height="0.15*"/>
+                    <RowDefinition Height="0.18*"/>
+                    <RowDefinition Height="0.18*"/>
+                    <RowDefinition Height="0.18*"/>
+                    <RowDefinition Height="0.18*"/>
+                    <RowDefinition Height="0.18*"/>
                     <RowDefinition Height="0.1*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -66,9 +65,10 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" Grid.ColumnSpan="6" Background="gray" CornerRadius="8">
-                    <Grid>
+                <Border Grid.Column="0" Grid.ColumnSpan="7" Background="Black" CornerRadius="8" Margin="5">
+                    <Grid Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -82,66 +82,262 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Grid.Column="0" Content="Total" Margin="5,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="Black" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="0" Grid.Column="1" Content="Upper1" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="Black" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="0" Grid.Column="2" Content="Upper2" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="Black" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="0" Grid.Column="3" Content="Upper3" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="Black" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="0" Grid.Column="4" Content="Low1" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="Black" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="0" Grid.Column="5" Content="Low2" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="Black" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="0" Grid.Column="6" Content="Low3" Margin="2,5,5,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="Black" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="0" Grid.Column="0" Content="Total" Margin="5,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightSlateGray" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="0" Grid.Column="1" Content="Upper1" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightSlateGray" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="0" Grid.Column="2" Content="Upper2" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightSlateGray" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="0" Grid.Column="3" Content="Upper3" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightSlateGray" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="0" Grid.Column="4" Content="Low1" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightSlateGray" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="0" Grid.Column="5" Content="Low2" Margin="2,5,2,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightSlateGray" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="0" Grid.Column="6" Content="Low3" Margin="2,5,5,2" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="LightSlateGray" Foreground="White"  telerik:CornerRadiusHelper.ClipRadius="8"/>
 
-                        <Label Grid.Row="1" Grid.Column="0" Content="0" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="1" Grid.Column="1" Content="0" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="1" Grid.Column="2" Content="0" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="1" Grid.Column="3" Content="0" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="1" Grid.Column="4" Content="0" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="1" Grid.Column="5" Content="0" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
-                        <Label Grid.Row="1" Grid.Column="6" Content="0" Margin="2,2,5,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="1" Grid.Column="0" Content="{Binding TotalCount}" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="1" Grid.Column="1" Content="{Binding CvCount[0]}" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="1" Grid.Column="2" Content="{Binding CvCount[1]}" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="1" Grid.Column="3" Content="{Binding CvCount[2]}" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="1" Grid.Column="4" Content="{Binding CvCount[3]}" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="1" Grid.Column="5" Content="{Binding CvCount[4]}" Margin="5,2,2,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
+                        <Label Grid.Row="1" Grid.Column="6" Content="{Binding CvCount[5]}" Margin="2,2,5,5" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" telerik:CornerRadiusHelper.ClipRadius="8"/>
                     </Grid>
                     
                 </Border>
 
-                <ContentControl Grid.Row="1" Grid.Column="0" Content="{Binding AgingCvList[0].AgingList[0]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding AgingCvList[0].AgingList[1]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="1" Grid.Column="2" Content="{Binding AgingCvList[0].AgingList[2]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="1" Grid.Column="3" Content="{Binding AgingCvList[0].AgingList[3]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="1" Grid.Column="4" Content="{Binding AgingCvList[0].AgingList[4]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="1" Grid.Column="5" Content="{Binding AgingCvList[0].AgingList[5]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="2" Grid.Column="0" Content="{Binding AgingCvList[0].AgingList[6]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="2" Grid.Column="1" Content="{Binding AgingCvList[0].AgingList[7]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="2" Grid.Column="2" Content="{Binding AgingCvList[0].AgingList[8]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="2" Grid.Column="3" Content="{Binding AgingCvList[0].AgingList[9]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="2" Grid.Column="4" Content="{Binding AgingCvList[0].AgingList[10]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="2" Grid.Column="5" Content="{Binding AgingCvList[0].AgingList[11]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="3" Grid.Column="0" Content="{Binding AgingCvList[0].AgingList[12]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="3" Grid.Column="1" Content="{Binding AgingCvList[0].AgingList[13]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="3" Grid.Column="2" Content="{Binding AgingCvList[0].AgingList[14]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="3" Grid.Column="3" Content="{Binding AgingCvList[0].AgingList[15]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="3" Grid.Column="4" Content="{Binding AgingCvList[0].AgingList[16]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="3" Grid.Column="5" Content="{Binding AgingCvList[0].AgingList[17]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="4" Grid.Column="0" Content="{Binding AgingCvList[0].AgingList[18]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="4" Grid.Column="1" Content="{Binding AgingCvList[0].AgingList[19]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="4" Grid.Column="2" Content="{Binding AgingCvList[0].AgingList[20]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="4" Grid.Column="3" Content="{Binding AgingCvList[0].AgingList[21]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="4" Grid.Column="4" Content="{Binding AgingCvList[0].AgingList[22]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="4" Grid.Column="5" Content="{Binding AgingCvList[0].AgingList[23]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="5" Grid.Column="0" Content="{Binding AgingCvList[0].AgingList[24]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="5" Grid.Column="1" Content="{Binding AgingCvList[0].AgingList[25]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="5" Grid.Column="2" Content="{Binding AgingCvList[0].AgingList[26]}" ContentTemplate="{StaticResource FloorTemplate}"/>
-                <ContentControl Grid.Row="5" Grid.Column="3" Content="{Binding AgingCvList[0].AgingList[27]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                <Grid Grid.Row="1" Grid.Column="0" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 01" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[0]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 02" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[1]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 03" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[2]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 04" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[3]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 05" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[4]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 06" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[5]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 07" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[6]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 08" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[7]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 09" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[8]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 10" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[9]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 11" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[10]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 12" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[11]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 13" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[12]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 14" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[13]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="3" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 15" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[14]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="3" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 16" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[15]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="3" Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 17" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[16]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="3" Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 18" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[17]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="3" Grid.Column="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 19" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[18]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="3" Grid.Column="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 20" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[19]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="3" Grid.Column="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 21" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[20]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="4" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 22" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[21]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="4" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 23" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[22]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="4" Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 24" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[23]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="4" Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 25" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[24]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="4" Grid.Column="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 26" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[25]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="4" Grid.Column="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 27" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[26]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
+                <Grid Grid.Row="4" Grid.Column="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.2*"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="No 28" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
+                    <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[27]}" ContentTemplate="{StaticResource FloorTemplate}"/>
+                </Grid>
 
                 <telerik:RadRadioButton Grid.Row="6" Grid.Column="0" Content="Upper 1" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Top_Handler"/>
+                        Command="{Binding Select_Command}" CommandParameter="Upper1"/>
                 <telerik:RadRadioButton Grid.Row="6" Grid.Column="1" Content="Upper 2" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Top_Handler" />
+                        Command="{Binding Select_Command}" CommandParameter="Upper2" />
                 <telerik:RadRadioButton Grid.Row="6" Grid.Column="2" Content="Upper 3" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Top_Handler" />
+                        Command="{Binding Select_Command}" CommandParameter="Upper3" />
                 <telerik:RadRadioButton Grid.Row="6" Grid.Column="3" Content="Low 1" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Top_Handler" />
+                        Command="{Binding Select_Command}" CommandParameter="Low1" />
                 <telerik:RadRadioButton Grid.Row="6" Grid.Column="4" Content="Low 2" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Top_Handler" />
+                        Command="{Binding Select_Command}" CommandParameter="Low2" />
                 <telerik:RadRadioButton Grid.Row="6" Grid.Column="5" Content="Low 3" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Top_Handler" />
+                        Command="{Binding Select_Command}" CommandParameter="Low3" />
                
             </Grid>
         </Border>
