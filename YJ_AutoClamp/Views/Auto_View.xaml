@@ -53,26 +53,31 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="0.16*"/>
-                                <RowDefinition Height="0.04*"/>
-                                <RowDefinition Height="0.16*"/>
-                                <RowDefinition Height="0.16*"/>
-                                <RowDefinition Height="0.16*"/>
-                                <RowDefinition Height="0.16*"/>
-                                <RowDefinition Height="0.16*"/>
+                                <RowDefinition Height="0.125*"/>
+                                <RowDefinition Height="0.125*"/>
+                                <RowDefinition Height="0.125*"/>
+                                <RowDefinition Height="0.125*"/>
+                                <RowDefinition Height="0.125*"/>
+                                <RowDefinition Height="0.125*"/>
+                                <RowDefinition Height="0.125*"/>
+                                <RowDefinition Height="0.125*"/>
                             </Grid.RowDefinitions>
-                            <Label Grid.Row="0" Grid.Column="0" Content="T/T (Sec)" Margin="0,2,2,2" Background="LightSlateGray" Foreground="White" FontSize="12" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Tact Time (Sec)" Margin="0,2,2,2" Background="LightSlateGray" Foreground="White" Style="{StaticResource Inside_LabelStyle}" FontSize="14"/>
 
-                            <Label Grid.Row="2" Grid.ColumnSpan="2" Content="Current Set Count" Margin="0,2,2,2" Background="LightSlateGray" Foreground="White" Style="{StaticResource Inside_LabelStyle}" FontSize="14"/>
-                            <Label Grid.Row="3" Grid.Column="0" Content="Input C/V" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
-                            <Label Grid.Row="4" Grid.Column="0" Content="Loading" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
-                            <Label Grid.Row="5" Grid.Column="0" Content="Aging" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="1" Grid.Column="0" Content="TactTime" Margin="0,2,2,2" Background="LightGray" Foreground="Black" FontSize="12" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="Average" Margin="0,2,2,2" Background="LightGray" Foreground="Black" FontSize="12" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
 
-                            <Label Grid.Row="0" Grid.Column="2" Content="{Binding Channels[0].TactTime}"  Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
-                            <Label Grid.Row="3" Grid.Column="2" Content="{Binding Channels[0].InputCount}" Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
-                            <Label Grid.Row="4" Grid.Column="2" Content="{Binding Channels[0].LoadCount}" Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
-                            <Label Grid.Row="5" Grid.Column="2" Content="{Binding Channels[0].AgingCvTotalCount}" Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
-                            <Label Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Content="IP:192.168.10.20" Margin="0,2,0,2" FontSize="15" FontWeight="Bold" Padding="0"
+                            <Label Grid.Row="3" Grid.ColumnSpan="2" Content="Current Set Count" Margin="0,2,2,2" Background="LightSlateGray" Foreground="White" Style="{StaticResource Inside_LabelStyle}" FontSize="14"/>
+                            <Label Grid.Row="4" Grid.Column="0" Content="Input C/V" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="5" Grid.Column="0" Content="Loading" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+                            <Label Grid.Row="6" Grid.Column="0" Content="Aging" FontSize="12" Margin="0,2,2,2" FontWeight="Bold" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="LightGray" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8,0,0,8"/>
+
+                            <Label Grid.Row="1" Grid.Column="2" Content="{Binding Channels[0].TactTime}"  Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
+                            <Label Grid.Row="2" Grid.Column="2" Content="{Binding Channels[0].AverageTactTime}"  Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
+                            <Label Grid.Row="4" Grid.Column="2" Content="{Binding Channels[0].InputCount}" Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
+                            <Label Grid.Row="5" Grid.Column="2" Content="{Binding Channels[0].LoadCount}" Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
+                            <Label Grid.Row="6" Grid.Column="2" Content="{Binding Channels[0].AgingCvTotalCount}" Style="{StaticResource InspectionData_LableStyle}" FontSize="15" Margin="2"/>
+                            <Label Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Content="IP:192.168.10.20" Margin="0,2,0,2" FontSize="15" FontWeight="Bold" Padding="0"
                                    Background="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsIF_Connected_1, Converter={StaticResource ConnectionColorConverter}}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderThickness="0,0,0,0" BorderBrush="Black" telerik:CornerRadiusHelper.ClipRadius="8"/>
                         </Grid>
                     </Border>

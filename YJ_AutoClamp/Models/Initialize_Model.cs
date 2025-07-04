@@ -78,7 +78,7 @@ namespace YJ_AutoClamp.Models
         {
             Ez_Model.ServoMovePause((int)ServoSlave_List.Out_Z_Handler_Z, 0);
             Ez_Model.ServoStop((int)ServoSlave_List.Out_Z_Handler_Z);
-            if (Ez_Model.IsOutHandlerPickupPosY() == true)
+            if (Ez_Model.IsOutHandlerPickupPosY_2() == true || Ez_Model.IsOutHandlerPickupPosY_2() == true)
             {
                 Global.instance.ShowMessagebox("X initialization failed. Move the Y axis to Ready position.\r\n(로딩 Y 대기위치로 이동후 다시 진행하세요.)");
                 return false; // 실패 시 false 반환

@@ -75,7 +75,7 @@ namespace YJ_AutoClamp
 
         public ObservableCollection<int> LoadFloor { get; set; }
         public ObservableCollection<Lift_Model> Display_Lift { get; set; }
-        public ObservableCollection<Aging_Model> Display_AgingCv { get; set; }
+        public ObservableCollection<Aging_Model> Aging_Model { get; set; }
         public int LoadStageNo = 0;
         public int LoadAgingCvIndex = 0;
         public int AgingCvIndex = 0;
@@ -131,9 +131,9 @@ namespace YJ_AutoClamp
             for (int i = 0; i < 3; i++)
                 Display_Lift.Add(new Lift_Model("LIFT " + (i + 1)));
 
-            Display_AgingCv = new ObservableCollection<Aging_Model>();
+            Aging_Model = new ObservableCollection<Aging_Model>();
             for (int i = 0; i < 6; i++)
-                Display_AgingCv.Add(new Aging_Model());
+                Aging_Model.Add(new Aging_Model(i));
 
             for (int i = 0; i < (int)SerialIndex.Max; i++)
             {
@@ -187,8 +187,8 @@ namespace YJ_AutoClamp
             if (!Directory.Exists(teachFolder))
                 Directory.CreateDirectory(teachFolder);
             //Aging 폴거가 없으면 생성
-            //if (!Directory.Exists(agingFolder))
-            //    Directory.CreateDirectory(agingFolder);
+            if (!Directory.Exists(agingFolder))
+                Directory.CreateDirectory(agingFolder);
             //MES LOG 폴거가 없으면 생성
             if (!Directory.Exists(mesLogFolder))
                 Directory.CreateDirectory(mesLogFolder);

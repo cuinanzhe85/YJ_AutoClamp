@@ -42,11 +42,17 @@ namespace YJ_AutoClamp.Models
             get { return _Status; }
             set { SetValue(ref _Status, value); }
         }
-        private string _TactTime;
+        private string _TactTime = "0.0";
         public string TactTime
         {
             get { return _TactTime; }
             set { SetValue(ref _TactTime, value); }
+        }
+        private string _AverageTactTime = "0.0";
+        public string AverageTactTime
+        {
+            get { return _AverageTactTime; }
+            set { SetValue(ref _AverageTactTime, value); }
         }
         private string _Barcode;
         public string Barcode
@@ -91,6 +97,7 @@ namespace YJ_AutoClamp.Models
             this.Index = (int)channel;
             this.Status = ChannelStatus.EMPTY;
             this.TactTime = string.Empty;
+            this.AgingCvTotalCount = string.Empty;
             this.Barcode = string.Empty;
             this.InputCount = "0";
             this.LoadCount = "0";

@@ -84,7 +84,7 @@ namespace YJ_AutoClamp.ViewModels
             }
             else if (cmd == "Start")
             {
-                if(SingletonManager.instance.IsInspectionStart == false)
+                if (SingletonManager.instance.IsInspectionStart == false)
                     await Global.instance.InspectionStart();
             }
             else if (cmd == "Stop")

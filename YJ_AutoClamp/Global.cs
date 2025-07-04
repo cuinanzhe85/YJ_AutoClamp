@@ -14,11 +14,8 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
-using Telerik.Windows.Controls.FileDialogs;
 using YJ_AutoClamp.Models;
 
 namespace YJ_AutoClamp
@@ -80,7 +77,7 @@ namespace YJ_AutoClamp
         public string IniSystemPath { get; set; } = Environment.CurrentDirectory + @"\Config\System.ini";
         public string IniVelocityPath { get; set; } = Environment.CurrentDirectory + @"\Config\Velocity.ini";
         public string IniTeachPath { get; set; } = Environment.CurrentDirectory + @"\Config\Teach\Teaching.ini";
-        public string IniAgingPath { get; set; } = Environment.CurrentDirectory + @"\Aging";
+        public string IniAgingPath { get; set; } = Environment.CurrentDirectory + @"\Config\AGING";
         public string IniMesLogPath { get; set; } = Environment.CurrentDirectory + @"\MES";
         public string AlarmLogPath { get; set; } = Environment.CurrentDirectory + @"\Alarm";
         public string IniSequencePath { get; set; } = Environment.CurrentDirectory + @"\Config\Sequence.ini";
@@ -110,8 +107,16 @@ namespace YJ_AutoClamp
             get { return _TactTimeStart; }
             set { SetValue(ref _TactTimeStart, value); }
         }
+        private double[] _AverageTactTime = new double[10];
+        public double[] AverageTactTime
+        {
+            get { return _AverageTactTime; }
+            set { SetValue(ref _AverageTactTime, value); }
+        }
+
         private Global()
         {
+            AverageTactTime = new double[10];
             // Date Timer
             ClockTimer.Interval = TimeSpan.FromSeconds(1);
             ClockTimer.Tick += new EventHandler(ClockTimer_Tick);
@@ -224,6 +229,13 @@ namespace YJ_AutoClamp
             count += 1;
             SingletonManager.instance.Channel_Model[0].LoadCount = count.ToString();
             myIni.Write("LOAD_COUNT", count.ToString(), section);
+            
+            if (!string.IsNullOrEmpty(SingletonManager.instance.Channel_Model[0].AgingCvTotalCount))
+            {
+                count = Convert.ToInt32(SingletonManager.instance.Channel_Model[0].AgingCvTotalCount);
+            }
+            count += 1;
+            SingletonManager.instance.Channel_Model[0].AgingCvTotalCount = count.ToString();
         }
         public void MES_LOG(string cn, string Result)
         {
@@ -248,7 +260,25 @@ namespace YJ_AutoClamp
                 double tt = TactTimeSw.ElapsedMilliseconds / 1000.0;
                 tt = Math.Round(tt, 1);
                 SingletonManager.instance.Channel_Model[0].TactTime = $"{tt.ToString()}";//"{seconds:D2}:{milliseconds:D1}";
+                AverageTacttimeUpdate(tt);
             }
+        }
+        private void AverageTacttimeUpdate(double tactTime)
+        {
+            // 배열에서 가장 오래된 값을 제거하고 새 값을 추가
+            for (int i = AverageTactTime.Length - 1; i > 0; i--)
+            {
+                AverageTactTime[i] = AverageTactTime[i - 1];
+            }
+            AverageTactTime[0] = tactTime;
+            // 평균 계산
+            double sum = 0;
+            for (int i = 0; i < AverageTactTime.Length; i++)
+            {
+                sum += AverageTactTime[i];
+            }
+            double average = sum / AverageTactTime.Length;
+            SingletonManager.instance.Channel_Model[0].AverageTactTime = average.ToString("F1");
         }
         public void WriteAlarmLog(string message, string section = "ALARM")
         {
@@ -277,6 +307,7 @@ namespace YJ_AutoClamp
                 {
                     if (buzzOn == true)
                     {
+                        SendMainUiLog(message, UiLogType.Error);
                         Mlog.Info($"Error Message : {message}");
                         Global.instance.Set_TowerLamp(Global.TowerLampType.Error);
                         SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
@@ -287,19 +318,21 @@ namespace YJ_AutoClamp
                     }
                     else if (Alarm == true)
                     {
+                        SendMainUiLog(message, UiLogType.Error);
                         Mlog.Info($"Error Message : {message}");
-                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, true);
+                        //SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, true);
                         SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
-                        Thread.Sleep(1000);
+                        Thread.Sleep(1200);
                         SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
                         var view = new MessageBox_View(message, isError);
                         view.ShowDialog();
-                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
+                        //SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
                     }
                     else
                     {
                         var view = new MessageBox_View(message, isError);
                         view.Show();
+                        
                     }
                 });
             }

@@ -767,16 +767,33 @@ namespace YJ_AutoClamp.Models
             return false;
         }
        
-        public bool MoveOutHandlerPickUpY()
+        public bool MoveOutHandlerPickUpY_1()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up).ToString()];
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up1).ToString()];
             pos = Math.Round(pos, 2);
             Global.instance.Write_Sequence_Log("OUT_Y_SERVO_POS", pos.ToString());
             return MoveABS((int)(ServoSlave_List.Out_Y_Handler_Y), pos);
         }
-        public bool IsOutHandlerPickupPosY()
+        public bool IsOutHandlerPickupPosY_1()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up).ToString()];
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up1).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveOutHandlerPickUpY_2()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up2).ToString()];
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("OUT_Y_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Out_Y_Handler_Y), pos);
+        }
+        public bool IsOutHandlerPickupPosY_2()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Y_Handler_Pick_Up2).ToString()];
             // 소수점아래 2자리까지비교
             pos = Math.Round(pos, 2);
             double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Y_Handler_Y)), 2);
@@ -831,16 +848,33 @@ namespace YJ_AutoClamp.Models
                 return true;
             return false;
         }
-        public bool MoveOutHandlerPickUpZ()
+        public bool MoveOutHandlerPickUpZ_1()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up).ToString()];
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up1).ToString()];
             pos = Math.Round(pos, 2);
             Global.instance.Write_Sequence_Log("OUT_Z_SERVO_POS", pos.ToString());
             return MoveABS((int)(ServoSlave_List.Out_Z_Handler_Z), pos);
         }
-        public bool IsOutHandlerPickUpZ()
+        public bool IsOutHandlerPickUpZ_1()
         {
-            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up).ToString()];
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up1).ToString()];
+            // 소수점아래 2자리까지비교
+            pos = Math.Round(pos, 2);
+            double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);
+            if (GetPos == pos)
+                return true;
+            return false;
+        }
+        public bool MoveOutHandlerPickUpZ_2()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up2).ToString()];
+            pos = Math.Round(pos, 2);
+            Global.instance.Write_Sequence_Log("OUT_Z_SERVO_POS", pos.ToString());
+            return MoveABS((int)(ServoSlave_List.Out_Z_Handler_Z), pos);
+        }
+        public bool IsOutHandlerPickUpZ_2()
+        {
+            double pos = SingletonManager.instance.Teaching_Data[(Teaching_List.Out_Z_Handler_Pick_Up2).ToString()];
             // 소수점아래 2자리까지비교
             pos = Math.Round(pos, 2);
             double GetPos = Math.Round(GetActualPos((int)(ServoSlave_List.Out_Z_Handler_Z)), 2);

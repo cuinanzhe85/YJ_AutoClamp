@@ -289,7 +289,7 @@
         <Setter Property="BorderBrush" Value="DimGray"/>
         <Setter Property="BorderThickness" Value="1,1,1,0"/>
         <Setter Property="Padding" Value="0"/>
-        <Setter Property="FontSize" Value="7"/>
+        <Setter Property="FontSize" Value="12"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
@@ -307,7 +307,7 @@
                 <Label Content="2" Background="{Binding Floor[1], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}"/>
                 <Label Content="1" Background="{Binding Floor[0], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}" BorderThickness="1" />
             </UniformGrid>
-            <Label Grid.Row="1" Content="00:00:00" HorizontalContentAlignment="Center"/>
+            <Label Grid.Row="1" Content="{Binding AgingTime}" HorizontalContentAlignment="Center" FontSize="15" FontWeight="Bold"/>
         </Grid>
     </DataTemplate>
     <Style TargetType="telerik:RadRadioButton" x:Key="Radio_ButtonStyle">
