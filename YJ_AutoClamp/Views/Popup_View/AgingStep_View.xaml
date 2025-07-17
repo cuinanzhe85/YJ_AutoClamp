@@ -67,8 +67,8 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" Grid.ColumnSpan="7" Background="Black" CornerRadius="8" Margin="5">
-                    <Grid Margin="5">
+                <Border Grid.Column="0" Grid.ColumnSpan="6" Background="gray" CornerRadius="8">
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>

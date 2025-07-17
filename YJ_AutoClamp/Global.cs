@@ -281,6 +281,7 @@ namespace YJ_AutoClamp
                 double tt = TactTimeSw.ElapsedMilliseconds / 1000.0;
                 tt = Math.Round(tt, 1);
                 SingletonManager.instance.Channel_Model[0].TactTime = $"{tt.ToString()}";//"{seconds:D2}:{milliseconds:D1}";
+                AverageTacttimeUpdate(tt);
             }
         }
         public void AverageTacttimeUpdate()

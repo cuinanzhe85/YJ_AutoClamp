@@ -30,6 +30,12 @@ namespace YJ_AutoClamp.Models
             get { return _AgingIndex; }
             set { SetValue(ref _AgingIndex, value); }
         }
+        private int _AgingTotalCount = 0;
+        public int AgingTotalCount
+        {
+            get { return _AgingTotalCount; }
+            set { SetValue(ref _AgingTotalCount, value); }
+        }
         private int _TotalCount = 0;
         public int TotalCount
         {
