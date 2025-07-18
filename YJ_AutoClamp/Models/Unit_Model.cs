@@ -81,6 +81,7 @@ namespace YJ_AutoClamp.Models
         Stopwatch _BottomCvTimeDelay2 = new Stopwatch();
         Stopwatch _AgingCvStepRunTime = new Stopwatch();
         Stopwatch _SetNgCvDelay = new Stopwatch();
+        Stopwatch _InCvTimer = new Stopwatch();
 
 
         public string ClampFailMassage= string.Empty;
@@ -350,18 +351,21 @@ namespace YJ_AutoClamp.Models
             {
                 case InCvSequence.Idle:
                     In_Cv_Step = InCvSequence.In_Sensor_Check;
-                    _TimeDelay.Restart();
+                    _InCvTimer.Restart();
                     break;
                 case InCvSequence.In_Sensor_Check:
                     // 제품 투입 sensor 와 도착 위치에 제품이 없을때 cv on
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == false
                         && Dio.DI_RAW_DATA[(int)DI_MAP.INTERFACE_FRONT_MC_SAFETY] == true)
                     {
-                        _TimeDelay.Restart();
+                        _InCvTimer.Restart();
                         if (Dio.DO_RAW_DATA[(int)DO_MAP.TOWER_LAMP_RED] == false)
                         {
-                            Dio_Output(DO_MAP.TOWER_LAMP_YELLOW, false);
-                            Dio_Output(DO_MAP.TOWER_LAMP_GREEN, true);
+                            if (SingletonManager.instance.IsInspectionStart == true)
+                            {
+                                Dio_Output(DO_MAP.TOWER_LAMP_YELLOW, false);
+                                Dio_Output(DO_MAP.TOWER_LAMP_GREEN, true);
+                            }
                         }
                             
                         In_Cv_Step = InCvSequence.CV_Run_Wait;
@@ -372,9 +376,10 @@ namespace YJ_AutoClamp.Models
                     {
                         In_Cv_Step = InCvSequence.CV_Off_Check;
                     }
-                    else if (_TimeDelay.ElapsedMilliseconds > 30000)
+                    // 30초 진입 없을때 타워램프 yellow로 변경
+                    else if (_InCvTimer.ElapsedMilliseconds > 30000)
                     {
-                        _TimeDelay.Reset();
+                        _InCvTimer.Reset();
                         if (Dio.DO_RAW_DATA[(int)DO_MAP.TOWER_LAMP_YELLOW] == false)
                         {
                             Dio_Output(DO_MAP.TOWER_LAMP_YELLOW, true);
@@ -383,11 +388,11 @@ namespace YJ_AutoClamp.Models
 
                         Global.instance.LoadingTactTimeReset();
                     }
-                    if (_TimeDelay.ElapsedMilliseconds == 0)
-                        _TimeDelay.Restart();
+                    if (_InCvTimer.ElapsedMilliseconds == 0)
+                        _InCvTimer.Restart();
                     break;
                 case InCvSequence.CV_Run_Wait:
-                    if (_TimeDelay.ElapsedMilliseconds > 100)
+                    if (_InCvTimer.ElapsedMilliseconds > 100)
                     {
                         Dio_Output(DO_MAP.INPUT_SET_CV_RUN, true);
                         In_Cv_Step = InCvSequence.CV_Off_Check;
@@ -398,19 +403,20 @@ namespace YJ_AutoClamp.Models
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_OUT_SS_2] == true
                         && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == true)
                     {
-                        _TimeDelay.Restart();
+                        _InCvTimer.Restart();
 
                         In_Cv_Step = InCvSequence.CV_Off_Wait;
                         Global.instance.InputCountPlus();
                     }
                     break;
                 case InCvSequence.CV_Off_Wait:
-                    if (_TimeDelay.ElapsedMilliseconds > 300)
+                    if (_InCvTimer.ElapsedMilliseconds > 300)
                     {
-                        // Centering 전진
-                        Dio_Output(DO_MAP.IN_SET_CV_CENTERING, true);
                         // cv off
                         Dio_Output(DO_MAP.INPUT_SET_CV_RUN, false);
+                        // Centering 전진
+                        Dio_Output(DO_MAP.IN_SET_CV_CENTERING, true);
+                        
                         In_Cv_Step = InCvSequence.CV_Centering_Check;
                     }
                     break;
@@ -1020,10 +1026,7 @@ namespace YJ_AutoClamp.Models
                             || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                         {
                             Dio_Output(DO_MAP.CLAMPING_CV_CENTERING_SOL_2, true);
-                            Global.Mlog.Info($"Bottom_Step => Clamp CV Centering FWD");
                         }
-                        Global.Mlog.Info($"Bottom_Step => Left Z Turn On");
-                        Global.Mlog.Info($"Bottom_Step => X Sol Right Move");
 
                         Bottom_Step = BottomHandle.Set_Handler_Down;
                         Global.Mlog.Info($"Bottom_Step => Next Step : Set_Handler_Down");
@@ -1050,7 +1053,6 @@ namespace YJ_AutoClamp.Models
                                 || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                             {
                                 Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, true);
-                                Global.Mlog.Info($"Bottom_Step => Right Z Down");
                             }
                             if (SingletonManager.instance.SystemModel.NfcUseNotUse == "Use")
                             {
@@ -1063,7 +1065,6 @@ namespace YJ_AutoClamp.Models
                                 {
                                     Bottom_Step = BottomHandle.Set_PutDown;
                                     SingletonManager.instance.ClampResult = false;
-                                    Global.Mlog.Info($"Bottom_Step => Left Z Down");
                                     Global.Mlog.Info($"Bottom_Step => Next Step : Set_PutDown");
                                 }
                             }
@@ -1105,7 +1106,6 @@ namespace YJ_AutoClamp.Models
                             || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                         {
                             Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, true);
-                            Global.Mlog.Info($"Bottom_Step => Right Z Down");
                         }
                         if (SingletonManager.instance.SystemModel.NfcUseNotUse == "Use")
                         {
@@ -1118,7 +1118,6 @@ namespace YJ_AutoClamp.Models
                             {
                                 Bottom_Step = BottomHandle.Set_PutDown;
                                 SingletonManager.instance.ClampResult = false;
-                                Global.Mlog.Info($"Bottom_Step => Left Z Down");
                                 Global.Mlog.Info($"Bottom_Step => Next Step : Set_PutDown");
                             }
                         }
@@ -1173,13 +1172,10 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_LZ_VACUUM_SOL, false);
                         Dio_Output(DO_MAP.TRANSFER_LZ_BOLW_SOL, true);
                         Dio_Output(DO_MAP.TRANSFER_LZ_DOWN_SOL, false);
-                        Global.Mlog.Info($"Bottom_Step => Vacuum Off, Bolw On");
-                        Global.Mlog.Info($"Bottom_Step => Left Z Up");
 
                         if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_DOWN_CYL_SS] == true)
                         {
                             Dio_Output(DO_MAP.TRANSFER_RZ_GRIP_SOL, true);
-                            Global.Mlog.Info($"Bottom_Step => Right Z Grip");
                         }
                         Bottom_Step = BottomHandle.Set_Handler_Up;
                         
@@ -1197,15 +1193,11 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_LZ_BOLW_SOL, false);
                         Dio_Output(DO_MAP.CLAMPING_CV_CENTERING_SOL_2, false);
                         Dio_Output(DO_MAP.CLAMPING_CV_UP_SOL, false);
-                        Global.Mlog.Info($"Bottom_Step => Bolw Off");
-                        Global.Mlog.Info($"Bottom_Step => CV Side Centering BWD");
-                        Global.Mlog.Info($"Bottom_Step => CV Up Centering BWD");
 
                         // RZ Pincup Up
                         if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_GRIP_CYL_SS] == true)
                         {
                             Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, false);
-                            Global.Mlog.Info($"Bottom_Step => Right Z UP");
                         }
                         _BottomHandlerTimer.Restart();
                         Bottom_Step = BottomHandle.Set_PutDown_Done;
@@ -1232,7 +1224,6 @@ namespace YJ_AutoClamp.Models
                         }
                         // 여기서 CV Move 한다.
                         SingletonManager.instance.BottomClampDone = true;
-                        Global.Mlog.Info($"Bottom_Step => BottomClampDone : true");
                     }
                     break;
                 case BottomHandle.Bottom_Clmap_Pickup:
@@ -1262,7 +1253,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_RZ_GRIP_SOL, true);
                         Bottom_Step = BottomHandle.Bottom_Handler_Up;
 
-                        Global.Mlog.Info($"Bottom_Step => Grip");
                         Global.Mlog.Info($"Bottom_Step => Next Step : Bottom_Handler_Up");
                         _BottomHandlerTimer.Restart();
                     }
@@ -1274,7 +1264,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, false);
                         Bottom_Step = BottomHandle.Bottom_PicUp_Done;
 
-                        Global.Mlog.Info($"Bottom_Step => Right Z Up");
                         Global.Mlog.Info($"Bottom_Step => Next Step : Bottom_PicUp_Done");
                     }
                     else if (_BottomHandlerTimer.ElapsedMilliseconds > 2000)
@@ -1284,7 +1273,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, false);
                         ClampFailMassage = "Bottom Clamp Pickup Grip Fail\r\n(바텀 클램프 그립 실패)";
                         Bottom_Step = BottomHandle.Bottom_Clmap_Pickup;
-                        Global.Mlog.Info($"Bottom_Step => Bottom Clamp Pickup Grip Fail");
                         Global.Mlog.Info($"Bottom_Step => Next Step : Bottom_Clmap_Pickup");
                     }
                     break;
@@ -1297,8 +1285,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_FORWARD_SOL, true);
                         Bottom_Step = BottomHandle.Set_PickUp_Down;
                         ClampRetryCount = 0;
-                        Global.Mlog.Info($"Bottom_Step => Left Z Turn Off");
-                        Global.Mlog.Info($"Bottom_Step => X Left Move");
                         Global.Mlog.Info($"Bottom_Step => Next Step : Set_PickUp_Down");
                         _BottomHandlerTimer.Reset();
                     }
@@ -1327,11 +1313,6 @@ namespace YJ_AutoClamp.Models
                             Dio_Output(DO_MAP.TRANSFER_LZ_DOWN_SOL, true);
                             Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, true);
 
-                            Global.Mlog.Info($"Bottom_Step => CV UP Stopper Sol Off");
-                            Global.Mlog.Info($"Bottom_Step => Clamp Centering BWD");
-                            Global.Mlog.Info($"Bottom_Step => Right Z Down");
-                            Global.Mlog.Info($"Bottom_Step => Left Z Down");
-                            
                             // Down 하고나서 NFC Use 이면 먼저 MES SEND를 하고 나중에 결과를 확인한다.
                             Global.Mlog.Info($"Bottom_Step => NFC UseNotuse : {SingletonManager.instance.SystemModel.NfcUseNotUse.ToString()}");
                             if (SingletonManager.instance.SystemModel.NfcUseNotUse == "Use")
@@ -1398,14 +1379,11 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TRANSFER_RZ_DOWN_SOL, false);
                         
                         // CV Up Stopper 상승
-                        Global.Mlog.Info($"Bottom_Step => Cmaping CV Up Sol On");
                         Dio_Output(DO_MAP.CLAMPING_CV_UP_SOL, true);
 
-                        Global.Mlog.Info($"Bottom_Step => Vacuum On");
                         if (SingletonManager.instance.EquipmentMode == EquipmentMode.Auto)
                             Dio_Output(DO_MAP.TRANSFER_LZ_VACUUM_SOL, true);
 
-                        Global.Mlog.Info($"Bottom_Step => Righ Z UP");
                         Global.Mlog.Info($"Bottom_Step => Next Step : Set_Vacuum_On");
                         Bottom_Step = BottomHandle.Set_Vacuum_On;
                     }
@@ -1472,7 +1450,6 @@ namespace YJ_AutoClamp.Models
                         && Ez_Model.IsOutHandlerPickupPosY_2() != true
                         && Ez_Model.IsOutHandlerPickupPosY_2() != true)
                     {
-                        Global.Mlog.Info($"TopHandle => MoveTopHandlerPickUpPos");
                         if (Ez_Model.MoveTopHandlerPickUpPos() == true)
                         {
                             Top_Handle_Step = TopHandle.Top_Handle_Pickup_Position_Check;
@@ -1511,7 +1488,6 @@ namespace YJ_AutoClamp.Models
                     }
                     break;
                 case TopHandle.Top_BarCode_Read:
-                    Global.Mlog.Info($"TopHandle =>  Barcode Trig");
                     SingletonManager.instance.SerialModel[0].SendBcrTrig();
                     _TopHandlerTimeDelay.Restart();
                     Top_Handle_Step = TopHandle.Top_BarCode_Read_Done;
@@ -1559,7 +1535,6 @@ namespace YJ_AutoClamp.Models
                 
                 case TopHandle.Top_Clamp_PickupDown:
 
-                    Global.Mlog.Info($"TopHandle => Down Sol 1,2 Down");
                     Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, true);
                     if (SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, false);
@@ -1576,7 +1551,6 @@ namespace YJ_AutoClamp.Models
                         && (Dio.DI_RAW_DATA[(int)DI_MAP.TOP_JIG_RT_Z_DOWN_CYL_SS_2] == true
                         || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry))
                     {
-                        Global.Mlog.Info($"TopHandle => Grip");
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_GRIP_SOL, true);
                         Top_Handle_Step = TopHandle.Top_Handle_Grip_Lock_Check;
 
@@ -1591,7 +1565,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, false);
                         Top_Handle_Step = TopHandle.Top_Handle_PutUp_Check;
 
-                        Global.Mlog.Info($"TopHandle => Next Step : Down Sol 1,2 Up");
                         Global.Mlog.Info($"TopHandle => Next Step : Top_Handle_PutUp_Check");
                     }
                     else if (SingletonManager.instance.EquipmentMode == EquipmentMode.Dry
@@ -1645,7 +1618,6 @@ namespace YJ_AutoClamp.Models
                         if (SingletonManager.instance.IsY_PickupColl == false)
                         {
                             SingletonManager.instance.IsY_PickupColl = true;
-                            Global.Mlog.Info($"Bottom_Step => IsY_PickupColl : true");
                         }
                     }
                     else if (SingletonManager.instance.SystemModel.BcrUseNotUse == "Use")
@@ -1669,7 +1641,6 @@ namespace YJ_AutoClamp.Models
                 case TopHandle.Top_Handle_NG_Port_Move:
                     if (SingletonManager.instance.IsY_PickupColl == false)
                     {
-                        Global.Mlog.Info($"TopHandle => MoveTopHandlerNGPort");
                         if (Ez_Model.MoveTopHandlerNGPort() == true)
                         {
                             Top_Handle_Step = TopHandle.Top_Handle_NG_Port_Move_Check;
@@ -1684,8 +1655,6 @@ namespace YJ_AutoClamp.Models
                         // NG Port에 Clmap가 없으면 
                         if (Dio.DI_RAW_DATA[(int)DI_MAP.NG_TOP_CV_DETECT_SS_1] != true)
                         {
-                            Global.Mlog.Info($"TopHandle => IsMoveTopNGPortDone");
-                            Global.Mlog.Info($"TopHandle => TR Z Down 1,2");
                             Global.Mlog.Info($"TopHandle => Next Step : Top_Handle_NG_Port_Down_check");
                             Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, true);
                             Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, true);
@@ -1701,7 +1670,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_GRIP_SOL, false);
                         Top_Handle_Step = TopHandle.Top_Handle_NG_Port_UnGrip_check;
 
-                        Global.Mlog.Info($"TopHandle => Ungrip");
                         Global.Mlog.Info($"TopHandle => Next Step : Top_Handle_NG_Port_UnGrip_check");
                     }
                     break;
@@ -1712,7 +1680,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, false);
                         Top_Handle_Step = TopHandle.Top_Handle_NG_Port_Up_check;
-                        Global.Mlog.Info($"TopHandle => TR Z Up");
                         Global.Mlog.Info($"TopHandle => Next Step : Top_Handle_NG_Port_Up_check");
                     }
                     break;
@@ -1732,7 +1699,6 @@ namespace YJ_AutoClamp.Models
                         && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == false)
                        || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                     {
-                        Global.Mlog.Info($"TopHandle => MoveTopHandlerPutDownPos");
                         if (Ez_Model.MoveTopHandlerPutDownPos() == true)
                         {
                             Top_Handle_Step = TopHandle.Top_Handle_PutDown_Move_Check;
@@ -1749,9 +1715,6 @@ namespace YJ_AutoClamp.Models
                         && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == false
                         && Dio.DO_RAW_DATA[(int)DO_MAP.CLAMPING_CV_RUN] == false)
                     {
-                        Global.Mlog.Info($"TopHandle => IsTopHandlerPutDownPos Done");
-
-                        Global.Mlog.Info($"TopHandle => Centering FWD");
                         Dio_Output(DO_MAP.CLAMPING_CV_CENTERING_SOL_1, true);
                         Top_Handle_Step = TopHandle.Top_Handle_Centering_FWD_Check;
                     }
@@ -1769,7 +1732,6 @@ namespace YJ_AutoClamp.Models
                     {
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, true);
 
-                        Global.Mlog.Info($"TopHandle => TR Z 1 Down");
                         Global.Mlog.Info($"TopHandle => Next Step : Top_Handle_PutDown_Check");
                         Top_Handle_Step = TopHandle.Top_Handle_PutDown_Check;
                         _TopHandlerTimeDelay.Restart();
@@ -1786,7 +1748,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_GRIP_SOL, false);
                         Top_Handle_Step = TopHandle.Top_Handle_Grip_Unlock_Check;
 
-                        Global.Mlog.Info($"TopHandle => Ungrip");
                         Global.Mlog.Info($"TopHandle => Next Step : Top_Handle_Grip_Unlock_Check");
                     }
                     else if (_TopHandlerTimeDelay.ElapsedMilliseconds > 2000)
@@ -1794,9 +1755,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_GRIP_SOL, false);
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
                         ClampFailMassage = "TOP Clmap Down Timeout\r\n(탑 클램프 조립 실패)";
-
-                        Global.Mlog.Info($"TopHandle => Ungrip");
-                        Global.Mlog.Info($"TopHandle => Z 1 Up");
 
                         Top_Handle_Step = TopHandle.Top_Handle_Centering_FWD_Check;
                         Global.Mlog.Info($"TopHandle => Next Step : Top_Handle_Centering_FWD_Check");
@@ -1810,7 +1768,6 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_1, false);
                         Dio_Output(DO_MAP.TOP_JIG_TR_Z_DOWN_SOL_2, false);
 
-                        Global.Mlog.Info($"TopHandle => TR Z Up");
                         Global.Mlog.Info($"TopHandle => Next Step : Top_Handle_PutDown_Up_Check");
 
                         Top_Handle_Step = TopHandle.Top_Handle_PutDown_Up_Check;
@@ -1833,7 +1790,6 @@ namespace YJ_AutoClamp.Models
                         // X Handle Pickup완료 후 Clamping 상태 변경
                         SingletonManager.instance.IsY_PickupColl = true;
 
-                        Global.Mlog.Info($"TopHandle => IsY_PickupColl : true");
                         Top_Handle_Step = TopHandle.Idle;
                     }
                     else
@@ -1864,14 +1820,12 @@ namespace YJ_AutoClamp.Models
                         {
                             _AgingCvStepRunTime.Restart();
                         }
-                        Global.Mlog.Info($"Out_Handle_Step => IsOutHandlerReadyDoneZ");
                         Global.Mlog.Info($"Out_Handle_Step => Next Step : Top_Tray_Sensor_Check");
                     }
                     break;
                 case OutHandle.Out_Handle_Y_Ready_Done:
                     if (Ez_Model.IsMoveOutHandlerReadyY() == true)
                     {
-                        Global.Mlog.Info($"Out_Handle_Step => IsMoveOutHandlerReadyY");
                         Global.Mlog.Info($"Out_Handle_Step => Next Step : Top_Tray_Sensor_Check");
                         Out_Handle_Step = OutHandle.Top_Tray_Sensor_Check;
                     }
@@ -1887,11 +1841,9 @@ namespace YJ_AutoClamp.Models
                         //&& Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_X_LEFT_CYL_SS] == true)   // Bottom Handle Left 위치 도착
                         //&& (SingletonManager.instance.LoadFloor[SingletonManager.instance.LoadStageNo] < 3)) // 3층 적제 Test 옵션
                     {
-                        Global.Mlog.Info($"Out_Handle_Step => Pickup Start");
                         // Out Handle Y축 Pickup위치로 이동
                         if (Ez_Model.MoveOutHandlerPickUpY_1() == true)
                         {
-                            Global.Mlog.Info($"Out_Handle_Step => Move Pickup Position");
                             Global.Mlog.Info($"Out_Handle_Step => Next Step : Out_Handle_Y_Pickup_Pos_Check");
                             Out_Handle_Step = OutHandle.Out_Handle_Y_Pickup_Pos_Check;
                         }
@@ -1901,14 +1853,13 @@ namespace YJ_AutoClamp.Models
                         // Pickup 준비완료 되지 않았으면 Y를 Ready위치로 먼저 이동한다.
                         Ez_Model.MoveOutHandlerReadyY();
                         Out_Handle_Step = OutHandle.Out_Handle_Y_Ready_Done;
-                        Global.Mlog.Info($"Out_Handle_Step => Move Ready Y (Waiting)");
                         Global.Mlog.Info($"Out_Handle_Step => Next Step : Out_Handle_Y_Ready_Done");
                     }
                     else if (SingletonManager.instance.EquipmentMode == EquipmentMode.Auto 
                         && SingletonManager.instance.SystemModel.PickUpWaitTimeOutY > 0)
                     {
                         // Y PickUp Time out 발생시 현제 로딩한 만큼 배출
-                        if (SingletonManager.instance.SystemModel.PickUpWaitTimeOutY * 1000 < _AgingCvStepRunTime.ElapsedMilliseconds)
+                        if ((SingletonManager.instance.SystemModel.PickUpWaitTimeOutY * 1000) < _AgingCvStepRunTime.ElapsedMilliseconds)
                         {
                             Global.Mlog.Info($"OutHandle => Y PickUp Time Out : {SingletonManager.instance.SystemModel.PickUpWaitTimeOutY.ToString()}");
                             Global.Mlog.Info($"OutHandle => Lift No : {SingletonManager.instance.LoadStageNo.ToString()}");
@@ -1954,13 +1905,11 @@ namespace YJ_AutoClamp.Models
                             ClampFailMassage = "Loading Handler not Ungrip\r\n(로딩 언그립 알람)";
                             break;
                         }
-                        Global.Mlog.Info($"Out_Handle_Step => IsOutHandlerPickupPosY");
                         // Top Clamping 완료 위치 제품있는지 확인 
                         if ((Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_1] == true
                             && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == true)
                             || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                         {
-                            Global.Mlog.Info($"Out_Handle_Step => Move Pickup Z");
                             // Out Handle Z down
                             Ez_Model.MoveOutHandlerPickUpZ_1();
                             Dio_Output(DO_MAP.CLAMPING_CV_CENTERING_SOL_1, false);
@@ -1999,7 +1948,6 @@ namespace YJ_AutoClamp.Models
                 case OutHandle.Out_Handle_Z_Pickup2_Done:
                     if (Ez_Model.IsOutHandlerPickUpZ_2() == true)
                     {
-                        Global.Mlog.Info($"Out_Handle_Step => Loading Handler Grip");
                         // Out Handle Grip Lock
                         Dio_Output(DO_MAP.CLAMPING_LD_Z_GRIP_SOL, true);
                         Out_Handle_Step = OutHandle.Out_Handle_Grip_Check;
@@ -2019,6 +1967,7 @@ namespace YJ_AutoClamp.Models
                     {
                         _TimeDelay.Restart();
                         Out_Handle_Step = OutHandle.Out_Handle_Grip_Wait;
+                        Global.Mlog.Info($"Out_Handle_Step => Next Step : Out_Handle_Grip_Wait");
                     }
                     break;
                 case OutHandle.Out_Handle_Grip_Wait:
@@ -2072,7 +2021,6 @@ namespace YJ_AutoClamp.Models
                         // Out Handle X PutDown위치로 이동
                         if (Ez_Model.MoveOutHandlerPutDownY() == true)
                         {
-                            Global.Mlog.Info($"Out_Handle_Step => Move Putdown Y");
                             Out_Handle_Step = OutHandle.Out_Handle_Y_Safety_Pos;
                             Global.Mlog.Info($"Out_Handle_Step => Next Step : Out_Handle_Y_Safety_Pos");
                         }
@@ -2087,7 +2035,6 @@ namespace YJ_AutoClamp.Models
                     {
                         SingletonManager.instance.IsY_PickupColl = false;
                         Out_Handle_Step = OutHandle.Out_Handle_Y_PutDown_Pos_Check;
-                        Global.Mlog.Info($"Out_Handle_Step => IsY_PickupColl : false");
                         Global.Mlog.Info($"Out_Handle_Step => Next Step : Out_Handle_Y_PutDown_Pos_Check");
                     }
                     break;
@@ -2137,7 +2084,6 @@ namespace YJ_AutoClamp.Models
                     // Z Down완료 후 Ungrip
                     if (Ez_Model.IsOutHandlerPutDownDoneZ() == true)
                     {
-                        Global.Mlog.Info($"Out_Handle_Step => Loading Z Ungrip");
                         // Out Handle UnGrip 
                         Dio_Output(DO_MAP.CLAMPING_LD_Z_GRIP_SOL, false);
                         Out_Handle_Step = OutHandle.Out_Handle_UnGrip_Check;
@@ -2164,7 +2110,6 @@ namespace YJ_AutoClamp.Models
 
                         Ez_Model.MoveOutHandlerRadyZ();
                         Out_Handle_Step = OutHandle.Out_Handle_Z_Ready_Check;
-                        Global.Mlog.Info($"Out_Handle_Step => Move Ready Z");
                         Global.Mlog.Info($"Out_Handle_Step => Next Step : Out_Handle_Z_Ready_Check");
                         Global.instance.LoadCountPlus();
                     }

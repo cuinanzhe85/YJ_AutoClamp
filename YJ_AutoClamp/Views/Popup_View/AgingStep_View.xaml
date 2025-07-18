@@ -67,7 +67,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" Grid.ColumnSpan="6" Background="gray" CornerRadius="8">
+                <Border Grid.Column="0" Grid.ColumnSpan="7" Background="gray" CornerRadius="8">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -325,19 +325,28 @@
                     <Label Content="No 28" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Background="LightSteelBlue" Margin="5,0,5,0"/>
                     <ContentControl Grid.Row="1" Content="{Binding DisplayAgingCvList.AgingList[27]}" ContentTemplate="{StaticResource FloorTemplate}"/>
                 </Grid>
-
-                <telerik:RadRadioButton Grid.Row="6" Grid.Column="0" Content="Upper 1" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Upper1"/>
-                <telerik:RadRadioButton Grid.Row="6" Grid.Column="1" Content="Upper 2" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Upper2" />
-                <telerik:RadRadioButton Grid.Row="6" Grid.Column="2" Content="Upper 3" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Upper3" />
-                <telerik:RadRadioButton Grid.Row="6" Grid.Column="3" Content="Low 1" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Low1" />
-                <telerik:RadRadioButton Grid.Row="6" Grid.Column="4" Content="Low 2" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Low2" />
-                <telerik:RadRadioButton Grid.Row="6" Grid.Column="5" Content="Low 3" Style="{StaticResource Radio_ButtonStyle}" 
-                        Command="{Binding Select_Command}" CommandParameter="Low3" />
+                <Grid Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="7">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <telerik:RadRadioButton  Grid.Column="0" Content="Upper 1" Style="{StaticResource Radio_ButtonStyle}" 
+                                    Command="{Binding Select_Command}" CommandParameter="Upper1"/>
+                    <telerik:RadRadioButton Grid.Column="1" Content="Upper 2" Style="{StaticResource Radio_ButtonStyle}" 
+                                    Command="{Binding Select_Command}" CommandParameter="Upper2" />
+                    <telerik:RadRadioButton Grid.Column="2" Content="Upper 3" Style="{StaticResource Radio_ButtonStyle}" 
+                                    Command="{Binding Select_Command}" CommandParameter="Upper3" />
+                    <telerik:RadRadioButton Grid.Column="3" Content="Low 1" Style="{StaticResource Radio_ButtonStyle}" 
+                                    Command="{Binding Select_Command}" CommandParameter="Low1" />
+                    <telerik:RadRadioButton Grid.Column="4" Content="Low 2" Style="{StaticResource Radio_ButtonStyle}" 
+                                    Command="{Binding Select_Command}" CommandParameter="Low2" />
+                    <telerik:RadRadioButton Grid.Column="5" Content="Low 3" Style="{StaticResource Radio_ButtonStyle}" 
+                                    Command="{Binding Select_Command}" CommandParameter="Low3" />
+                </Grid>
                
             </Grid>
         </Border>
