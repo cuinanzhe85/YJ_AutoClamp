@@ -40,6 +40,24 @@ namespace YJ_AutoClamp.Models
             get { return _AgingCvNotUse; }
             set { SetValue(ref _AgingCvNotUse, value); }
         }
+        public bool _IsEdmUse;
+        public bool IsEdmUse
+        {
+            get { return _IsEdmUse; }
+            set { SetValue(ref _IsEdmUse, value); }
+        }
+        public bool _IsNoneSetTest;
+        public bool IsNoneSetTest
+        {
+            get { return _IsNoneSetTest; }
+            set { SetValue(ref _IsNoneSetTest, value); }
+        }
+        public int _ClampCvStopDelay;
+        public int ClampCvStopDelay
+        {
+            get { return _ClampCvStopDelay; }
+            set { SetValue(ref _ClampCvStopDelay, value); }
+        }
         public System_Model()
         {
         }

@@ -54,6 +54,18 @@ namespace YJ_AutoClamp.ViewModels
             get { return _AgingCvNotUse; }
             set { SetValue(ref _AgingCvNotUse, value); }
         }
+        private bool _IsEdmUse;
+        public bool IsEdmUse
+        {
+            get { return _IsEdmUse; }
+            set { SetValue(ref _IsEdmUse, value); }
+        }
+        private bool _IsNoneSetTest;
+        public bool IsNoneSetTest
+        {
+            get { return _IsNoneSetTest; }
+            set { SetValue(ref _IsNoneSetTest, value); }
+        }
         private string _AgingCvSelected;
         public string AgingCvSelected
         {
@@ -84,6 +96,12 @@ namespace YJ_AutoClamp.ViewModels
             get { return _AgingCvStepTime; }
             set { SetValue(ref _AgingCvStepTime, value); }
         }
+        private int _ClampCvStopDelay;
+        public int ClampCvStopDelay
+        {
+            get { return _ClampCvStopDelay; }
+            set { SetValue(ref _ClampCvStopDelay, value); }
+        }
         public SystemData_ViewModel()
         {
             UseNotUse.Add("NotUse");
@@ -104,6 +122,9 @@ namespace YJ_AutoClamp.ViewModels
             LoadFloorCount = SingletonManager.instance.SystemModel.LoadFloorCount.ToString();
             AgingCvStepTime = SingletonManager.instance.SystemModel.AgingCvStepTime.ToString();
             AgingCvNotUse = SingletonManager.instance.SystemModel.AgingCvNotUse;
+            IsEdmUse = SingletonManager.instance.SystemModel.IsEdmUse;
+            IsNoneSetTest = SingletonManager.instance.SystemModel.IsNoneSetTest;
+            ClampCvStopDelay = SingletonManager.instance.SystemModel.ClampCvStopDelay;
         }
         private void OnSave_Command(object obj)
         {
@@ -145,6 +166,18 @@ namespace YJ_AutoClamp.ViewModels
                 myIni.Write($"AGING_CV_USE", AgingCvNotUse, Section);
                 Global.Mlog.Info($" AGING_CV_USE = " + AgingCvNotUse);
                 SingletonManager.instance.SystemModel.AgingCvNotUse = AgingCvNotUse;
+
+                myIni.Write($"EDM_USE", IsEdmUse.ToString(), Section);
+                Global.Mlog.Info($" EDM_USE = " + IsEdmUse);
+                SingletonManager.instance.SystemModel.IsEdmUse = IsEdmUse;
+
+                myIni.Write($"CLAMP_CV_STOP_DELAY", ClampCvStopDelay.ToString(), Section);
+                Global.Mlog.Info($" CLAMP_CV_STOP_DELAY = " + ClampCvStopDelay);
+                SingletonManager.instance.SystemModel.ClampCvStopDelay = ClampCvStopDelay;
+
+                myIni.Write($"NONE_SET_TEST", IsNoneSetTest.ToString(), Section);
+                Global.Mlog.Info($" NONE_SET_TEST = " + IsNoneSetTest);
+                SingletonManager.instance.SystemModel.IsNoneSetTest = IsNoneSetTest;
             }
             catch (Exception e)
             {

@@ -41,25 +41,6 @@ namespace YJ_AutoClamp.ViewModels
         }
         private readonly Dictionary<MainWindow_PopupList, Func<(Window, Child_ViewModel)>> PopupFactories;
         #endregion
-
-        private string _DepartmentName = "SmartFactory Group(MX)";
-        public string DepartmentName
-        {
-            get { return _DepartmentName; }
-            set { SetValue(ref _DepartmentName, value); }
-        }
-        private string _SoftwareName = "AUTO CLAMP";
-        public string SoftwareName
-        {
-            get { return _SoftwareName; }
-            set { SetValue(ref _SoftwareName, value); }
-        }
-        private string _SoftwareVersion = "[ 25-07-14 T1 ]";
-        public string SoftwareVersion
-        {
-            get { return _SoftwareVersion; }
-            set { SetValue(ref _SoftwareVersion, value); }
-        }
         private ListBox _LogList = new ListBox();
         public ListBox LogList
         {

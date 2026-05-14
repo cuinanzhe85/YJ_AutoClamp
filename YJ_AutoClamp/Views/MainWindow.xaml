@@ -37,14 +37,14 @@
                 <!--<Label Content="{Binding DepartmentName}" Style="{StaticResource MainWindow_DepartmentLabelStyle}"/>-->
                 <TextBlock Style="{StaticResource MainWindow_TopTbStyle}" Margin="10">
                         <Run Text="{Binding Source={x:Static local:Global.instance},Path=NowDate}"/><LineBreak/>
-                        <Run Text="{Binding DepartmentName}"/>
+                        <Run Text="{Binding Source={x:Static local:Global.instance},Path=DepartmentName}"/>
                 </TextBlock>
                 <!--설비명-->
-                <Label Grid.Column="1" Content="{Binding SoftwareName}" Style="{StaticResource MainWindow_HeaderLabelStyle}"/>
+                <Label Grid.Column="1" Content="{Binding Source={x:Static local:Global.instance},Path=SoftwareName}" Style="{StaticResource MainWindow_HeaderLabelStyle}"/>
                 <!--모델명 / 시간-->
                 <TextBlock Grid.Column="2" Style="{StaticResource MainWindow_TopTbStyle}">
                     <Run Text="Software : " />
-                    <Run Text="{Binding SoftwareVersion}"/>
+                    <Run Text="{Binding Source={x:Static local:Global.instance},Path=SoftwareVersion}"/>
 
                 </TextBlock>
             </Grid>

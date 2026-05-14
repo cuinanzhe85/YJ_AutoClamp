@@ -238,6 +238,17 @@ namespace YJ_AutoClamp
             valus = myIni.Read("AGING_CV_USE", section);
             SystemModel.AgingCvNotUse = valus;
 
+            valus = myIni.Read("EDM_USE", section);
+            SystemModel.IsEdmUse = bool.TryParse(valus, out bool parsedValue) ? parsedValue : false;
+
+            valus = myIni.Read("NONE_SET_TEST", section);
+            SystemModel.IsNoneSetTest = bool.TryParse(valus, out bool isNoneSet) ? isNoneSet : false;
+
+            valus = myIni.Read("CLAMP_CV_STOP_DELAY", section);
+            if (string.IsNullOrEmpty(valus))
+                SystemModel.ClampCvStopDelay = 300;
+            else
+                SystemModel.ClampCvStopDelay = Convert.ToInt32(valus);
             //valus = myIni.Read("AGING_COUNT", "SYSTEM");
             //Channel_Model[0].AgingCvTotalCount = valus;
         }
@@ -715,7 +726,7 @@ namespace YJ_AutoClamp
                             || !Dio.DI_RAW_DATA[(int)DI_MAP.REAR_OP_EMERGENCY_FEEDBACK])
                         {
                             Global.instance.SafetyErrorMessage = "EMERGENCY Button Operation! ";
-                            IsSafetyInterLock = true;
+                            //IsSafetyInterLock = true;
                         }
 
                         if (IsSafetyInterLock == true)

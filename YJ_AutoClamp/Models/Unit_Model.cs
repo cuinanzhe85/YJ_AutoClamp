@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YJ_AutoClamp.Utils;
+using static YJ_AutoClamp.Global;
 using static YJ_AutoClamp.Models.EziDio_Model;
 
 namespace YJ_AutoClamp.Models
@@ -69,8 +70,6 @@ namespace YJ_AutoClamp.Models
         private bool[] AgingCvEndStopCondition = { false, false, false, false, false, false };
         private bool[] AgingCvInStopCondition = { false, false, false, false, false, false };
         private int _AgingPassCvIndex = 0; // Aging CV Index
-
-        public bool _NoneSetTest = false; // Set Test Mode
 
         Stopwatch _TimeDelay = new Stopwatch();
         Stopwatch _TopHandlerTimeDelay = new Stopwatch();
@@ -355,47 +354,53 @@ namespace YJ_AutoClamp.Models
                     break;
                 case InCvSequence.In_Sensor_Check:
                     // 제품 투입 sensor 와 도착 위치에 제품이 없을때 cv on
-                    if (Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == false
+                    if (SingletonManager.instance.IsInspectionStart == true)
+                    {
+                        if (Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == false
                         && Dio.DI_RAW_DATA[(int)DI_MAP.INTERFACE_FRONT_MC_SAFETY] == true)
-                    {
-                        _InCvTimer.Restart();
-                        if (Dio.DO_RAW_DATA[(int)DO_MAP.TOWER_LAMP_RED] == false)
                         {
-                            if (SingletonManager.instance.IsInspectionStart == true)
+                            _InCvTimer.Restart();
+                            if (Dio.DO_RAW_DATA[(int)DO_MAP.TOWER_LAMP_RED] == false
+                                && Dio.DO_RAW_DATA[(int)DO_MAP.TOWER_LAMP_GREEN] == false)
                             {
-                                Dio_Output(DO_MAP.TOWER_LAMP_YELLOW, false);
-                                Dio_Output(DO_MAP.TOWER_LAMP_GREEN, true);
+                                if (SingletonManager.instance.IsInspectionStart == true)
+                                {
+                                    Dio_Output(DO_MAP.TOWER_LAMP_YELLOW, false);
+                                    Dio_Output(DO_MAP.TOWER_LAMP_GREEN, true);
+                                    Global.instance.Write_Mes_Log(null, MesLogType.EDM, EdmLogList.ChangeLamp);
+                                }
                             }
-                        }
-                            
-                        In_Cv_Step = InCvSequence.CV_Run_Wait;
-                    }
-                    // 이미 제품이 투입되있으면 Off 로 이동 시킨다.
-                    else if (Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_OUT_SS_2] == true
-                        && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == true)
-                    {
-                        In_Cv_Step = InCvSequence.CV_Off_Check;
-                    }
-                    // 30초 진입 없을때 타워램프 yellow로 변경
-                    else if (_InCvTimer.ElapsedMilliseconds > 30000)
-                    {
-                        _InCvTimer.Reset();
-                        if (Dio.DO_RAW_DATA[(int)DO_MAP.TOWER_LAMP_YELLOW] == false)
-                        {
-                            Dio_Output(DO_MAP.TOWER_LAMP_YELLOW, true);
-                            Dio_Output(DO_MAP.TOWER_LAMP_GREEN, false);
-                        }
 
-                        Global.instance.LoadingTactTimeReset();
+                            In_Cv_Step = InCvSequence.CV_Run_Wait;
+                        }
+                        // 이미 제품이 투입되있으면 Off 로 이동 시킨다.
+                        else if (Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_OUT_SS_2] == true
+                            && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == true)
+                        {
+                            In_Cv_Step = InCvSequence.CV_Off_Check;
+                        }
+                        // 30초 진입 없을때 타워램프 yellow로 변경
+                        else if (_InCvTimer.ElapsedMilliseconds > 60000)
+                        {
+                            _InCvTimer.Reset();
+                            if (Dio.DO_RAW_DATA[(int)DO_MAP.TOWER_LAMP_YELLOW] == false)
+                            {
+                                Global.instance.Set_TowerLamp(TowerLampType.InputStop);
+                                Global.instance.Write_Mes_Log(null, MesLogType.EDM, EdmLogList.ChangeLamp);
+                            }
+
+                            Global.instance.LoadingTactTimeReset();
+                        }
+                        if (_InCvTimer.ElapsedMilliseconds == 0)
+                            _InCvTimer.Restart();
                     }
-                    if (_InCvTimer.ElapsedMilliseconds == 0)
-                        _InCvTimer.Restart();
                     break;
                 case InCvSequence.CV_Run_Wait:
                     if (_InCvTimer.ElapsedMilliseconds > 100)
                     {
                         Dio_Output(DO_MAP.INPUT_SET_CV_RUN, true);
                         In_Cv_Step = InCvSequence.CV_Off_Check;
+                        _InCvTimer.Restart();
                     }
                     break;
                 case InCvSequence.CV_Off_Check:
@@ -407,6 +412,14 @@ namespace YJ_AutoClamp.Models
 
                         In_Cv_Step = InCvSequence.CV_Off_Wait;
                         Global.instance.InputCountPlus();
+                    }
+                    else if (_InCvTimer.ElapsedMilliseconds > 5000
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_IN_SS_1] == false
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_OUT_SS_2] == false
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == false)
+                    {
+                        Dio_Output(DO_MAP.INPUT_SET_CV_RUN, false);
+                        In_Cv_Step = InCvSequence.Idle;
                     }
                     break;
                 case InCvSequence.CV_Off_Wait:
@@ -578,7 +591,7 @@ namespace YJ_AutoClamp.Models
                     //}
                     break;
                 case OutCvSequence.Out_CV_Off_Wait:
-                    if (_TimeDelay.ElapsedMilliseconds > 150)
+                    if (_TimeDelay.ElapsedMilliseconds > SingletonManager.instance.SystemModel.ClampCvStopDelay)
                     {
                         Dio_Output(DO_MAP.CLAMPING_CV_RUN, false);
                         Out_Cv_Step = OutCvSequence.Idle;
@@ -605,6 +618,7 @@ namespace YJ_AutoClamp.Models
                 case Set_NG_Step.CV_Off_Wait:
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.NG_BOTTOM_CV_DETECT_SS_1] == true)
                     {
+                        Global.instance.Write_Mes_Log(null, MesLogType.EDM, EdmLogList.JudgeNg);
                         _SetNgCvDelay.Restart();
                         SetNgCvStep = Set_NG_Step.CV_Off;
                     }
@@ -671,7 +685,7 @@ namespace YJ_AutoClamp.Models
                     }
                     break;
                 case Top_CV.Top_CV_Stop_Wait:
-                    if (_TimeDelay.ElapsedMilliseconds > 300)
+                    if (_TimeDelay.ElapsedMilliseconds > 500)
                     {
                         Ez_Model.MoveTopReturnCvStop();
                         TopCvStep = Top_CV.Idle;
@@ -1042,7 +1056,7 @@ namespace YJ_AutoClamp.Models
                         if ((Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_4] == true
                             && Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS] == true
                             && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_CENTERING_CYL_SS_2_BWD] == false)
-                            || _NoneSetTest == true
+                            || SingletonManager.instance.SystemModel.IsNoneSetTest == true
                             || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                         {
                             // Bottom clamp가 놓여져 있으면 Put Down 동작을 한다.
@@ -1067,6 +1081,12 @@ namespace YJ_AutoClamp.Models
                                     SingletonManager.instance.ClampResult = false;
                                     Global.Mlog.Info($"Bottom_Step => Next Step : Set_PutDown");
                                 }
+                            }
+                            else
+                            {
+                                Bottom_Step = BottomHandle.Set_PutDown;
+                                SingletonManager.instance.ClampResult = true;
+                                Global.Mlog.Info($"Bottom_Step => Next Step : Set_PutDown");
                             }
                         }
                         // Clamp 놓여져있는데 Vacuum이 인식되지 않으면 제품이 이동중 탈착된것으로 인지한다.
@@ -1095,7 +1115,7 @@ namespace YJ_AutoClamp.Models
                     // Set Vacuum error 발생시 수동 안착후 다음 스템으로 이어서 진행.
                     if ((Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_4] == true
                             && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_CENTERING_CYL_SS_2_BWD] == false)
-                            || _NoneSetTest == true
+                            || SingletonManager.instance.SystemModel.IsNoneSetTest == true
                             || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                     {
                         // Bottom clamp가 놓여져 있으면 Put Down 동작을 한다.
@@ -1303,7 +1323,7 @@ namespace YJ_AutoClamp.Models
                             && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_4] == false// Bottom Clamp Putdown 센서 Off
                             && Dio.DO_RAW_DATA[(int)DO_MAP.INPUT_SET_CV_RUN] == false       // In set CV Stop상태
                             && Dio.DO_RAW_DATA[(int)DO_MAP.CLAMPING_CV_RUN] == false)
-                            || (_NoneSetTest == true && Dio.DO_RAW_DATA[(int)DO_MAP.CLAMPING_CV_RUN] == false)
+                            || (SingletonManager.instance.SystemModel.IsNoneSetTest == true && Dio.DO_RAW_DATA[(int)DO_MAP.CLAMPING_CV_RUN] == false && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_4] == false)
                             || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)       // Clamp CV Stop상태
                         {
                             // Conveyor 센터링 풀고 동시 Down한다.
@@ -1393,7 +1413,7 @@ namespace YJ_AutoClamp.Models
                     // RZ Down 센서가 Off이면
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_DOWN_CYL_SS] != true
                         && (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS] == true
-                        || _NoneSetTest == true
+                        || SingletonManager.instance.SystemModel.IsNoneSetTest == true
                         || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry))
                     {
                         if (SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
@@ -1580,7 +1600,7 @@ namespace YJ_AutoClamp.Models
                     if ((Dio.DI_RAW_DATA[(int)DI_MAP.TOP_JIG_TR_Z_UP_CYL_SS_1] == true
                         && Dio.DI_RAW_DATA[(int)DI_MAP.TOP_JIG_TR_Z_UP_CYL_SS_2] == true)
                         && SingletonManager.instance.IsY_PickupColl == false
-                        && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == false
+                        && (Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == false)
                         || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry)
                     {
                         Global.Mlog.Info($"TopHandle => Barcode UseNotUse : {SingletonManager.instance.SystemModel.BcrUseNotUse}");
@@ -1712,7 +1732,7 @@ namespace YJ_AutoClamp.Models
                     if (Ez_Model.IsTopHandlerPutDownPos() == true
                         && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_1] == true
                         && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_STOPER_UP_CYL_SS] == true
-                        && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == false
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == false  // Top Clamp가 있는지 체크
                         && Dio.DO_RAW_DATA[(int)DO_MAP.CLAMPING_CV_RUN] == false)
                     {
                         Dio_Output(DO_MAP.CLAMPING_CV_CENTERING_SOL_1, true);
@@ -1785,7 +1805,7 @@ namespace YJ_AutoClamp.Models
                     break;
                 case TopHandle.Top_Detect_Check:
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_1] == true
-                           && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == true)
+                       && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == true)
                     {
                         // X Handle Pickup완료 후 Clamping 상태 변경
                         SingletonManager.instance.IsY_PickupColl = true;
@@ -1794,7 +1814,7 @@ namespace YJ_AutoClamp.Models
                     }
                     else
                     {
-                        ClampFailMassage = "Top Clmap PutDown Detect Fail\r\n(탑 클램프 안착 실패)";
+                        ClampFailMassage = "Top Clamp PutDown Detect Fail\r\n(탑 클램프 안착 실패)";
                     }
                     break;
             }
@@ -2491,6 +2511,7 @@ namespace YJ_AutoClamp.Models
                         for (int i = 0; i < (int)Floor_Index.Max; i++)
                             SingletonManager.instance.Display_Lift[GetLiftNomber(SingletonManager.instance.AgingCvIndex)].Floor[i] = false;
 
+                        Global.instance.Write_Mes_Log(null, MesLogType.EDM, EdmLogList.JudePass);
                         // Aging CV Start
                         Dio_Aging_CV_Control(SingletonManager.instance.AgingCvIndex, false); 
                         AgingCVStep = Aging_CV_Step.Cv_Step_IF_Off;
@@ -3047,7 +3068,7 @@ namespace YJ_AutoClamp.Models
                 SingletonManager.instance.LoadComplete[3] = false;
                 SingletonManager.instance.LoadComplete[4] = false;
                 SingletonManager.instance.LoadComplete[5] = false;
-                _NoneSetTest = false;
+                //SingletonManager.instance.SystemModel.IsNoneSetTest = false;
                 return;
             }
             Out_Handle_Step = (OutHandle)Convert.ToInt16(value);
@@ -3077,11 +3098,11 @@ namespace YJ_AutoClamp.Models
             //else
             //    SingletonManager.instance.LoadComplete[GetLiftNomber(SingletonManager.instance.AgingCvIndex)] = bool.Parse(value);
 
-            value = myIni.Read("NONE_SET_TEST", "SEQUENCE");
-            if (value == "")
-                _NoneSetTest = false;
-            else
-                _NoneSetTest = bool.Parse(value);
+            //value = myIni.Read("NONE_SET_TEST", "SEQUENCE");
+            //if (value == "")
+            //    SingletonManager.instance.SystemModel.IsNoneSetTest = false;
+            //else
+            //    SingletonManager.instance.SystemModel.IsNoneSetTest = bool.Parse(value);
 
         }
     }

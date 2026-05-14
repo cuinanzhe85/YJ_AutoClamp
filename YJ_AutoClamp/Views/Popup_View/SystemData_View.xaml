@@ -78,13 +78,23 @@
                      ItemsSource="{Binding UseNotUse}" SelectedItem="{Binding NfcUseNotuse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label Content="Aging CV Step Time(ms)" Grid.Row="2" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
                 <telerik:RadWatermarkTextBox Grid.Row="2" Grid.Column="1" Text="{Binding AgingCvStepTime, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
-                
 
                  <!--Aging Conveyor Use NotUse-->
                 <Label Content="Aging CV Use" Grid.Row="1" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
                 <telerik:RadComboBox Grid.Row="1" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
                         ItemsSource="{Binding AgingCvUseNotUseList}" SelectedItem="{Binding AgingCvNotUse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                
+                <!--EDM-->
+                <Label Content="EDM Use" Grid.Row="4" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="4" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
+                        ItemsSource="{Binding UseNotUse}" SelectedIndex="{Binding IsEdmUse}"/>
+                <!--Clamp CV End Delay time-->
+                <Label Content="Clamp CV Stop Delay(ms)" Grid.Row="5" Grid.Column="0" Style="{StaticResource Option_LabelStyle}" FontSize="20"/>
+                <telerik:RadWatermarkTextBox Grid.Row="5" Grid.Column="1" Text="{Binding ClampCvStopDelay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
+
+                <!--EDM-->
+                <Label Content="None Set Test Use" Grid.Row="6" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
+                <telerik:RadComboBox Grid.Row="6" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"
+                     ItemsSource="{Binding UseNotUse}" SelectedIndex="{Binding IsNoneSetTest}"/>
             </Grid>
         </Border>
         <!--Save / Exit-->
