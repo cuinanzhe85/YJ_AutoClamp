@@ -319,4 +319,50 @@
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
     </Style>
+    <Style x:Key="InfoHeader_ButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="DarkSlateBlue"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="helpers:ThemeHelper.MouseOverBrush" Value="SlateBlue"/>
+        <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+    </Style>
+    <Style x:Key="InfoContent_LabelStyle" TargetType="Label">
+        <Setter Property="Background" Value="Black"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+    <DataTemplate x:Key="Step_Template1">
+        <Grid Margin="5">
+            <Grid.Effect>
+                <DropShadowEffect ShadowDepth="2" Color="DimGray"/>
+            </Grid.Effect>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.15*"/>
+                <RowDefinition Height="0.85*"/>
+            </Grid.RowDefinitions>
+            <Button Content="{Binding Title}" Style="{StaticResource InfoHeader_ButtonStyle}"/>
+            <UniformGrid Grid.Row="1" Columns="2" Rows="6">
+                <Label Content="Bottom Hand Step" Style="{StaticResource InfoContent_LabelStyle}" HorizontalContentAlignment="Left"/>
+                <Label Content="{Binding BottomHandStep}" ContentStringFormat="{}{0}" Style="{StaticResource InfoContent_LabelStyle}" Foreground="LimeGreen"/>
+                <Label Content="Top Hand Step" Style="{StaticResource InfoContent_LabelStyle}" HorizontalContentAlignment="Left"/>
+                <Label Content="{Binding TopHandStep}" ContentStringFormat="{}{0}" Style="{StaticResource InfoContent_LabelStyle}" Foreground="LimeGreen"/>
+                <Label Content="Out Hand Step" Style="{StaticResource InfoContent_LabelStyle}" HorizontalContentAlignment="Left"/>
+                <Label Content="{Binding OutHandStep}" ContentStringFormat="{}{0}" Style="{StaticResource InfoContent_LabelStyle}" Foreground="LimeGreen"/>
+                <Label Content="Aging Step" Style="{StaticResource InfoContent_LabelStyle}" HorizontalContentAlignment="Left"/>
+                <Label Content="{Binding AgingStep}" ContentStringFormat="{}{0}" Style="{StaticResource InfoContent_LabelStyle}" Foreground="LimeGreen"/>
+                <Label Content="Input CV Step" Style="{StaticResource InfoContent_LabelStyle}" HorizontalContentAlignment="Left"/>
+                <Label Content="{Binding InputCVStep}" ContentStringFormat="{}{0}" Style="{StaticResource InfoContent_LabelStyle}" Foreground="LimeGreen"/>
+                <Label Content="Clamp CV Step" Style="{StaticResource InfoContent_LabelStyle}" HorizontalContentAlignment="Left"/>
+                <Label Content="{Binding ClampCVStep}" ContentStringFormat="{}{0}" Style="{StaticResource InfoContent_LabelStyle}" Foreground="LimeGreen"/>
+            </UniformGrid>
+
+        </Grid>
+    </DataTemplate> 
 </ResourceDictionary>

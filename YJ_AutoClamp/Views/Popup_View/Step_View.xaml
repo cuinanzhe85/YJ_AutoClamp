@@ -1,0 +1,77 @@
+﻿<Window x:Class="YJ_AutoClamp.Step_View"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:local="clr-namespace:YJ_AutoClamp"
+        mc:Ignorable="d" 
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:utils="clr-namespace:YJ_AutoClamp.Utils"
+        Height="500" Width="400" ResizeMode="NoResize" WindowStyle="None"
+        Background="Transparent" AllowsTransparency="True" WindowStartupLocation="CenterScreen"
+        Name="StepView">
+    <Window.Resources>
+        <!-- RadGridView 기본 스타일 -->
+        <Style TargetType="telerik:RadGridView">
+            <Setter Property="GroupRenderMode" Value="Flat"/>
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="ShowGroupPanel" Value="False"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="RowIndicatorVisibility" Value="Collapsed"/>
+            <Setter Property="IsReadOnly" Value="False"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserFreezeColumns" Value="False"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="ShowColumnHeaders" Value="False"/>
+            <Setter Property="RowHeight" Value="31.33"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="telerik:StyleManager.Theme" Value="Material"/>
+        </Style>
+        <Style TargetType="Label" x:Key="Option_LabelStyle">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style TargetType="Button" x:Key="Option_ButtonStyle">
+            <Setter Property="Background" Value="MintCream"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.08*"/>
+            <RowDefinition Height="0.92*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.RowSpan="2" Background="Black" Opacity="0.6"/>
+        <!--Title-->
+        <Grid>
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="MouseDown">
+                    <b:InvokeCommandAction Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=MoveCommand}" CommandParameter="Step"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#261b2a" Offset="0.0"/>
+                    <GradientStop Color="#292d37" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <StackPanel Orientation="Horizontal">
+                <telerik:RadGlyph Glyph="&#xe022;" Margin="15,0" FontSize="25" Foreground="White"/>
+                <Label Content="Step View" Foreground="White" FontSize="16" FontWeight="SemiBold" VerticalContentAlignment="Center"/>
+            </StackPanel>
+            <telerik:RadButton Command="{Binding Source={x:Static utils:WindowManager.Instance}, Path=CloseCommand}" 
+                       CommandParameter="StepView" Style="{StaticResource Exit_ButtonStyle}">
+                <telerik:RadGlyph Glyph="&#xe11b;" FontSize="25"/>
+            </telerik:RadButton>
+        </Grid>
+        <ContentControl Grid.Row="1" Content="{Binding Step_Model[0]}" ContentTemplate="{StaticResource Step_Template1}"/>
+    </Grid>
+</Window>

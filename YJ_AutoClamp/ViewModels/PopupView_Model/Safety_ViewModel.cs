@@ -1,7 +1,5 @@
 ﻿using Common.Commands;
 using Common.Mvvm;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using YJ_AutoClamp.Models;
 using YJ_AutoClamp.Utils;

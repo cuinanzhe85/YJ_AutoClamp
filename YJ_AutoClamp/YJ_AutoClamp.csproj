@@ -204,6 +204,7 @@
     <Compile Include="ViewModels\PopupView_Model\AgingStep_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\Product_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\Safety_ViewModel.cs" />
+    <Compile Include="ViewModels\PopupView_Model\Step_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\SystemData_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\TcpSerial_ViewModel.cs" />
     <Compile Include="ViewModels\Teach_ViewModel.cs" />
@@ -267,6 +268,9 @@
     </Compile>
     <Compile Include="Views\DioManager_View.xaml.cs">
       <DependentUpon>DioManager_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popup_View\Step_View.xaml.cs">
+      <DependentUpon>Step_View.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Teach_View.xaml.cs">
       <DependentUpon>Teach_View.xaml</DependentUpon>
@@ -378,6 +382,10 @@
     <Page Include="Views\DioManager_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popup_View\Step_View.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Teach_View.xaml">
       <SubType>Designer</SubType>

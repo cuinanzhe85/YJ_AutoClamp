@@ -40,7 +40,11 @@
                         <Run Text="{Binding Source={x:Static local:Global.instance},Path=DepartmentName}"/>
                 </TextBlock>
                 <!--설비명-->
-                <Label Grid.Column="1" Content="{Binding Source={x:Static local:Global.instance},Path=SoftwareName}" Style="{StaticResource MainWindow_HeaderLabelStyle}"/>
+                <Label Grid.Column="1" Content="{Binding Source={x:Static local:Global.instance},Path=SoftwareName}" Style="{StaticResource MainWindow_HeaderLabelStyle}">
+                    <Label.InputBindings>
+                        <MouseBinding Gesture="LeftClick" Command="{Binding BottomMenu_ButtonCommands}" CommandParameter="StepViewer"/>
+                    </Label.InputBindings>
+                </Label>
                 <!--모델명 / 시간-->
                 <TextBlock Grid.Column="2" Style="{StaticResource MainWindow_TopTbStyle}">
                     <Run Text="Software : " />

@@ -3,6 +3,8 @@ using Common.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Data;
@@ -85,6 +87,15 @@ namespace YJ_AutoClamp.ViewModels
             }
             else if (cmd == "Start")
             {
+                await Task.Run(() =>
+                {
+                    for (int i =0; i<10; i++)
+                    {
+                        SingletonManager.instance.Unit_Model[(int)MotionUnit_List.Top_X].Bottom_Step++;
+                        Thread.Sleep(500);
+                    }
+                });
+                return;
                 if (SingletonManager.instance.IsInspectionStart == false)
                     await Global.instance.InspectionStart();
             }

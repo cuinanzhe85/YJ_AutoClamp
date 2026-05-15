@@ -19,6 +19,7 @@ using Telerik.Windows.Data;
 using YJ_AutoClamp.Models;
 using YJ_AutoClamp.Utils;
 using YJ_AutoClamp.ViewModels;
+using YJ_Base.ViewModels.PopupView_Model;
 using static YJ_AutoClamp.Models.EziDio_Model;
 using static YJ_AutoClamp.Models.Serial_Model;
 
@@ -100,7 +101,6 @@ namespace YJ_AutoClamp
         public RadObservableCollection<Channel_Model> Channel_Model { get; set; }
         public Dictionary<string, double> Teaching_Data { get; set; }
         public System_Model SystemModel { get; set; }
-
         #endregion
         #region // UI Properties
         public RadObservableCollection<bool> DisplayUI_Dio { get; set; }

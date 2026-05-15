@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using YJ_AutoClamp.Models;
 using YJ_AutoClamp.Utils;
+using YJ_Base.ViewModels.PopupView_Model;
 
 namespace YJ_AutoClamp.ViewModels
 {
@@ -37,7 +38,7 @@ namespace YJ_AutoClamp.ViewModels
         #region // Popup Manager
         enum MainWindow_PopupList
         {
-            Gocator
+            StepViewer
         }
         private readonly Dictionary<MainWindow_PopupList, Func<(Window, Child_ViewModel)>> PopupFactories;
         #endregion
@@ -47,7 +48,6 @@ namespace YJ_AutoClamp.ViewModels
             get { return _LogList; }
             set { SetValue(ref _LogList, value); }
         }
-
         #region // Loading bacground
         private BackgroundWorker bgWorkerLoading;
         #endregion
@@ -64,6 +64,10 @@ namespace YJ_AutoClamp.ViewModels
             
             ModulesManager = new ModulesManager(new ViewsManager(Modules), Modules);
 
+            PopupFactories = new Dictionary<MainWindow_PopupList, Func<(Window, Child_ViewModel)>>
+            {
+                { MainWindow_PopupList.StepViewer, () => (new Step_View(), new Step_ViewModel()) },
+            };
             // Loading Backgorund Thread
             bgWorkerLoading = new BackgroundWorker()
             {
@@ -198,6 +202,9 @@ namespace YJ_AutoClamp.ViewModels
 
                     }), DispatcherPriority.Send);
                     
+                    break;
+                case "StepViewer":
+                    PopupManager.ShowPopupView(PopupFactories, MainWindow_PopupList.StepViewer);
                     break;
             }
         }

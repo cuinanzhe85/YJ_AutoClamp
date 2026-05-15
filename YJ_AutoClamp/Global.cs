@@ -108,7 +108,7 @@ namespace YJ_AutoClamp
             get { return _SoftwareName; }
             set { SetValue(ref _SoftwareName, value); }
         }
-        private string _SoftwareVersion = "[ 26-05-14 T1 ]";
+        private string _SoftwareVersion = "260514.1";
         public string SoftwareVersion
         {
             get { return _SoftwareVersion; }

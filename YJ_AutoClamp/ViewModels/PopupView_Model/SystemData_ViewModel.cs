@@ -2,13 +2,8 @@
 using Common.Managers;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using YJ_AutoClamp.Models;
-using static YJ_AutoClamp.Models.Serial_Model;
 
 namespace YJ_AutoClamp.ViewModels
 {
