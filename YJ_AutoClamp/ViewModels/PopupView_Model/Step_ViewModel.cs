@@ -2,11 +2,9 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Timers;
-using YJ_AutoClamp;
 using YJ_AutoClamp.Models;
-using YJ_AutoClamp.ViewModels;
 
-namespace YJ_Base.ViewModels.PopupView_Model
+namespace YJ_AutoClamp.ViewModels.PopupView_Model
 {
     public class Step_Model : BindableAndDisposable
     {

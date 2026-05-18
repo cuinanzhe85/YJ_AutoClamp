@@ -4,7 +4,6 @@ using Common.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.Eventing.Reader;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using YJ_AutoClamp.Models;
 using YJ_AutoClamp.Utils;
-using YJ_Base.ViewModels.PopupView_Model;
+using YJ_AutoClamp.ViewModels.PopupView_Model;
 
 namespace YJ_AutoClamp.ViewModels
 {

@@ -726,7 +726,7 @@ namespace YJ_AutoClamp
                             || !Dio.DI_RAW_DATA[(int)DI_MAP.REAR_OP_EMERGENCY_FEEDBACK])
                         {
                             Global.instance.SafetyErrorMessage = "EMERGENCY Button Operation! ";
-                            //IsSafetyInterLock = true;
+                            IsSafetyInterLock = true;
                         }
 
                         if (IsSafetyInterLock == true)
