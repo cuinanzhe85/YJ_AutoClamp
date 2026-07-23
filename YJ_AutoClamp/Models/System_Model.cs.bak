@@ -58,14 +58,6 @@ namespace YJ_AutoClamp.Models
             get { return _ClampCvStopDelay; }
             set { SetValue(ref _ClampCvStopDelay, value); }
         }
-
-        public int _LiftCvStopDelay;
-        public int LiftCvStopDelay
-        {
-            get { return _LiftCvStopDelay; }
-            set { SetValue(ref _LiftCvStopDelay, value); }
-        }
-
         public System_Model()
         {
         }

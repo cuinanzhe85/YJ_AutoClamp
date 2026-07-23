@@ -254,12 +254,6 @@ namespace YJ_AutoClamp
                 SystemModel.ClampCvStopDelay = 300;
             else
                 SystemModel.ClampCvStopDelay = Convert.ToInt32(valus);
-
-            valus = myIni.Read("LIFT_CV_STOP_DELAY", section);
-            if (string.IsNullOrEmpty(valus))
-                SystemModel.LiftCvStopDelay = 300;
-            else
-                SystemModel.LiftCvStopDelay = Convert.ToInt32(valus);
             //valus = myIni.Read("AGING_COUNT", "SYSTEM");
             //Channel_Model[0].AgingCvTotalCount = valus;
 

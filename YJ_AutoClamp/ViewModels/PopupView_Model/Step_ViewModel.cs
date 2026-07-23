@@ -82,10 +82,10 @@ namespace YJ_AutoClamp.ViewModels.PopupView_Model
             {
                 Step_Model[0].BottomHandStep = (int)unitModel[(int)MotionUnit_List.Top_X].Bottom_Step;
                 Step_Model[0].TopHandStep = (int)unitModel[(int)MotionUnit_List.Top_X].Top_Handle_Step;
-                Step_Model[0].OutHandStep = (int)unitModel[(int)MotionUnit_List.Top_X].Out_Handle_Step;
-                Step_Model[0].AgingStep = (int)unitModel[(int)MotionUnit_List.Top_X].AgingCVStep;
-                Step_Model[0].InputCVStep = (int)unitModel[(int)MotionUnit_List.Top_X].In_Cv_Step;
-                Step_Model[0].ClampCVStep = (int)unitModel[(int)MotionUnit_List.Top_X].Out_Cv_Step;
+                Step_Model[0].OutHandStep = (int)unitModel[(int)MotionUnit_List.Out_Y].Out_Handle_Step;
+                Step_Model[0].AgingStep = (int)unitModel[(int)MotionUnit_List.Lift_1].AgingCVStep;
+                Step_Model[0].InputCVStep = (int)unitModel[(int)MotionUnit_List.In_CV].In_Cv_Step;
+                Step_Model[0].ClampCVStep = (int)unitModel[(int)MotionUnit_List.Out_CV].Out_Cv_Step;
             }
         }
         #region // Override

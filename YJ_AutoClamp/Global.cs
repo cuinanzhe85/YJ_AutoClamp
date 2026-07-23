@@ -108,7 +108,7 @@ namespace YJ_AutoClamp
             get { return _SoftwareName; }
             set { SetValue(ref _SoftwareName, value); }
         }
-        private string _SoftwareVersion = "260519.1";
+        private string _SoftwareVersion = "260723.2";
         public string SoftwareVersion
         {
             get { return _SoftwareVersion; }
@@ -416,6 +416,8 @@ namespace YJ_AutoClamp
                         // Yes 선택 시
                         return true;
                     }
+                    else
+                        return false;
                 }
                 return true;
             }

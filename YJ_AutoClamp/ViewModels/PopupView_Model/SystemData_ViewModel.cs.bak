@@ -97,12 +97,6 @@ namespace YJ_AutoClamp.ViewModels
             get { return _ClampCvStopDelay; }
             set { SetValue(ref _ClampCvStopDelay, value); }
         }
-        private int _LiftCvStopDelay;
-        public int LiftCvStopDelay
-        {
-            get { return _LiftCvStopDelay; }
-            set { SetValue(ref _LiftCvStopDelay, value); }
-        }
         public SystemData_ViewModel()
         {
             UseNotUse.Add("NotUse");
@@ -126,7 +120,6 @@ namespace YJ_AutoClamp.ViewModels
             IsEdmUse = SingletonManager.instance.SystemModel.IsEdmUse;
             IsNoneSetTest = SingletonManager.instance.SystemModel.IsNoneSetTest;
             ClampCvStopDelay = SingletonManager.instance.SystemModel.ClampCvStopDelay;
-            LiftCvStopDelay = SingletonManager.instance.SystemModel.LiftCvStopDelay;
         }
         private void OnSave_Command(object obj)
         {
@@ -176,10 +169,6 @@ namespace YJ_AutoClamp.ViewModels
                 myIni.Write($"CLAMP_CV_STOP_DELAY", ClampCvStopDelay.ToString(), Section);
                 Global.Mlog.Info($" CLAMP_CV_STOP_DELAY = " + ClampCvStopDelay);
                 SingletonManager.instance.SystemModel.ClampCvStopDelay = ClampCvStopDelay;
-
-                myIni.Write($"LIFT_CV_STOP_DELAY", LiftCvStopDelay.ToString(), Section);
-                Global.Mlog.Info($" LIFT_CV_STOP_DELAY = " + LiftCvStopDelay);
-                SingletonManager.instance.SystemModel.LiftCvStopDelay = LiftCvStopDelay;
 
                 myIni.Write($"NONE_SET_TEST", IsNoneSetTest.ToString(), Section);
                 Global.Mlog.Info($" NONE_SET_TEST = " + IsNoneSetTest);

@@ -91,10 +91,6 @@
                 <Label Content="Clamp CV Stop Delay(ms)" Grid.Row="5" Grid.Column="0" Style="{StaticResource Option_LabelStyle}" FontSize="20"/>
                 <telerik:RadWatermarkTextBox Grid.Row="5" Grid.Column="1" Text="{Binding ClampCvStopDelay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
 
-                <!--Clamp CV End Delay time-->
-                <Label Content="Lift CV Stop Delay(ms)" Grid.Row="1" Grid.Column="2" Style="{StaticResource Option_LabelStyle}" FontSize="20"/>
-                <telerik:RadWatermarkTextBox Grid.Row="1" Grid.Column="3" Text="{Binding LiftCvStopDelay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Option_TextStyle}"/>
-
                 <!--EDM-->
                 <Label Content="None Set Test Use" Grid.Row="6" Grid.Column="0" Style="{StaticResource Option_LabelStyle}"/>
                 <telerik:RadComboBox Grid.Row="6" Grid.Column="1"  Style="{StaticResource Option_ComboStyle}"

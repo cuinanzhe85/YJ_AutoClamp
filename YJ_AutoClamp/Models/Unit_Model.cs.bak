@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using YJ_AutoClamp.Utils;
@@ -220,8 +219,8 @@ namespace YJ_AutoClamp.Models
             Cv_Step_IF_Run,
             Cv_Step_IF_Clamp_OutWait,
             Cv_Step_IF_Stop,
-            Cv_Step_IF_Off,
-            Lift_CV_Stop_Wait,
+            Cv_Step_IF_Off
+
         }
         public enum Aging_CV_Pass_Step
         {
@@ -302,7 +301,6 @@ namespace YJ_AutoClamp.Models
         public TopHandle Top_Handle_Step = TopHandle.Idle;
         public OutHandle Out_Handle_Step = OutHandle.Idle;
         public Aging_CV_Step AgingCVStep = Aging_CV_Step.Idle;
-        public Aging_CV_Step AgingCVNextStep = Aging_CV_Step.Idle;
 
         public Rtn_Top_CV_1 RetTopCV_1_Step = Rtn_Top_CV_1.Idle;
         public Rtn_Top_CV_2 RetTopCV_2_Step = Rtn_Top_CV_2.Idle;
@@ -406,7 +404,6 @@ namespace YJ_AutoClamp.Models
                     }
                     break;
                 case InCvSequence.CV_Off_Check:
-                    Dio_Output(DO_MAP.INPUT_SET_CV_RUN, true);
                     // cv out 센서 감지 됬을때 cv off 하고 centering 전진
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_OUT_SS_2] == true
                         && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == true)
@@ -415,22 +412,16 @@ namespace YJ_AutoClamp.Models
 
                         In_Cv_Step = InCvSequence.CV_Off_Wait;
                         Global.instance.InputCountPlus();
-                        break;
                     }
-
-                    if (Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_IN_SS_1] == true
-                        || Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_OUT_SS_2] == true
-                        || Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == true)
-                    {
-                        _InCvTimer.Restart();
-                    }
-                    else if (_InCvTimer.ElapsedMilliseconds > 5000)
+                    else if (_InCvTimer.ElapsedMilliseconds > 5000
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_IN_SS_1] == false
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_OUT_SS_2] == false
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.IN_CV_DETECT_SS_3] == false)
                     {
                         Dio_Output(DO_MAP.INPUT_SET_CV_RUN, false);
                         In_Cv_Step = InCvSequence.Idle;
                     }
                     break;
-
                 case InCvSequence.CV_Off_Wait:
                     if (_InCvTimer.ElapsedMilliseconds > 300)
                     {
@@ -633,7 +624,7 @@ namespace YJ_AutoClamp.Models
                     }
                     break;
                 case Set_NG_Step.CV_Off:
-                    if (_SetNgCvDelay.ElapsedMilliseconds > 5000)
+                    if (_SetNgCvDelay.ElapsedMilliseconds > 2000)
                     {
                         Dio_Output(DO_MAP.NG_BOTTOM_JIG_CV_RUN, false);
 
@@ -1187,7 +1178,7 @@ namespace YJ_AutoClamp.Models
                         Global.instance.MES_LOG(NFC_Data, "TIMEOUT");
                         Global.Mlog.Info($"Bottom_Step => MES Result : TIMEOUT");
                         Global.instance.WriteAlarmLog($"MES {NFC_Data} = TIMEOUT");
-                        SingletonManager.instance.ClampResult = false;
+
                         Bottom_Step = BottomHandle.Set_PutDown;
                     }
                     break;
@@ -2284,7 +2275,7 @@ namespace YJ_AutoClamp.Models
                         else
                         {
                             // Lift Down Step으로 이동
-                            if (LiftOutputSS(SingletonManager.instance.AgingCvIndex) == false)
+                            if (LiftLowMoveConditon(SingletonManager.instance.AgingCvIndex) == true)
                             {
                                 Ez_Model.MoveLiftDown(SingletonManager.instance.AgingCvIndex);
                                 AgingCVStep = Aging_CV_Step.Low_Lift_Down;
@@ -2315,31 +2306,29 @@ namespace YJ_AutoClamp.Models
                 case Aging_CV_Step.Loading_Life_Up_Wait:
                     if (Ez_Model.IsMoveLiftUpDone(SingletonManager.instance.AgingCvIndex) == true)
                     {
-                        //if (AgingCvFull[SingletonManager.instance.AgingCvIndex] == true)
-                        //{
-                        //    // Unclamping IF on step 이동
-                        //    AgingCVStep = Aging_CV_Step.Unclamping_IF_Send;
-                        //}
-                        //else
-                        //{
-                        //    // CV 전진 step 이동
-                        //    AgingCVStep = Aging_CV_Step.Lift_CV_Forward;
-                        //}
-                        AgingCVStep = Aging_CV_Step.Lift_CV_Forward;
+                        if (AgingCvFull[SingletonManager.instance.AgingCvIndex] == true)
+                        {
+                            // Unclamping IF on step 이동
+                            AgingCVStep = Aging_CV_Step.Unclamping_IF_Send;
+                        }
+                        else
+                        {
+                            // CV 전진 step 이동
+                            AgingCVStep = Aging_CV_Step.Lift_CV_Forward;
+                        }
                     }
                     break;
                 case Aging_CV_Step.Low_Lift_Down:
                     if (Ez_Model.IsMoveLiftDownDone(SingletonManager.instance.AgingCvIndex) == true)
                     {
-                        //if (AgingCvFull[SingletonManager.instance.AgingCvIndex] == true)
-                        //{
-                        //    AgingCVStep = Aging_CV_Step.Unclamping_IF_Send;
-                        //}
-                        //else
-                        //{
-                        //    AgingCVStep = Aging_CV_Step.Lift_CV_Forward;
-                        //}
-                        AgingCVStep = Aging_CV_Step.Lift_CV_Forward;
+                        if (AgingCvFull[SingletonManager.instance.AgingCvIndex] == true)
+                        {
+                            AgingCVStep = Aging_CV_Step.Unclamping_IF_Send;
+                        }
+                        else
+                        {
+                            AgingCVStep = Aging_CV_Step.Lift_CV_Forward;
+                        }
                     }
                     break;
                 case Aging_CV_Step.Unclamping_IF_Send:
@@ -2365,34 +2354,40 @@ namespace YJ_AutoClamp.Models
                     AgingCVStep = Aging_CV_Step.Aging_CV_Forward;
                     break;
                 case Aging_CV_Step.Aging_CV_Forward:
+                    int Lift_CV_Out_IO = 0;
+                    if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 0)
+                        Lift_CV_Out_IO = (int)DI_MAP.LIFT_1_CV_DETECT_OUT_SS_2;
+                    else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 1)
+                        Lift_CV_Out_IO = (int)DI_MAP.LIFT_2_CV_DETECT_OUT_SS_2;
+                    else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 2)
+                        Lift_CV_Out_IO = (int)DI_MAP.LIFT_3_CV_DETECT_OUT_SS_2;
                     // Lift CV out sensor check
-                    if (LiftOutputSS(SingletonManager.instance.AgingCvIndex) == true)
+                    if (Dio.DI_RAW_DATA[Lift_CV_Out_IO] == true)
                     {
                         // Aging CV Run
-                        if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 0)
-                            Dio_Output(DO_MAP.LIFT_CV_RUN_1, false);
-                        else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 1)
-                            Dio_Output(DO_MAP.LIFT_CV_RUN_2, false);
-                        else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 2)
-                            Dio_Output(DO_MAP.LIFT_CV_RUN_3, false);
-                        AgingCVStep = Aging_CV_Step.CV_Stop;
-                        _TimeDelay.Restart();
-                    }
-                    break;
-                case Aging_CV_Step.CV_Stop:
-                    if (GetAgingCVEndSS(SingletonManager.instance.AgingCvIndex) == false)
-                    {
-                        if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 0)
-                            Dio_Output(DO_MAP.LIFT_CV_RUN_1, true);
-                        else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 1)
-                            Dio_Output(DO_MAP.LIFT_CV_RUN_2, true);
-                        else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 2)
-                            Dio_Output(DO_MAP.LIFT_CV_RUN_3, true);
                         Dio_Aging_CV_Control(SingletonManager.instance.AgingCvIndex, true);
+                        AgingCVStep = Aging_CV_Step.CV_Stop_Wait;
                         _TimeDelay.Restart();
                     }
-                    AgingCVStep = Aging_CV_Step.CV_Stop_Wait;
                     break;
+                //case Aging_CV_Step.CV_Stop:
+                //    if (GetAgingCVStartSS(SingletonManager.instance.AgingCvIndex) == false)
+                //    {
+                //        AgingCVStep = Aging_CV_Step.CV_Stop_Wait;
+                //        break;
+                //    }
+                //    if (GetAgingCVEndSS(SingletonManager.instance.AgingCvIndex) == true)
+                //    {
+                //         if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 0)
+                //            Dio_Output(DO_MAP.LIFT_CV_RUN_1, false);
+                //        else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 1)
+                //            Dio_Output(DO_MAP.LIFT_CV_RUN_2, false);
+                //        else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 2)
+                //            Dio_Output(DO_MAP.LIFT_CV_RUN_3, false);
+                //        Dio_Aging_CV_Control(SingletonManager.instance.AgingCvIndex, false);
+                //        AgingCVStep = Aging_CV_Step.Cv_Step_Run_IF_Send;
+                //    }
+                //    break;
                 case Aging_CV_Step.CV_Stop_Wait:
                     // Aging cv 투입중 end 신호가 먼저 들어오면 배출하면서 투입 동시 진행
                     if (GetAgingCVEndSS(SingletonManager.instance.AgingCvIndex) == true)
@@ -2443,14 +2438,10 @@ namespace YJ_AutoClamp.Models
                     }
                     break;
                 case Aging_CV_Step.Low_Lift_Up_Start:
-                    if (LiftOutputSS(SingletonManager.instance.AgingCvIndex) == false)
+                    if (LiftLowMoveConditon(SingletonManager.instance.AgingCvIndex) == true)
                     {
                         Ez_Model.MoveLiftLoading(GetLiftNomber(SingletonManager.instance.AgingCvIndex));
                         AgingCVStep = Aging_CV_Step.Low_Lift_Up_Wait;
-                    }
-                    else
-                    {
-                        ClampFailMassage = $"LIFT {SingletonManager.instance.AgingCvIndex + 1} OUTPUT DETECT ERROR\r\nLIFT {SingletonManager.instance.AgingCvIndex + 1} 배출 센서 감지 에러";
                     }
                     break;
                 case Aging_CV_Step.Low_Lift_Up_Wait:
@@ -2551,7 +2542,7 @@ namespace YJ_AutoClamp.Models
 
                         Global.instance.Write_Mes_Log(null, MesLogType.EDM, EdmLogList.JudePass);
                         // Aging CV Start
-                        Dio_Aging_CV_Control(SingletonManager.instance.AgingCvIndex, false);
+                        Dio_Aging_CV_Control(SingletonManager.instance.AgingCvIndex, false); 
                         AgingCVStep = Aging_CV_Step.Cv_Step_IF_Off;
                     }
                     break;
@@ -2579,21 +2570,6 @@ namespace YJ_AutoClamp.Models
                             SingletonManager.instance.AgingCvIndex = 0;
 
                         AgingCVStep = Aging_CV_Step.Idle;
-                    }
-                    break;
-
-                case Aging_CV_Step.Lift_CV_Stop_Wait:
-                    if (_TimeDelay.ElapsedMilliseconds >= SingletonManager.instance.SystemModel.LiftCvStopDelay)
-                    {
-                        if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 0)
-                            Dio_Output(DO_MAP.LIFT_CV_RUN_1, false);
-                        else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 1)
-                            Dio_Output(DO_MAP.LIFT_CV_RUN_2, false);
-                        else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 2)
-                            Dio_Output(DO_MAP.LIFT_CV_RUN_3, false);
-
-                        AgingCVStep = AgingCVNextStep;
-                        AgingCVNextStep = Aging_CV_Step.Idle;
                     }
                     break;
 
@@ -2931,20 +2907,23 @@ namespace YJ_AutoClamp.Models
             }
             return false;
         }
-        private bool LiftOutputSS(int index)
+        private bool LiftLowMoveConditon(int index)
         {
             // Lift Donw 하는데 간섭이 있는지 확인
             if (index == 0 || index == 3)
             {
-                return Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_1_CV_DETECT_OUT_SS_2];
+                if (Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_1_CV_DETECT_OUT_SS_2] == false)
+                    return true;
             }
             if (index == 1 || index == 4)
             {
-                return Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_2_CV_DETECT_OUT_SS_2];
+                if (Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_2_CV_DETECT_OUT_SS_2] == false)
+                    return true;
             }
             if (index == 2 || index == 5)
             {
-                return Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_3_CV_DETECT_OUT_SS_2];
+                if (Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_3_CV_DETECT_OUT_SS_2] == false)
+                    return true;
             }
             return false; 
         }
