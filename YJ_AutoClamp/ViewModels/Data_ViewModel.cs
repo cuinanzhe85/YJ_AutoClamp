@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using YJ_AutoClamp.Utils;
+using YJ_AutoClamp.Views.Popup_View;
 
 namespace YJ_AutoClamp.ViewModels
 {
@@ -17,7 +18,7 @@ namespace YJ_AutoClamp.ViewModels
         enum DataMenu_PopupList
         {
             System,
-            //Model,
+            Model,
             Serial,
             Jog,
             Motor
@@ -40,6 +41,7 @@ namespace YJ_AutoClamp.ViewModels
             PopupFactories = new Dictionary<DataMenu_PopupList, Func<(Window, Child_ViewModel)>>
             {
                 { DataMenu_PopupList.System, () => (new SystemData_View(), new SystemData_ViewModel()) },
+                { DataMenu_PopupList.Model, () => (new ModelChange_View(), new ModelChange_ViewModel()) },
                 { DataMenu_PopupList.Serial, () => (new TcpSerial_View(), new TcpSerial_ViewModel()) },
                 { DataMenu_PopupList.Jog, () => (new JogVelocity_View(), new JogVelocity_ViewModel()) },
                 { DataMenu_PopupList.Motor, () => (new MotorVelocity_View(), new MotorVelocity_ViewModel()) },

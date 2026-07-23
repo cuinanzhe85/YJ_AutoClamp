@@ -188,19 +188,12 @@ namespace YJ_AutoClamp.ViewModels
                         Global.instance.ShowMessagebox("Inspection is running. Please Stop Inspection First");
                         break;
                     }
-                    Application.Current.Dispatcher.BeginInvoke(
-                    (ThreadStart)(() =>
+                    if (Global.instance.ShowMessagebox("Confirm! Are You Ready Exit Program?",true,false,false,true) == true)
                     {
-                        var msgBox = new MessageBoxYesNo_View("Confirm! Are You Ready Exit Program?");
-                        bool? result = msgBox.ShowDialog();
-                        if (result == true)
-                        {
-                            // Yes 클릭
-                            SoftwareExit();
-                        }
+                        // Yes 클릭
+                        SoftwareExit();
+                    }
 
-                    }), DispatcherPriority.Send);
-                    
                     break;
                 case "StepViewer":
                     PopupManager.ShowPopupView(PopupFactories, MainWindow_PopupList.StepViewer);

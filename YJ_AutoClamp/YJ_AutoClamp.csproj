@@ -199,6 +199,10 @@
     <Compile Include="ViewModels\MainWindow_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\Initialize_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\JogVelocity_ViewModel.cs" />
+    <Compile Include="ViewModels\PopupView_Model\ModelChange_ViewModel.cs" />
+    <Compile Include="Views\Popup_View\ModelChange_View.xaml.cs">
+      <DependentUpon>ModelChange_View.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\PopupView_Model\MotorVelocity_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\Origin_ViewModel.cs" />
     <Compile Include="ViewModels\PopupView_Model\AgingStep_ViewModel.cs" />
@@ -304,6 +308,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\TeachView_Style.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popup_View\ModelChange_View.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

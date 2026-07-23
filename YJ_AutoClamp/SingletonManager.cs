@@ -19,7 +19,6 @@ using Telerik.Windows.Data;
 using YJ_AutoClamp.Models;
 using YJ_AutoClamp.Utils;
 using YJ_AutoClamp.ViewModels;
-using YJ_Base.ViewModels.PopupView_Model;
 using static YJ_AutoClamp.Models.EziDio_Model;
 using static YJ_AutoClamp.Models.Serial_Model;
 
@@ -73,7 +72,12 @@ namespace YJ_AutoClamp
             get { return _IsIF_Connected_1; }
             set { SetValue(ref _IsIF_Connected_1, value); }
         }
-
+        private string _TeachFileName = string.Empty;
+        public string TeachFileName
+        {
+            get { return _TeachFileName; }
+            set { SetValue(ref _TeachFileName, value); }
+        }
         public ObservableCollection<int> LoadFloor { get; set; }
         public ObservableCollection<Lift_Model> Display_Lift { get; set; }
         public ObservableCollection<Aging_Model> Aging_Model { get; set; }
@@ -196,6 +200,7 @@ namespace YJ_AutoClamp
             if (!Directory.Exists(AlarmLogFolder))
                 Directory.CreateDirectory(AlarmLogFolder);
 
+
             var myIni = new IniFile(Global.instance.IniSystemPath);
             string section = "SYSTEM";
             string valus = myIni.Read("BARCODE_USE", section);
@@ -251,12 +256,16 @@ namespace YJ_AutoClamp
                 SystemModel.ClampCvStopDelay = Convert.ToInt32(valus);
             //valus = myIni.Read("AGING_COUNT", "SYSTEM");
             //Channel_Model[0].AgingCvTotalCount = valus;
+
+            // Teach File Name
+            valus = myIni.Read("CURRENT_TEACH", section);
+            TeachFileName = valus;
         }
        
         public void LoadTeachFile()
         {
             // Teaching Data 섹션 데이터 로드
-            string teachFilePath = Path.Combine(Global.instance.IniTeachPath);
+            string teachFilePath = Path.Combine(Global.instance.IniTeachPath, TeachFileName)+".ini";
             var iniTeachFile = new IniFile(teachFilePath);
 
             string[] teachSection = { "Top_X_Handler", "Out_Y_Handler", "Out_Z_Handler", "Lift" };
@@ -726,7 +735,7 @@ namespace YJ_AutoClamp
                             || !Dio.DI_RAW_DATA[(int)DI_MAP.REAR_OP_EMERGENCY_FEEDBACK])
                         {
                             Global.instance.SafetyErrorMessage = "EMERGENCY Button Operation! ";
-                            IsSafetyInterLock = true;
+                            //IsSafetyInterLock = true;
                         }
 
                         if (IsSafetyInterLock == true)

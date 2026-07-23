@@ -47,7 +47,9 @@
                 </Label>
                 <!--모델명 / 시간-->
                 <TextBlock Grid.Column="2" Style="{StaticResource MainWindow_TopTbStyle}">
-                    <Run Text="Software : " />
+                    <Run Text="Model :"/>
+                    <Run Text="{Binding Source={x:Static local:SingletonManager.instance}, Path=TeachFileName}"/><LineBreak/>
+                    <Run Text="Version : " />
                     <Run Text="{Binding Source={x:Static local:Global.instance},Path=SoftwareVersion}"/>
 
                 </TextBlock>

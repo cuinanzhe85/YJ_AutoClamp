@@ -1306,7 +1306,7 @@ namespace YJ_AutoClamp.Models
                         Bottom_Step = BottomHandle.Set_PickUp_Down;
                         ClampRetryCount = 0;
                         Global.Mlog.Info($"Bottom_Step => Next Step : Set_PickUp_Down");
-                        _BottomHandlerTimer.Reset();
+                        _BottomHandlerTimer.Restart();
                     }
                     break;
                 case BottomHandle.Set_PickUp_Down:
@@ -1372,12 +1372,16 @@ namespace YJ_AutoClamp.Models
                             
                             Bottom_Step = BottomHandle.Handler_Down_Check;
                             Global.Mlog.Info($"Bottom_Step => Next Step : Handler_Down_Check");
+                            _BottomHandlerTimer.Restart();
                             break;
                         }
                     }
                     else if (_BottomHandlerTimer.ElapsedMilliseconds > 3000)
                     {
-                        ClampFailMassage = $"Bottom Handler Left Move Time Out";
+                        if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_X_LEFT_CYL_SS] != true)
+                            ClampFailMassage = $"Bottom Handler Left Move Fail.\r\n바텀 핸드 왼쪽 이동 실패";
+                        if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_TURN_CYL_SS] != true)
+                            ClampFailMassage = $"Set Handler Turn On Fail.\r\n세트 핸드 턴온 실패";
                         Bottom_Step = BottomHandle.Idle;
                     }
                     break;
@@ -1389,6 +1393,14 @@ namespace YJ_AutoClamp.Models
                         Dio_Output(DO_MAP.IN_SET_CV_CENTERING, false);
                         Bottom_Step = BottomHandle.Ungrip_InCenteringBwd_Check;
                         Global.Mlog.Info($"Bottom_Step => Next Step : Ungrip_InCenteringBwd_Check");
+                    }
+                     else if (_BottomHandlerTimer.ElapsedMilliseconds > 3000)
+                    {
+                        if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_DOWN_CYL_SS] != true)
+                            ClampFailMassage = $"Bottom Handler Down Fail.\r\n바텀 핸드 다운 실패";
+                        if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_RZ_DOWN_CYL_SS] != true)
+                            ClampFailMassage = $"Set Handler Down Fail.\r\n세트 핸드 다운 실패";
+                        Bottom_Step = BottomHandle.Idle;
                     }
                     break;
                 case BottomHandle.Ungrip_InCenteringBwd_Check:
@@ -1406,6 +1418,7 @@ namespace YJ_AutoClamp.Models
 
                         Global.Mlog.Info($"Bottom_Step => Next Step : Set_Vacuum_On");
                         Bottom_Step = BottomHandle.Set_Vacuum_On;
+                        _BottomHandlerTimer.Restart();
                     }
                     break;
                 case BottomHandle.Set_Vacuum_On:
@@ -1425,16 +1438,32 @@ namespace YJ_AutoClamp.Models
                         // Set Handler Up
                         Dio_Output(DO_MAP.TRANSFER_LZ_DOWN_SOL, false);
                     }
+                    else if (_BottomHandlerTimer.ElapsedMilliseconds >3000
+                        && SingletonManager.instance.EquipmentMode == EquipmentMode.Auto
+                        && SingletonManager.instance.SystemModel.IsNoneSetTest == false
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS] == false)
+                    {
+                        ClampFailMassage = $"Set Pickup Vacuum Fail.\r\n세트 픽업 버큠 실패";
+                    }
                     break;
-                
                 case BottomHandle.Set_PickUp_Up:
                     // Set CV Out centering Backward
                     if (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_UP_CYL_SS] == true
-                        && Dio.DI_RAW_DATA[(int)DI_MAP.CLMAPING_CV_UP_CYL_SS] == true)
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.CLMAPING_CV_UP_CYL_SS] == true
+                        && (Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS] == true
+                        || SingletonManager.instance.SystemModel.IsNoneSetTest == true
+                        || SingletonManager.instance.EquipmentMode == EquipmentMode.Dry))
                     {
                         Dio_Output(DO_MAP.TRANSFER_LZ_TURN_SOL, true);
                         Bottom_Step = BottomHandle.Bottom_PutDown_Done;
                         Global.Mlog.Info($"Bottom_Step => Next Step : Bottom_PutDown_Down");
+                    }
+                    else if (_BottomHandlerTimer.ElapsedMilliseconds > 3000
+                        && SingletonManager.instance.EquipmentMode == EquipmentMode.Auto
+                        && SingletonManager.instance.SystemModel.IsNoneSetTest == false
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_LZ_VACUUM_SS] == false)
+                    {
+                        ClampFailMassage = $"Set Pickup Vacuum Fail.\r\n세트 픽업 버큠 실패";
                     }
                     break;
                 case BottomHandle.Bottom_PutDown_Done:
@@ -2456,7 +2485,7 @@ namespace YJ_AutoClamp.Models
                             SingletonManager.instance.AgingCvIndex = 0;
 
                         AgingCVStep = Aging_CV_Step.Idle;
-                     }
+                    }
                     //if (_TimeDelay.ElapsedMilliseconds == 0)
                     //    _TimeDelay.Restart();
                     break;

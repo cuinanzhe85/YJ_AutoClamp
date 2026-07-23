@@ -13,27 +13,34 @@
             <Setter Property="IsSelected" Value="{Binding IsTileSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
         </Style>
         <Style x:Key="TileGlyph_Style" TargetType="telerik:RadGlyph">
-            <Setter Property="Margin" Value="40"/>
+            <Setter Property="Margin" Value="20"/>
             <Setter Property="FontSize" Value="60"/>
         </Style>
         <Style x:Key="TileLabel_Style" TargetType="Label">
-            <Setter Property="Margin" Value="10,-5"/>
+            <Setter Property="Margin" Value="5,0"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontSize" Value="25"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
     </mvvm:BaseUserControl.Resources>
-    <Grid Width="Auto" Height="Auto" >
+    <Grid Width="980" Height="500" Margin="30,0">
         <Grid.Effect>
             <DropShadowEffect ShadowDepth="2"/>
         </Grid.Effect>
-        <telerik:RadTileList TilePlaceHolderSide="220" Margin="70,0,0,0"  telerik:TouchManager.TouchMode="None">
+        <telerik:RadTileList TilePlaceHolderSide="160" telerik:TouchManager.TouchMode="None">
             <telerik:Tile Background="Gray" Style="{StaticResource Tile_Style}"
                           Command="{Binding TileButton_Command}" CommandParameter="System">
                 <StackPanel VerticalAlignment="Center">
                     <telerik:RadGlyph Glyph="&#xe025;" Style="{StaticResource TileGlyph_Style}"/>
                     <Label Content="System Manager" Style="{StaticResource TileLabel_Style}"/>
+                </StackPanel>
+            </telerik:Tile>
+            <telerik:Tile Background="Gray" Style="{StaticResource Tile_Style}"
+                          Command="{Binding TileButton_Command}" CommandParameter="Model">
+                <StackPanel VerticalAlignment="Center">
+                    <telerik:RadGlyph Glyph="&#xe665;" Style="{StaticResource TileGlyph_Style}"/>
+                    <Label Content="Model Data" Style="{StaticResource TileLabel_Style}"/>
                 </StackPanel>
             </telerik:Tile>
             <telerik:Tile Background="Gray" Style="{StaticResource Tile_Style}"

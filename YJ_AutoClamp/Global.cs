@@ -108,7 +108,7 @@ namespace YJ_AutoClamp
             get { return _SoftwareName; }
             set { SetValue(ref _SoftwareName, value); }
         }
-        private string _SoftwareVersion = "260514.1";
+        private string _SoftwareVersion = "260519.1";
         public string SoftwareVersion
         {
             get { return _SoftwareVersion; }
@@ -118,7 +118,7 @@ namespace YJ_AutoClamp
         public string IniConfigPath { get; set; } = Environment.CurrentDirectory + @"\Config";
         public string IniSystemPath { get; set; } = Environment.CurrentDirectory + @"\Config\System.ini";
         public string IniVelocityPath { get; set; } = Environment.CurrentDirectory + @"\Config\Velocity.ini";
-        public string IniTeachPath { get; set; } = Environment.CurrentDirectory + @"\Config\Teach\Teaching.ini";
+        public string IniTeachPath { get; set; } = Environment.CurrentDirectory + @"\Config\Teach";
         public string IniAgingPath { get; set; } = Environment.CurrentDirectory + @"\Config\AGING";
         public string IniMesLogPath { get; set; } = Environment.CurrentDirectory + @"\MES";
         public string AlarmLogPath { get; set; } = Environment.CurrentDirectory + @"\Alarm";
@@ -366,43 +366,58 @@ namespace YJ_AutoClamp
                 Global.ExceptionLog.Error($"WriteAlarmLog - {ex.ToString()}");
             }
         }
-        public void ShowMessagebox(string message, bool isError = true, bool buzzOn = false, bool Alarm = false)
+        public bool ShowMessagebox(string message, bool isError = true, bool buzzOn = false, bool Alarm = false,bool IsYesNo = false)
         {
             try
             {
-                // UI 쓰레드에서 동작하도록 보장
-                Application.Current.Dispatcher.Invoke(() =>
+                if (IsYesNo == false)
                 {
-                    if (buzzOn == true)
+                    // UI 쓰레드에서 동작하도록 보장
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        SendMainUiLog(message, UiLogType.Error);
-                        Mlog.Info($"Error Message : {message}");
-                        Global.instance.Set_TowerLamp(Global.TowerLampType.Error);
-                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
-                        var view = new MessageBox_View(message, isError);
-                        view.ShowDialog();
-                        Global.instance.Set_TowerLamp(Global.TowerLampType.Stop);
-                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
-                    }
-                    else if (Alarm == true)
+                        if (buzzOn == true)
+                        {
+                            SendMainUiLog(message, UiLogType.Error);
+                            Mlog.Info($"Error Message : {message}");
+                            Global.instance.Set_TowerLamp(Global.TowerLampType.Error);
+                            SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
+                            var view = new MessageBox_View(message, isError);
+                            view.ShowDialog();
+                            Global.instance.Set_TowerLamp(Global.TowerLampType.Stop);
+                            SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
+                        }
+                        else if (Alarm == true)
+                        {
+                            SendMainUiLog(message, UiLogType.Error);
+                            Mlog.Info($"Error Message : {message}");
+                            SingletonManager.instance.Dio.BuzzerOnOff(3500);
+                            var view = new MessageBox_View(message, isError);
+                            view.ShowDialog();
+                            //SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
+                        }
+                        else
+                        {
+                            var view = new MessageBox_View(message, isError);
+                            view.Show();
+
+                        }
+                    });
+                }
+                else
+                {
+                    bool? result = Application.Current.Dispatcher.Invoke(() =>
                     {
-                        SendMainUiLog(message, UiLogType.Error);
-                        Mlog.Info($"Error Message : {message}");
-                        //SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, true);
-                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, true);
-                        Thread.Sleep(1200);
-                        SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.BUZZER, false);
-                        var view = new MessageBox_View(message, isError);
-                        view.ShowDialog();
-                        //SingletonManager.instance.Dio.SetIO_OutputData((int)EziDio_Model.DO_MAP.TOWER_LAMP_RED, false);
-                    }
-                    else
+                        var msgBox = new MessageBoxYesNo_View(message);
+                        return msgBox.ShowDialog();
+
+                    });
+                    if (result == true)
                     {
-                        var view = new MessageBox_View(message, isError);
-                        view.Show();
-                        
+                        // Yes 선택 시
+                        return true;
                     }
-                });
+                }
+                return true;
             }
             catch (Exception ex)
             {
@@ -411,6 +426,7 @@ namespace YJ_AutoClamp
                 {
                     MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 });
+                return false;
             }
         }
         public void StartMesLogWorker()

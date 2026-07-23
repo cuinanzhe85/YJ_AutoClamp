@@ -543,6 +543,15 @@ namespace YJ_AutoClamp.Models
             SetIO_OutputData((int)DO_MAP.TRANSFER_FORWARD_SOL, true);
 
         }
+        public void BuzzerOnOff(int OnTime)
+        {
+            Task.Run((() =>
+            {
+                SetIO_OutputData((int)DO_MAP.BUZZER, true);
+                Thread.Sleep(OnTime);
+                SetIO_OutputData((int)DO_MAP.BUZZER, false);
+            }));
+        }
         public void ThreadReceive()
         {
             UpdateIO_OperData();
