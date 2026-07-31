@@ -155,11 +155,12 @@ namespace YJ_AutoClamp.ViewModels
                 SingletonManager.instance.SystemModel.PickUpWaitTimeOutY = Convert.ToInt32(PickUpTimeOut);
 
                 int floorcount = Convert.ToInt32(LoadFloorCount);
-                if (floorcount > 5)
-                    LoadFloorCount = "5";
+                if (floorcount > 6)
+                    LoadFloorCount = "6";
                 myIni.Write("LOAD_FLOOR_COUNT", LoadFloorCount, Section);
                 Global.Mlog.Info(" LOAD_FLOOR_COUNT = " + LoadFloorCount);
                 SingletonManager.instance.SystemModel.LoadFloorCount = Convert.ToInt32(LoadFloorCount);
+                SingletonManager.instance.UpdateFloor(Convert.ToInt32(LoadFloorCount));
 
                 myIni.Write("AGING_CV_STEP_TIME", AgingCvStepTime, Section);
                 Global.Mlog.Info(" AGING_CV_STEP_TIME = " + AgingCvStepTime);

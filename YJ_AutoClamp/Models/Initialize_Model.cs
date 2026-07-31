@@ -233,8 +233,8 @@ namespace YJ_AutoClamp.Models
                 {
                     //SingletonManager.instance.LoadComplete[index] = false;
                     SingletonManager.instance.LoadFloor[index] = 0;
-                    for (int i = 0; i < (int)Floor_Index.Max; i++)
-                        SingletonManager.instance.Display_Lift[index].Floor[i] = false;
+                    for (int i = 0; i < (int)SingletonManager.instance.SystemModel.LoadFloorCount; i++)
+                        SingletonManager.instance.Display_Lift[index].Floors[i].IsActive = false;
 
                 }
                 await Task.Run(async () =>

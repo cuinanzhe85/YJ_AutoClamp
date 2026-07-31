@@ -9,7 +9,6 @@
         <Setter Property="CornerRadius" Value="5"/>
         <Setter Property="Background" Value="DodgerBlue"/>
         <Setter Property="FontSize" Value="18"/>
-        <Setter Property="Height" Value="55"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="Focusable" Value="False"/>
@@ -120,14 +119,35 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Label Content="{Binding LiftName}" Style="{StaticResource Inside_LabelStyle}" Background="SlateBlue"/>
-            <UniformGrid Grid.Row="1" Margin="2,5,2,-5" Rows="7">
-                
-                <Label Content="Floor 5" Background="{Binding Floor[4], FallbackValue=false, Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}"/>
-                <Label Content="Floor 4" Background="{Binding Floor[3], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}"/>
-                <Label Content="Floor 3" Background="{Binding Floor[2], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}"/>
-                <Label Content="Floor 2" Background="{Binding Floor[1], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}"/>
-                <Label Content="Floor 1" Background="{Binding Floor[0], Converter={StaticResource FloorColorConverter}}" Style="{StaticResource Floor_LabelStyle}" BorderThickness="1" />
-            </UniformGrid>
+            <ItemsControl Grid.Row="1"
+              Margin="2,5,2,-5"
+              ItemsSource="{Binding Floors}">
+
+                <ItemsControl.LayoutTransform>
+                    <ScaleTransform ScaleY="-1"/>
+                </ItemsControl.LayoutTransform>
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="1"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding FloorNo, StringFormat=Floor {0}}"
+                   Background="{Binding IsActive, Converter={StaticResource FloorColorConverter}}"
+                   Style="{StaticResource Floor_LabelStyle}">
+
+                            <Label.LayoutTransform>
+                                <ScaleTransform ScaleY="-1"/>
+                            </Label.LayoutTransform>
+
+                        </Label>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
         </Grid>
     </DataTemplate>
     <Style x:Key="Count_TextStyle" TargetType="telerik:RadWatermarkTextBox">

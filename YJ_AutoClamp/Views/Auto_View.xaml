@@ -393,13 +393,13 @@
             </StackPanel>
 
             <!--Products Infomations-->
-            <StackPanel Grid.Row="1">
+            <StackPanel Grid.Row="1" Margin="0,15,0,0">
                 <!--<telerik:RadButton Content="Input Stop" Style="{StaticResource AutoView_ButtonStyle}"
                                          Command="{Binding RightMenu_PopupCommand}" CommandParameter="InputStop" Background="Gray"/>-->
-                <telerik:RadButton Content="Inspection Start" Style="{StaticResource AutoView_ButtonStyle}"
+                <telerik:RadButton Content="Inspection Start" Style="{StaticResource AutoView_ButtonStyle}" Height="60"
                                         IsEnabled="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsInspectionStart, Converter={StaticResource ReversBoolConverter}}"
                                         Command="{Binding RightMenu_PopupCommand}" CommandParameter="Start" Background="CadetBlue"/>
-                <telerik:RadButton Content="Inspection Stop" Style="{StaticResource AutoView_ButtonStyle}"
+                <telerik:RadButton Content="Inspection Stop" Style="{StaticResource AutoView_ButtonStyle}" Height="60"
                                         IsEnabled="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsInspectionStart}"
                                         Command="{Binding RightMenu_PopupCommand}" CommandParameter="Stop" Background="PaleVioletRed"/>
             </StackPanel>

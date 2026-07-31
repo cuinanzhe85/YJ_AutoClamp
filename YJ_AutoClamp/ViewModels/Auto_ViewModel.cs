@@ -147,19 +147,26 @@ namespace YJ_AutoClamp.ViewModels
             get { return _LiftName; }
             set { SetValue(ref _LiftName, value); }
         }
-        private ObservableCollection<bool> _Floor;
-        public ObservableCollection<bool> Floor
+        private ObservableCollection<FloorItem> _Floors;
+        public ObservableCollection<FloorItem> Floors
         {
-            get { return _Floor; }
-            set { SetValue(ref _Floor, value); }
+            get { return _Floors; }
+            set { SetValue(ref _Floors, value); }
         }
         public Lift_Model(string lift)
         {
-            Floor = new ObservableCollection<bool>();
-            for (int i = 0; i < (int)Floor_Index.Max; i++)
-                Floor.Add(false);
-
+            Floors = new ObservableCollection<FloorItem>();
             this.LiftName = lift;
+        }
+    }
+    public class FloorItem : BindableAndDisposable
+    {
+        public int FloorNo { get; set; }
+        private bool _IsActive;
+        public bool IsActive 
+        {
+            get { return _IsActive; }
+            set { SetValue(ref _IsActive, value); } 
         }
     }
 }

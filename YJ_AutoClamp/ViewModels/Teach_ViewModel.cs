@@ -44,7 +44,7 @@ namespace YJ_AutoClamp.ViewModels
         Lift_Load_3,
         Lift_Upper_3,
         Lift_Low_3,
-
+        Floor_Range,
         Max
     }
     // Initial -> Flow 초기화 홈포지션

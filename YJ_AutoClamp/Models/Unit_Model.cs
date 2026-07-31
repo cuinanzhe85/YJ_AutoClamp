@@ -56,6 +56,7 @@ namespace YJ_AutoClamp.Models
         Floor_3,
         Floor_4,
         Floor_5,
+        Floor_6,
         Max
     }
     public class Unit_Model
@@ -2073,7 +2074,7 @@ namespace YJ_AutoClamp.Models
                                 SingletonManager.instance.LoadFloor[SingletonManager.instance.LoadStageNo] = 0;
                                 // Auto Ui 초기화
                                 for (int i = 0; i < floorMax; i++)
-                                    SingletonManager.instance.Display_Lift[SingletonManager.instance.LoadStageNo].Floor[i] = false;
+                                    SingletonManager.instance.Display_Lift[SingletonManager.instance.LoadStageNo].Floors[i].IsActive = false;
                             }
                         }
                         // Out Handle X PutDown위치로 이동
@@ -2177,7 +2178,7 @@ namespace YJ_AutoClamp.Models
                     {
                         // 적제 단수 증가
                         int floor = SingletonManager.instance.LoadFloor[SingletonManager.instance.LoadStageNo];
-                        SingletonManager.instance.Display_Lift[SingletonManager.instance.LoadStageNo].Floor[floor] = true;
+                        SingletonManager.instance.Display_Lift[SingletonManager.instance.LoadStageNo].Floors[floor].IsActive = true;
 
                         // Aging Conveyer 수량 설정
                         SingletonManager.instance.Aging_Model[SingletonManager.instance.LoadAgingCvIndex].SetFirstLoadingFloor(floor+1);
@@ -2389,8 +2390,8 @@ namespace YJ_AutoClamp.Models
                         else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 2)
                             Dio_Output(DO_MAP.LIFT_CV_RUN_3, true);
                         Dio_Aging_CV_Control(SingletonManager.instance.AgingCvIndex, true);
-                        _TimeDelay.Restart();
                     }
+                    _TimeDelay.Restart();
                     AgingCVStep = Aging_CV_Step.CV_Stop_Wait;
                     break;
                 case Aging_CV_Step.CV_Stop_Wait:
@@ -2421,7 +2422,7 @@ namespace YJ_AutoClamp.Models
                         //AgingCVStep = Aging_CV_Step.Unclamping_IF_Set_Off;
 
                         //SingletonManager.instance.LoadFloor[GetLiftNomber(SingletonManager.instance.AgingCvIndex)] = 0;
-                        for (int i = 0; i < (int)Floor_Index.Max; i++)
+                        for (int i = 0; i < (int)SingletonManager.instance.SystemModel.LoadFloorCount; i++)
                             SingletonManager.instance.Display_Lift[GetLiftNomber(SingletonManager.instance.AgingCvIndex)].Floors[i].IsActive = false;
 
                         // Interfase 신호를 on했으면 Off 조건확인 시퀀스로 이동한다.
@@ -2546,12 +2547,13 @@ namespace YJ_AutoClamp.Models
                     if (GetAgingCVEndSS(SingletonManager.instance.AgingCvIndex) == true
                         || _TimeDelay.ElapsedMilliseconds >= SingletonManager.instance.SystemModel.AgingCvStepTime)
                     {
-                        for (int i = 0; i < (int)Floor_Index.Max; i++)
-                            SingletonManager.instance.Display_Lift[GetLiftNomber(SingletonManager.instance.AgingCvIndex)].Floor[i] = false;
+                        Dio_Aging_CV_Control(SingletonManager.instance.AgingCvIndex, false);
+
+                        for (int i = 0; i < (int)SingletonManager.instance.SystemModel.LoadFloorCount; i++)
+                            SingletonManager.instance.Display_Lift[GetLiftNomber(SingletonManager.instance.AgingCvIndex)].Floors[i].IsActive = false;
 
                         Global.instance.Write_Mes_Log(null, MesLogType.EDM, EdmLogList.JudePass);
                         // Aging CV Start
-                        Dio_Aging_CV_Control(SingletonManager.instance.AgingCvIndex, false);
                         AgingCVStep = Aging_CV_Step.Cv_Step_IF_Off;
                     }
                     break;

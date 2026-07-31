@@ -221,6 +221,7 @@ namespace YJ_AutoClamp
                 SystemModel.LoadFloorCount = Convert.ToInt32(valus);
             else
                 SystemModel.LoadFloorCount = 0;
+            UpdateFloor(SystemModel.LoadFloorCount);
 
             valus = myIni.Read("LOAD_COUNT", section);
             if (string.IsNullOrEmpty(valus))
@@ -267,7 +268,22 @@ namespace YJ_AutoClamp
             valus = myIni.Read("CURRENT_TEACH", section);
             TeachFileName = valus;
         }
-       
+        public void UpdateFloor(int floor)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Display_Lift[i].Floors.Clear();
+                // 높은 층부터 표시
+                for (int j = 1; j <= floor; j++)
+                {
+                    Display_Lift[i].Floors.Add(new FloorItem
+                    {
+                        FloorNo = j,
+                        IsActive = false
+                    });
+                }
+            }
+        }
         public void LoadTeachFile()
         {
             // Teaching Data 섹션 데이터 로드
@@ -741,7 +757,7 @@ namespace YJ_AutoClamp
                             || !Dio.DI_RAW_DATA[(int)DI_MAP.REAR_OP_EMERGENCY_FEEDBACK])
                         {
                             Global.instance.SafetyErrorMessage = "EMERGENCY Button Operation! ";
-                            //IsSafetyInterLock = true;
+                            IsSafetyInterLock = true;
                         }
 
                         if (IsSafetyInterLock == true)
