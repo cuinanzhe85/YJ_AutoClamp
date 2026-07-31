@@ -2422,7 +2422,7 @@ namespace YJ_AutoClamp.Models
 
                         //SingletonManager.instance.LoadFloor[GetLiftNomber(SingletonManager.instance.AgingCvIndex)] = 0;
                         for (int i = 0; i < (int)Floor_Index.Max; i++)
-                            SingletonManager.instance.Display_Lift[GetLiftNomber(SingletonManager.instance.AgingCvIndex)].Floor[i] = false;
+                            SingletonManager.instance.Display_Lift[GetLiftNomber(SingletonManager.instance.AgingCvIndex)].Floors[i].IsActive = false;
 
                         // Interfase 신호를 on했으면 Off 조건확인 시퀀스로 이동한다.
                         if (GetSendInterfaseStatus(SingletonManager.instance.AgingCvIndex) == true)

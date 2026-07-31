@@ -248,7 +248,7 @@ namespace YJ_AutoClamp.Models
         public AgingSetpList()
         {
             Floor = new ObservableCollection<bool>();
-            for (int i = 0; i < (int)Floor_Index.Max; i++)
+            for (int i = 0; i < (int)SingletonManager.instance.SystemModel.LoadFloorCount; i++)
             {
                 Floor.Add(false);
             }
