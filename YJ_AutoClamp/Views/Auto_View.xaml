@@ -366,8 +366,8 @@
                 <DropShadowEffect ShadowDepth="2"/>
             </Grid.Effect>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.75*"/>
-                <RowDefinition Height="0.25*"/>
+                <RowDefinition Height="0.7*"/>
+                <RowDefinition Height="0.3*"/>
             </Grid.RowDefinitions>
             <!--Buttons-->
             <StackPanel>
@@ -393,16 +393,29 @@
             </StackPanel>
 
             <!--Products Infomations-->
-            <StackPanel Grid.Row="1" Margin="0,15,0,0">
-                <!--<telerik:RadButton Content="Input Stop" Style="{StaticResource AutoView_ButtonStyle}"
-                                         Command="{Binding RightMenu_PopupCommand}" CommandParameter="InputStop" Background="Gray"/>-->
-                <telerik:RadButton Content="Inspection Start" Style="{StaticResource AutoView_ButtonStyle}" Height="60"
-                                        IsEnabled="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsInspectionStart, Converter={StaticResource ReversBoolConverter}}"
-                                        Command="{Binding RightMenu_PopupCommand}" CommandParameter="Start" Background="CadetBlue"/>
-                <telerik:RadButton Content="Inspection Stop" Style="{StaticResource AutoView_ButtonStyle}" Height="60"
-                                        IsEnabled="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsInspectionStart}"
-                                        Command="{Binding RightMenu_PopupCommand}" CommandParameter="Stop" Background="PaleVioletRed"/>
-            </StackPanel>
+            <Grid Grid.Row="1">
+                <StackPanel Orientation="Horizontal" Margin="2,0,0,150">
+
+                    <telerik:RadButton Content="Input Stop" Style="{StaticResource Auto_ButtonStyle}" Width="90"
+                           Command="{Binding RightMenu_PopupCommand}" CommandParameter="InputStop"
+                           Background="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsInputStop, Converter={StaticResource ConnectionColorConverter}}"/>
+                    <telerik:RadButton Content="Output Stop" Style="{StaticResource Auto_ButtonStyle}" Width="90"
+                           Command="{Binding RightMenu_PopupCommand}" CommandParameter="OutputStop"
+                           Background="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsOutputStop, Converter={StaticResource ConnectionColorConverter}}"/>
+
+                </StackPanel>
+                <StackPanel Margin="0,45,0,0">
+                    <!--<telerik:RadButton Content="Input Stop" Style="{StaticResource AutoView_ButtonStyle}"
+                             Command="{Binding RightMenu_PopupCommand}" CommandParameter="InputStop" Background="Gray"/>-->
+
+                    <telerik:RadButton Content="Inspection Start" Style="{StaticResource AutoView_ButtonStyle}" Height="60"
+                           IsEnabled="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsInspectionStart, Converter={StaticResource ReversBoolConverter}}"
+                           Command="{Binding RightMenu_PopupCommand}" CommandParameter="Start" Background="CadetBlue"/>
+                    <telerik:RadButton Content="Inspection Stop" Style="{StaticResource AutoView_ButtonStyle}" Height="60"
+                           IsEnabled="{Binding Source={x:Static local:SingletonManager.instance}, Path=IsInspectionStart}"
+                           Command="{Binding RightMenu_PopupCommand}" CommandParameter="Stop" Background="PaleVioletRed"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </mvvm:BaseUserControl>

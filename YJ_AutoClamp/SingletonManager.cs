@@ -78,6 +78,18 @@ namespace YJ_AutoClamp
             get { return _TeachFileName; }
             set { SetValue(ref _TeachFileName, value); }
         }
+        private bool _IsInputStop = false;
+        public bool IsInputStop
+        {
+            get { return _IsInputStop; }
+            set { SetValue(ref _IsInputStop, value); }
+        }
+        private bool _IsOutputStop = false;
+        public bool IsOutputStop
+        {
+            get { return _IsOutputStop; }
+            set { SetValue(ref _IsOutputStop, value); }
+        }
         public ObservableCollection<int> LoadFloor { get; set; }
         public ObservableCollection<Lift_Model> Display_Lift { get; set; }
         public ObservableCollection<Aging_Model> Aging_Model { get; set; }

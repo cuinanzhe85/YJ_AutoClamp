@@ -401,9 +401,12 @@ namespace YJ_AutoClamp.Models
                 case InCvSequence.CV_Run_Wait:
                     if (_InCvTimer.ElapsedMilliseconds > 100)
                     {
-                        Dio_Output(DO_MAP.INPUT_SET_CV_RUN, true);
-                        In_Cv_Step = InCvSequence.CV_Off_Check;
-                        _InCvTimer.Restart();
+                        if (SingletonManager.instance.IsInputStop == false)
+                        {
+                            Dio_Output(DO_MAP.INPUT_SET_CV_RUN, true);
+                            In_Cv_Step = InCvSequence.CV_Off_Check;
+                            _InCvTimer.Restart();
+                        }
                     }
                     break;
                 case InCvSequence.CV_Off_Check:
@@ -1896,7 +1899,8 @@ namespace YJ_AutoClamp.Models
                     if (SingletonManager.instance.IsY_PickupColl == true
                         && Ez_Model.IsTopHandlerPutDownPos() != true                     // Top Handle PutDown위치가 아니면 
                         && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_1] == true   // Out CV 배출 Bottom Tray Sensor
-                        && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == true)   // Out CV 배출 Top Tray Sensor
+                        && Dio.DI_RAW_DATA[(int)DI_MAP.CLAMPING_CV_DETECT_SS_2] == true   // Out CV 배출 Top Tray Sensor
+                        && SingletonManager.instance.IsOutputStop == false)
                         //&& Dio.DI_RAW_DATA[(int)DI_MAP.TRANSFER_X_LEFT_CYL_SS] == true)   // Bottom Handle Left 위치 도착
                         //&& (SingletonManager.instance.LoadFloor[SingletonManager.instance.LoadStageNo] < 3)) // 3층 적제 Test 옵션
                     {
@@ -2236,15 +2240,27 @@ namespace YJ_AutoClamp.Models
                     AgingCvInStopCondition[SingletonManager.instance.AgingCvIndex] = false;
 
                     if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 0)
-                        Dio_Output(DO_MAP.LIFT_CV_RUN_1, false);
+                    {
+                        if (Dio.DO_RAW_DATA[(int)DO_MAP.LIFT_CV_RUN_1] == true)
+                            Dio_Output(DO_MAP.LIFT_CV_RUN_1, false);
+                    }
                     else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 1)
-                        Dio_Output(DO_MAP.LIFT_CV_RUN_2, false);
+                    {
+                        if (Dio.DO_RAW_DATA[(int)DO_MAP.LIFT_CV_RUN_2] == true)
+                            Dio_Output(DO_MAP.LIFT_CV_RUN_2, false);
+                    }
                     else if (GetLiftNomber(SingletonManager.instance.AgingCvIndex) == 2)
-                        Dio_Output(DO_MAP.LIFT_CV_RUN_3, false);
+                    {
+                        if (Dio.DO_RAW_DATA[(int)DO_MAP.LIFT_CV_RUN_3] == true)
+                            Dio_Output(DO_MAP.LIFT_CV_RUN_3, false);
+                    }
 
-                    if (Ez_Model.IsMoveLiftLoadingDone(GetLiftNomber(SingletonManager.instance.AgingCvIndex)) != true)
-                        Ez_Model.MoveLiftLoading(GetLiftNomber(SingletonManager.instance.AgingCvIndex));
-                    AgingCVStep = Aging_CV_Step.Lift_Loading_Pos_Check;
+                    if (SingletonManager.instance.IsInspectionStart == true)
+                    {
+                        if (Ez_Model.IsMoveLiftLoadingDone(GetLiftNomber(SingletonManager.instance.AgingCvIndex)) != true)
+                            Ez_Model.MoveLiftLoading(GetLiftNomber(SingletonManager.instance.AgingCvIndex));
+                        AgingCVStep = Aging_CV_Step.Lift_Loading_Pos_Check;
+                    }
                     break;
                 case Aging_CV_Step.Lift_Loading_Pos_Check:
                     if (Ez_Model.IsMoveLiftLoadingDone(GetLiftNomber(SingletonManager.instance.AgingCvIndex)) == true)
@@ -2253,15 +2269,16 @@ namespace YJ_AutoClamp.Models
                     }
                     break;
                 case Aging_CV_Step.CV_On_Condition_Wait:
-
+                    if (SingletonManager.instance.IsInspectionStart == false)
+                        break;
                     // Lift에 Clamp가 있는지 확인한다.
                     bool DetectSS = false;
                     if (SingletonManager.instance.AgingCvIndex == 0 || SingletonManager.instance.AgingCvIndex == 3)
-                    { 
+                    {
                         DetectSS = Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_1_CV_DETECT_IN_SS_1]; 
                     }
                     else if (SingletonManager.instance.AgingCvIndex == 1 || SingletonManager.instance.AgingCvIndex == 4)
-                    { 
+                    {
                         DetectSS = Dio.DI_RAW_DATA[(int)DI_MAP.LIFT_2_CV_DETECT_IN_SS_1]; 
                     }
                     else if (SingletonManager.instance.AgingCvIndex == 2 || SingletonManager.instance.AgingCvIndex == 5)
