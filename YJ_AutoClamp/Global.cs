@@ -718,6 +718,22 @@ namespace YJ_AutoClamp
                 _IsInspectionBusy = false;
             }
         }
+        public bool IsSafetyInterlockActive()
+        {
+            if (!SingletonManager.instance.Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.FRONT_DOOR_SS]
+                || !SingletonManager.instance.Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.REAR_DOOR_SS]
+                || !SingletonManager.instance.Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.LEFT_L_DOOR_SS]
+                || !SingletonManager.instance.Dio.DI_RAW_DATA[(int)EziDio_Model.DI_MAP.LEFT_R_DOOR_SS])
+            {
+                ShowMessagebox("DOOR IS OPEN ! ", true, true);
+                return true;
+            }
+            else if (SingletonManager.instance.Motion.ServoSlaveOriginStatus() == false)
+            {
+                return true;
+            }
+            return false;
+        }
         #region // override
         protected override void DisposeManaged()
         {

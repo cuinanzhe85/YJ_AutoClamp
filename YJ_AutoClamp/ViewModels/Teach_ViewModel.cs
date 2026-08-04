@@ -356,7 +356,7 @@ namespace YJ_AutoClamp.ViewModels
         {
             for (int i = 1; i < (int)ServoSlave_List.Max; i++)
             {
-                if (ServoModel[i].IsServoOn == true)
+                if (EzModel.IsMoveDone(i) == false)
                     EzModel.ServoStop(i);
             }
         }
@@ -419,6 +419,11 @@ namespace YJ_AutoClamp.ViewModels
         }
         private void OnServoMove_Command(object obj)
         {
+            if (Global.instance.IsSafetyInterlockActive() == true)
+            {
+                MoveAllStop();
+                return;
+            }
             switch (obj.ToString())
             {
                 case "Home":
@@ -561,14 +566,17 @@ namespace YJ_AutoClamp.ViewModels
         }
         private void OnTeachingMove_Command(object obj)
         {
+            if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+            if (Global.instance.IsSafetyInterlockActive() == true)
+                return;
             string cmd = obj.ToString();
             switch (cmd)
             {
                 case "Top_X_Handler":
-                    if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
+                    
                     if ( EzModel.IsOutHandlerPickupPosY_2() == true || EzModel.IsOutHandlerPickupPosY_1() == true)
                     {
                         Global.instance.ShowMessagebox("Pleass Check Servo Y Position");
@@ -582,16 +590,13 @@ namespace YJ_AutoClamp.ViewModels
                     }
                     break;
                 case "Out_Y_Handler":
-                    if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
+                    
                     //if (EzModel.IsOutHandlerReadyDoneZ() == false)
                     //{
                     //    Global.instance.ShowMessagebox("Z is not ready position.");
                     //    return;
                     //}
-                    if (EzModel.IsTopHandlerPutDownPos() == true)
+                    if (EzModel.IsTopHandlerPickUpPos() == false)
                     {
                         Global.instance.ShowMessagebox("Top Handler is not Ready position.");
                         return;
@@ -607,20 +612,14 @@ namespace YJ_AutoClamp.ViewModels
                     }
                     break;
                 case "Out_Z_Handler":
-                    if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
+                    
                     if (EzModel.MoveABS((int)ServoSlave_List.Out_Z_Handler_Z, TeachPosition[(int)TeachingSection.Out_Handler_Z])== false)
                     {
                         Global.instance.ShowMessagebox("Loading Z Servo Move Fail");
                     }
                     break;
                 case "Lift":
-                    if (MessageBox.Show($"Do you want to move servo to target position?", "Servo Move", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
+                    
                     if (EzModel.MoveABS((int)ServoSlave_List.Lift_1_Z + Selected_LiftIndex, TeachPosition[(int)TeachingSection.Lift])== false)
                     {
                         Global.instance.ShowMessagebox("Lift Serfo Move Fail");
