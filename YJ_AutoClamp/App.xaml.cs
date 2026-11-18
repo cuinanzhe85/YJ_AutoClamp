@@ -1,6 +1,7 @@
-﻿using System.Threading;
-using System;
+﻿using System;
+using System.Threading;
 using System.Windows;
+using YJ_Base.Utils;
 
 namespace YJ_AutoClamp
 {
@@ -21,6 +22,8 @@ namespace YJ_AutoClamp
 
                 if (isCreatedNew)
                 {
+                    // 타이머 해상도를 1ms로 설정 (exe 단독 실행 시 Sleep/Timer 지연 방지)
+                    TimerResolution.TimeBeginPeriod(1);
                     base.OnStartup(e);
                 }
                 else
